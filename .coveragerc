@@ -1,0 +1,16 @@
+[paths]
+source =
+   src/zentropi
+   */site-packages/zentropi
+
+[run]
+branch = true
+source =
+    zentropi
+    tests
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*
