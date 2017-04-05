@@ -51,15 +51,19 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: Implementation :: CPython',
-        'Programming Language :: Python :: Implementation :: PyPy',
-        # uncomment if you test on these interpreters:
-        # 'Programming Language :: Python :: Implementation :: IronPython',
-        # 'Programming Language :: Python :: Implementation :: Jython',
-        # 'Programming Language :: Python :: Implementation :: Stackless',
+        'Topic :: Communications',
+        'Topic :: Internet',
+        'Topic :: Software Development',
         'Topic :: Utilities',
     ],
     keywords=[
-        # eg: 'keyword1', 'keyword2', 'keyword3',
+        'agent-based',
+        'automation',
+        'event-based'
+        'iot',
+        'iot-framework',
+        'iot-platform',
+        'pub-sub',
     ],
     install_requires=[
         'click',
