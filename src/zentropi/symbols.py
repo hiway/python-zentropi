@@ -5,12 +5,12 @@ from enum import unique
 
 
 @unique
-class Kind(Enum):
-    timer = -1
-    unset = 0
-    command = 1
-    event = 2
-    message = 3
-    request = 4
-    response = 5
-    state = 6
+class KIND(Enum):
+    TIMER = -1
+    UNSET = 0
+    COMMAND = 1
+    EVENT = 2
+    MESSAGE = 3
+    REQUEST = 4
+    RESPONSE = 5
+    STATE = 6

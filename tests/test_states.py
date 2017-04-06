@@ -4,7 +4,7 @@ import pytest
 from zentropi import Field
 from zentropi.handlers import Handler
 from zentropi.states import States
-from zentropi.symbols import Kind
+from zentropi.symbols import KIND
 
 
 def test_states():
@@ -30,7 +30,7 @@ def test_states_with_callback():
         return True
 
     states = States()
-    a_handler = Handler(Kind.state, 'the_answer', test_handler)
+    a_handler = Handler(KIND.STATE, 'the_answer', test_handler)
     states.add_handler('the_answer', handler=a_handler)
     states.remove_handler('the_answer', handler=a_handler)
     states.add_handler('the_answer', handler=a_handler)
@@ -105,7 +105,7 @@ def test_states_with_callback_fails():
         assert state.data.value in [42, 0]
 
     states = States()
-    a_handler = Handler(Kind.state, 'the_answer', test_handler)
+    a_handler = Handler(KIND.STATE, 'the_answer', test_handler)
     states.add_handler('the_answer', handler=a_handler)
     states.the_answer = Field()
     states.callback = _trigger_frame_handler
@@ -126,7 +126,7 @@ def test_states_with_callback_no_update():
         return False
 
     states = States()
-    a_handler = Handler(Kind.state, 'the_answer', test_handler)
+    a_handler = Handler(KIND.STATE, 'the_answer', test_handler)
     states.add_handler('the_answer', handler=a_handler)
     states.the_answer = Field()
     states.callback = _trigger_frame_handler
