@@ -1,3 +1,14 @@
+builtin
+builtins
+classmethod
+staticmethod
+classmethods
+staticmethods
+args
+kwargs
+callstack
+Changelog
+Indices
 SPELLCHECK
 autodoc
 autosummary
