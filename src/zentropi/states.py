@@ -59,7 +59,8 @@ class States(UserDict):
             return object.__getattribute__(self, item)
         try:
             attr = object.__getattribute__(self, item)
-            return attr
+            if attr and callable(attr):
+                return attr
         except AttributeError:
             return self._get_state(item)
 

@@ -70,6 +70,7 @@ setup(
         'fuzzywuzzy',
         'parse',
         'sortedcontainers',
+        'pyyaml',
     ],
     extras_require={
         # eg:

@@ -10,6 +10,7 @@ import sys
 import warnings
 from typing import Any
 from typing import Optional
+from zentropi.symbols import SOURCES
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -136,3 +137,21 @@ def validate_id(id: str = None) -> Optional[str]:
         return None
     assert isinstance(id, str)
     return id
+
+
+def validate_validator(validator):
+    if validator and callable(validator):
+        return validator
+    else:
+        raise ValueError('validator must be callable, got: {}'
+                         ''.format(repr(validator)))
+
+
+def validate_source(source):
+    if not source:
+        return SOURCES.DEFAULT
+    if not source in SOURCES:
+        raise ValueError('Invalid value for source: {}. '
+                         'Expected int in range: {}'
+                         ''.format(source, [s for s in SOURCES]))
+    return source

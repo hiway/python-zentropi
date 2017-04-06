@@ -14,3 +14,11 @@ class KINDS(Enum):
     REQUEST = 4
     RESPONSE = 5
     STATE = 6
+
+
+@unique
+class SOURCES(Enum):
+    DEFAULT = 0
+    CONFIG = 1
+    ENV = 2
+    RUNTIME = 3

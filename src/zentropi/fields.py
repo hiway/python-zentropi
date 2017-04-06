@@ -53,6 +53,8 @@ class Field(object):
 
     @property
     def value(self) -> Any:
+        if self._value is None:
+            return self._default
         return self._value
 
     @value.setter
