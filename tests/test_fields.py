@@ -1,6 +1,8 @@
 # coding=utf-8
-import pytest
 from typing import Any
+
+import pytest
+
 from zentropi import Field
 
 
