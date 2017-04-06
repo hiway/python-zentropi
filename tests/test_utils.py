@@ -4,8 +4,8 @@ import logging
 from io import StringIO
 
 from zentropi.utils import i18n_wrapper
-from zentropi.utils import logger
 from zentropi.utils import log_to_stream
+from zentropi.utils import logger
 
 
 def test_log():

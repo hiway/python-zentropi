@@ -1,13 +1,14 @@
 # coding=utf-8
 
-import gettext
-import logging
-import sys
 
-import os
-import warnings
+import gettext
 import locale as lib_locale
-from typing import Optional, Any
+import logging
+import os
+import sys
+import warnings
+from typing import Any
+from typing import Optional
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -19,9 +20,9 @@ def log_to_stream(stream: Optional[Any] = None, *,
     """
     Send zentropi logs to stream, at logging.[DEBUG] level.
     Default: zentropi.defaults.LOG_LEVEL => logging.DEBUG
-    
-    Returns handler instance.
-    
+
+    Returns: handler instance.
+
     Example:
         >>> from zentropi.utils import log_to_stream
         >>> log_to_stream()  # logs to sys.stdout
@@ -48,10 +49,10 @@ def log_to_stream(stream: Optional[Any] = None, *,
 def i18n_wrapper(locale: Optional[str] = None) -> Any:
     """
     Internationalize using gettext.
-    
-    Returns gettext for provided locale 
+
+    Returns gettext for provided locale
     or default (zentropi.defaults.LOCALE).
-    
+
     Example:
         >>> from zentropi.utils import i18n_wrapper
         >>> _ = i18n_wrapper()
