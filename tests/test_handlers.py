@@ -7,7 +7,7 @@ from zentropi.handlers import HandlerRegistry
 from zentropi.handlers import validate_handler
 from zentropi.handlers import validate_kind
 from zentropi.handlers import validate_name
-from zentropi.symbols import KIND
+from zentropi.symbols import KINDS
 
 
 def dummy():
@@ -20,7 +20,7 @@ async def dummy_async():  # pragma: no cover
 
 
 def test_validate_handler():
-    dummy_handler = Handler(kind=KIND.UNSET,
+    dummy_handler = Handler(kind=KINDS.UNSET,
                             name='test',
                             handler=dummy)
 
@@ -58,38 +58,38 @@ def test_validate_kind_fails():
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_handler_fails_on_invalid_handler():
-    handler = Handler(KIND.UNSET, handler='obviously not a callable', name='test')
+    handler = Handler(KINDS.UNSET, handler='obviously not a callable', name='test')
 
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_handler_fails_on_invalid_meta():
-    handler = Handler(KIND.UNSET, handler=dummy, name='test', meta='nonsense')
+    handler = Handler(KINDS.UNSET, handler=dummy, name='test', meta='nonsense')
 
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_handler_fails_on_both_parse_and_fuzzy():
-    handler = Handler(KIND.UNSET, handler=dummy, name='test',
+    handler = Handler(KINDS.UNSET, handler=dummy, name='test',
                       fuzzy=True, parse=True)
 
 
 def test_handler_set_parse():
-    handler = Handler(KIND.UNSET, handler=dummy, name='test', parse=True)
+    handler = Handler(KINDS.UNSET, handler=dummy, name='test', parse=True)
 
 
 def test_handler_set_fuzzy():
-    handler = Handler(KIND.UNSET, handler=dummy, name='test', fuzzy=True)
+    handler = Handler(KINDS.UNSET, handler=dummy, name='test', fuzzy=True)
 
 
 def test_async_handler():
-    handler = Handler(KIND.UNSET, handler=dummy_async, name='test_async')
+    handler = Handler(KINDS.UNSET, handler=dummy_async, name='test_async')
     assert handler.run_async is True
 
 
 def test_handler():
-    handler = Handler(KIND.UNSET, handler=dummy, name='test', meta={'a': 'b'})
+    handler = Handler(KINDS.UNSET, handler=dummy, name='test', meta={'a': 'b'})
     assert handler() is True
     assert handler.name == 'test'
-    assert handler.kind == KIND.UNSET
+    assert handler.kind == KINDS.UNSET
     assert handler.meta == {'a': 'b'}
     assert handler.match_exact is True
     assert handler.match_parse is False
@@ -98,7 +98,7 @@ def test_handler():
 
 
 def test_handler_registry():
-    handler = Handler(KIND.EVENT, 'dummy', handler=dummy)
+    handler = Handler(KINDS.EVENT, 'dummy', handler=dummy)
     registry = HandlerRegistry()
     registry.add_handler('test-event', handler)
     frame_, handlers_ = registry.match(frame=Event('test-event'))
@@ -109,21 +109,21 @@ def test_handler_registry():
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_add_handler_fails_on_bad_match_values():
-    handler = Handler(KIND.EVENT, 'dummy', handler=dummy, exact=False)
+    handler = Handler(KINDS.EVENT, 'dummy', handler=dummy, exact=False)
     registry = HandlerRegistry()
     registry.add_handler('test-event', handler)
 
 
 @pytest.mark.xfail(raises=ValueError, strict=True)
 def test_add_handler_fails_if_match_already_assigned():
-    handler = Handler(KIND.EVENT, 'dummy', handler=dummy)
+    handler = Handler(KINDS.EVENT, 'dummy', handler=dummy)
     registry = HandlerRegistry()
     registry.add_handler('test-event', handler)
     registry.add_handler('test-event', handler)
 
 
 def test_handler_registry_parse():
-    handler = Handler(KIND.EVENT, 'dummy', handler=dummy, parse=True)
+    handler = Handler(KINDS.EVENT, 'dummy', handler=dummy, parse=True)
     registry = HandlerRegistry()
     registry.add_handler('{what}-event', handler)
     registry.add_handler('not this event', handler)
@@ -136,7 +136,7 @@ def test_handler_registry_parse():
 
 
 def test_handler_registry_fuzzy():
-    handler = Handler(KIND.EVENT, 'dummy', handler=dummy, fuzzy=True)
+    handler = Handler(KINDS.EVENT, 'dummy', handler=dummy, fuzzy=True)
     registry = HandlerRegistry()
     registry.add_handler('test-event', handler)
     frame_, handlers_ = registry.match(frame=Event('test event'))
@@ -146,9 +146,9 @@ def test_handler_registry_fuzzy():
 
 
 def test_registry_remove_handler():
-    handler_exact = Handler(KIND.EVENT, 'dummy', handler=dummy)
-    handler_parse = Handler(KIND.EVENT, 'dummy', handler=dummy, parse=True)
-    handler_fuzzy = Handler(KIND.EVENT, 'dummy', handler=dummy, fuzzy=True)
+    handler_exact = Handler(KINDS.EVENT, 'dummy', handler=dummy)
+    handler_parse = Handler(KINDS.EVENT, 'dummy', handler=dummy, parse=True)
+    handler_fuzzy = Handler(KINDS.EVENT, 'dummy', handler=dummy, fuzzy=True)
     registry = HandlerRegistry()
     # Exact
     registry.add_handler('test-event', handler_exact)

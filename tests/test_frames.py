@@ -12,7 +12,7 @@ from zentropi.frames import Message
 from zentropi.frames import Request
 from zentropi.frames import Response
 from zentropi.frames import State
-from zentropi.symbols import KIND
+from zentropi.symbols import KINDS
 
 
 def test_frame_data():
@@ -108,8 +108,8 @@ class TestZenceliumFrame(unittest.TestCase):
             frame1.meta = {'a': 'test'}
 
     def test_kind(self):
-        frame1 = Frame(kind=KIND.EVENT)
-        assert frame1.kind == KIND.EVENT
+        frame1 = Frame(kind=KINDS.EVENT)
+        assert frame1.kind == KINDS.EVENT
 
     def test_kind_validation(self):
         with self.assertRaises(ValueError):
@@ -123,11 +123,11 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_command(self):
         command = Command()
-        assert command.kind == KIND.COMMAND
+        assert command.kind == KINDS.COMMAND
 
     def test_event(self):
         event = Event()
-        assert event.kind == KIND.EVENT
+        assert event.kind == KINDS.EVENT
         del event
         event = Event('a test', data={'another': 'test'})
         assert event.id
@@ -137,7 +137,7 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_message(self):
         message = Message()
-        assert message.kind == KIND.MESSAGE
+        assert message.kind == KINDS.MESSAGE
         del message
         message = Message('a test', data={'another': 'test'})
         assert message.id
@@ -147,7 +147,7 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_state(self):
         state = State()
-        assert state.kind == KIND.STATE
+        assert state.kind == KINDS.STATE
         del state
         state = State('a test', data={'another': 'test'})
         assert state.id
@@ -157,7 +157,7 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_request(self):
         request = Request()
-        assert request.kind == KIND.REQUEST
+        assert request.kind == KINDS.REQUEST
         del request
         request = Request('a test', data={'another': 'test'})
         assert request.id
@@ -167,7 +167,7 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_response(self):
         response = Response()
-        assert response.kind == KIND.RESPONSE
+        assert response.kind == KINDS.RESPONSE
         del response
         response = Response('a test', data={'another': 'test'})
         assert response.reply_to is None
@@ -180,29 +180,29 @@ class TestZenceliumFrame(unittest.TestCase):
 
     def test_unset(self):
         frame = Frame()
-        assert frame.kind == KIND.UNSET
+        assert frame.kind == KINDS.UNSET
 
     def test_build(self):
         frame = Frame.build('test', data={'a': 'test'}, meta={'another': 'test'})
         assert frame.name == 'test'
         assert frame.data == {'a': 'test'}
         assert 'another' in frame.meta
-        assert frame.kind == KIND.UNSET
+        assert frame.kind == KINDS.UNSET
 
     def test_build_command(self):
-        frame = Frame.build('test', data={'a': 'test'}, meta={'another': 'test'}, kind=KIND.COMMAND)
+        frame = Frame.build('test', data={'a': 'test'}, meta={'another': 'test'}, kind=KINDS.COMMAND)
         assert frame.name == 'test'
         assert frame.data == {'a': 'test'}
         assert 'another' in frame.meta
-        assert frame.kind == KIND.COMMAND
+        assert frame.kind == KINDS.COMMAND
         assert isinstance(frame, Command)
 
     def test_build_event(self):
-        frame = Frame.build('test', data={'a': 'test'}, meta={'another': 'test'}, kind=KIND.EVENT)
+        frame = Frame.build('test', data={'a': 'test'}, meta={'another': 'test'}, kind=KINDS.EVENT)
         assert frame.name == 'test'
         assert frame.data == {'a': 'test'}
         assert 'another' in frame.meta
-        assert frame.kind == KIND.EVENT
+        assert frame.kind == KINDS.EVENT
         assert isinstance(frame, Event)
 
     def test_frame_meta_properties(self):

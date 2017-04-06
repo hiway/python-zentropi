@@ -101,14 +101,14 @@ def validate_name(name):
 
 
 def validate_kind(kind):
-    from .symbols import KIND
+    from .symbols import KINDS
     if kind is None:
-        return KIND.UNSET
+        return KINDS.UNSET
     if isinstance(kind, int):
-        return KIND(kind)
-    if kind not in KIND:
+        return KINDS(kind)
+    if kind not in KINDS:
         raise ValueError('Expected kind to be one of zentropi.symbols.Kinds: {!r}. '
-                         'Got: {!r}'.format(', '.join([str(k) for k in KIND]), kind))
+                         'Got: {!r}'.format(', '.join([str(k) for k in KINDS]), kind))
     return kind
 
 

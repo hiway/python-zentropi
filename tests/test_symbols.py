@@ -1,14 +1,14 @@
 # coding=utf-8
 
-from zentropi.symbols import KIND
+from zentropi.symbols import KINDS
 
 
 def test_kind():
-    assert KIND.TIMER.value == -1
-    assert KIND.UNSET.value == 0
-    assert KIND.COMMAND.value == 1
-    assert KIND.EVENT.value == 2
-    assert KIND.MESSAGE.value == 3
-    assert KIND.REQUEST.value == 4
-    assert KIND.RESPONSE.value == 5
-    assert KIND.STATE.value == 6
+    assert KINDS.TIMER.value == -1
+    assert KINDS.UNSET.value == 0
+    assert KINDS.COMMAND.value == 1
+    assert KINDS.EVENT.value == 2
+    assert KINDS.MESSAGE.value == 3
+    assert KINDS.REQUEST.value == 4
+    assert KINDS.RESPONSE.value == 5
+    assert KINDS.STATE.value == 6

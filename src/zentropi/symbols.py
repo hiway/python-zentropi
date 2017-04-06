@@ -5,7 +5,7 @@ from enum import unique
 
 
 @unique
-class KIND(Enum):
+class KINDS(Enum):
     TIMER = -1
     UNSET = 0
     COMMAND = 1

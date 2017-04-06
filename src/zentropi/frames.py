@@ -8,7 +8,7 @@ from uuid import uuid4
 
 from zentropi.utils import deflate_dict
 
-from .symbols import KIND
+from .symbols import KINDS
 from .utils import validate_data
 from .utils import validate_id
 from .utils import validate_kind
@@ -50,7 +50,7 @@ class Frame(object):
         self._data = validate_data(data)
         self._meta = validate_meta(meta)
         self._id = validate_id(id) or uuid4().hex
-        self._kind = validate_kind(kind) or KIND.UNSET
+        self._kind = validate_kind(kind) or KINDS.UNSET
         if source:
             self._meta.update({'source': validate_name(source)})
         if target:
@@ -130,17 +130,17 @@ class Frame(object):
               meta: dict = None,
               kind=None,
               id: str = None) -> Union['Frame', 'Command', 'Event']:
-        if kind == KIND.COMMAND or kind == KIND.COMMAND.value:
+        if kind == KINDS.COMMAND or kind == KINDS.COMMAND.value:
             return Command(name, data=data, meta=meta, kind=kind, id=id)
-        elif kind == KIND.EVENT or kind == KIND.EVENT.value:
+        elif kind == KINDS.EVENT or kind == KINDS.EVENT.value:
             return Event(name, data=data, meta=meta, kind=kind, id=id)
-        elif kind == KIND.MESSAGE or kind == KIND.MESSAGE.value:
+        elif kind == KINDS.MESSAGE or kind == KINDS.MESSAGE.value:
             return Message(name, data=data, meta=meta, kind=kind, id=id)
-        elif kind == KIND.REQUEST or kind == KIND.REQUEST.value:
+        elif kind == KINDS.REQUEST or kind == KINDS.REQUEST.value:
             return Request(name, data=data, meta=meta, kind=kind, id=id)
-        elif kind == KIND.RESPONSE or kind == KIND.RESPONSE.value:
+        elif kind == KINDS.RESPONSE or kind == KINDS.RESPONSE.value:
             return Response(name, data=data, meta=meta, kind=kind, id=id)
-        elif kind == KIND.STATE or kind == KIND.STATE.value:
+        elif kind == KINDS.STATE or kind == KINDS.STATE.value:
             return State(name, data=data, meta=meta, kind=kind, id=id)
         else:
             return Frame(name, data=data, meta=meta, kind=kind, id=id)
@@ -180,10 +180,10 @@ class Command(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.COMMAND, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.COMMAND, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.COMMAND
+        self._kind = KINDS.COMMAND
 
 
 class Event(Frame):
@@ -200,10 +200,10 @@ class Event(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.EVENT, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.EVENT, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.EVENT
+        self._kind = KINDS.EVENT
 
 
 class Message(Frame):
@@ -220,10 +220,10 @@ class Message(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.MESSAGE, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.MESSAGE, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.MESSAGE
+        self._kind = KINDS.MESSAGE
 
 
 class Request(Frame):
@@ -240,10 +240,10 @@ class Request(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.REQUEST, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.REQUEST, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.REQUEST
+        self._kind = KINDS.REQUEST
 
 
 class Response(Frame):
@@ -260,10 +260,10 @@ class Response(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.RESPONSE, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.RESPONSE, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.RESPONSE
+        self._kind = KINDS.RESPONSE
 
 
 class State(Frame):
@@ -280,7 +280,7 @@ class State(Frame):
                  space: str = None,
                  reply_to: str = None,
                  timestamp: int = None) -> None:
-        super().__init__(name, data=data, meta=meta, kind=KIND.STATE, id=id,
+        super().__init__(name, data=data, meta=meta, kind=KINDS.STATE, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp)
-        self._kind = KIND.STATE
+        self._kind = KINDS.STATE
