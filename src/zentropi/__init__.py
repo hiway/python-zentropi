@@ -14,5 +14,13 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import os
 
 __version__ = "0.1.0"
+
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+__all__ = [
+    '__version__',
+    'BASE_PATH',
+]
