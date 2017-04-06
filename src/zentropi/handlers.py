@@ -1,33 +1,16 @@
 # coding=utf-8
+from collections import defaultdict
 from inspect import iscoroutinefunction
 
-from .symbols import Kinds
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
+from parse import parse as string_parse
+from sortedcontainers import SortedListWithKey
 
-
-def validate_handler(handler):
-    if handler is None:
-        return None
-    if isinstance(handler, Handler):
-        return handler
-    raise ValueError('Expected handler to an instance of Handler. '
-                     'Got: {!r}'.format(handler))
-
-
-def validate_name(name):
-    if not name or not isinstance(name, str) or len(name.strip()) == 0:
-        raise ValueError('Expected name to be a non-empty string. '
-                         'Got: {!r}'.format(name))
-    if len(name) > 128:
-        raise ValueError('Expected name to be <= 128 unicode characters long. '
-                         'Got: {} characters'.format(len(name)))
-    return name
-
-
-def validate_kind(kind):
-    if kind not in Kinds:
-        raise ValueError('Expected kind (int) to be one of zentropi.symbols.Kinds: {!r}. '
-                         'Got: {!r}'.format(', '.join([str(k) for k in Kinds]), kind))
-    return kind
+from .defaults import MATCH_FUZZY_THRESHOLD
+from .utils import validate_handler
+from .utils import validate_kind
+from .utils import validate_name
 
 
 class Handler(object):
@@ -95,3 +78,78 @@ class Handler(object):
     @property
     def match_fuzzy(self):
         return self._match_fuzzy
+
+
+class HandlerRegistry(object):
+    def __init__(self):
+        self._handlers = defaultdict(set)
+        self._index_exact = SortedListWithKey(key=len)
+        self._index_parse = SortedListWithKey(key=len)
+        self._index_fuzzy = SortedListWithKey(key=len)
+        self.match_functions = [self.match_exact,
+                                self.match_parse,
+                                self.match_fuzzy]
+
+    def add_handler(self, name, handler):
+        validate_handler(handler)
+        if not any([handler.match_exact,
+                    handler.match_parse,
+                    handler.match_fuzzy]):
+            raise ValueError('Expected one of exact, parse, fuzzy'
+                             'to be True.')
+        if handler in self._handlers[name]:
+            raise ValueError('Handler: {!r} already assigned to: {!r}'
+                             ''.format(handler, name))
+        self._handlers[name].add(handler)
+        if handler.match_exact:
+            self._index_exact.append(name)
+        elif handler.match_parse:
+            self._index_parse.append(name)
+        else:  # handler.match_fuzzy:
+            self._index_fuzzy.append(name)
+
+    def remove_handler(self, name, handler):
+        self._handlers[name].remove(handler)
+        if handler.match_exact:
+            self._index_exact.remove(name)
+        elif handler.match_parse:
+            self._index_parse.remove(name)
+        else:  # handler.match_fuzzy:
+            self._index_fuzzy.remove(name)
+
+    def match(self, frame):
+        for match_function in self.match_functions:
+            frame, handlers = match_function(frame)
+            if not handlers:
+                continue
+            return frame, handlers
+        else:
+            return frame, set()
+
+    def match_exact(self, frame):
+        if frame.name not in self._index_exact:
+            return frame, set()
+        return frame, self._handlers[frame.name]
+
+    def match_parse(self, frame):
+        for pattern in reversed(self._index_parse):
+            res = string_parse(
+                format=pattern, string=frame.name)
+            if not res:
+                continue
+            handlers = self._handlers[pattern]
+            data = frame.data or {}
+            data.update(**res.named)
+            data.update({'args': res.fixed})
+            frame.data = data
+            return frame, handlers
+        else:
+            return frame, set()
+
+    def match_fuzzy(self, frame):
+        pattern = process.extractOne(
+            frame.name, self._index_fuzzy,
+            scorer=fuzz.token_sort_ratio)
+        if not pattern or pattern[1] < MATCH_FUZZY_THRESHOLD:
+            return frame, set()
+        return frame, self._handlers[pattern[0]]

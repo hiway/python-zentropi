@@ -67,6 +67,9 @@ setup(
     ],
     install_requires=[
         'click',
+        'fuzzywuzzy',
+        'parse',
+        'sortedcontainers',
     ],
     extras_require={
         # eg:

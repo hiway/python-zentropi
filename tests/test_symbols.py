@@ -1,14 +1,14 @@
 # coding=utf-8
 
-from zentropi.symbols import Kinds
+from zentropi.symbols import Kind
 
 
-def test_kinds():
-    assert Kinds.timer.value == -1
-    assert Kinds.unset.value == 0
-    assert Kinds.command.value == 1
-    assert Kinds.event.value == 2
-    assert Kinds.message.value == 3
-    assert Kinds.request.value == 4
-    assert Kinds.response.value == 5
-    assert Kinds.state.value == 6
+def test_kind():
+    assert Kind.timer.value == -1
+    assert Kind.unset.value == 0
+    assert Kind.command.value == 1
+    assert Kind.event.value == 2
+    assert Kind.message.value == 3
+    assert Kind.request.value == 4
+    assert Kind.response.value == 5
+    assert Kind.state.value == 6
