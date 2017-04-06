@@ -24,12 +24,12 @@ def log_to_stream(stream: Optional[Any] = None, *,
 
     Example:
         >>> from zentropi.utils import log_to_stream
-        >>> log_to_stream()  # logs to sys.stdout
+        >>> _ = log_to_stream()  # logs to sys.stdout
 
     Or
 
         >>> from zentropi.utils import log_to_stream
-        >>> log_to_stream(level=logging.WARNING)  # Only warning and higher
+        >>> _ = log_to_stream(level=logging.WARNING)  # Only warning and higher
     """
     from zentropi.defaults import LOG_LEVEL
     global logger
@@ -56,6 +56,7 @@ def i18n_wrapper(locale: Optional[str] = None) -> Any:
         >>> from zentropi.utils import i18n_wrapper
         >>> _ = i18n_wrapper()
         >>> print(_('Hello, world.'))
+        Hello, world.
     """
     from . import BASE_PATH
     from .defaults import LOCALE
