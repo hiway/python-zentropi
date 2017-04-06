@@ -1,8 +1,9 @@
 # coding=utf-8
 
-from enum import Enum
+from enum import Enum, unique
 
 
+@unique
 class Kinds(Enum):
     timer = -1
     unset = 0
