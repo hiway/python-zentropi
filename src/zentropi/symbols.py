@@ -4,7 +4,7 @@ from enum import Enum, unique
 
 
 @unique
-class Kinds(Enum):
+class Kind(Enum):
     timer = -1
     unset = 0
     command = 1
