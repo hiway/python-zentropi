@@ -12,7 +12,6 @@ from typing import Optional
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
-warnings.simplefilter('always')
 
 
 def log_to_stream(stream: Optional[Any] = None, *,
@@ -68,6 +67,6 @@ def i18n_wrapper(locale: Optional[str] = None) -> Any:
     except IOError:
         warnings.warn('Translation file for {} not found at: {}. Using default.'
                       ''.format(locale, locale_file))
-        translation = gettext.NullTranslations()
+        translation = gettext.NullTranslations()  # type: ignore
     translation.install()
     return translation.gettext
