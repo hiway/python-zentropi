@@ -16,6 +16,8 @@ limitations under the License.
 """
 import os
 
+from . import utils
+
 __version__ = "0.1.0"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
@@ -23,4 +25,5 @@ BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 __all__ = [
     '__version__',
     'BASE_PATH',
+    'utils',
 ]
