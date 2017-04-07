@@ -21,6 +21,7 @@ from . import utils
 from .events import Event
 from .events import Events
 from .fields import Field
+from .zentropian import Zentropian
 
 __version__ = "0.1.0"
 
@@ -34,4 +35,5 @@ __all__ = [
     'Field',
     'fields',
     'utils',
+    'Zentropian',
 ]
