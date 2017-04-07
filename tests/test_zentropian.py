@@ -36,3 +36,21 @@ def test_zentropian_fails_on_async():
         pass
 
     zen.emit('failing')
+
+
+def test_zentropian_sub_class():
+    from zentropi import Zentropian
+    from zentropi import on_event
+
+    class Test(Zentropian):
+        @on_event('test-event')
+        def on_test(self, event):
+            assert event.name == 'test-event'
+
+    zen = Test()
+    zen.inspect_handlers()
+    zen.emit('test-event')
+
+
+if __name__ == '__main__':
+    test_zentropian_sub_class()

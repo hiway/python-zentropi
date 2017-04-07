@@ -46,7 +46,7 @@ class Field(object):
 
     @name.setter
     def name(self, name: str) -> None:
-        if not name or not isinstance(name, str):
+        if not isinstance(name, str) or not name.strip():
             raise ValueError('Expected non-empty string for name, '
                              'got: {!r}'.format(name))
         self._name = name
