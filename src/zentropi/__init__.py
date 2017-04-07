@@ -1,3 +1,4 @@
+# coding=utf-8
 """
 Copyright 2017 Harshad Sharma
 
@@ -13,5 +14,26 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import os
+
+from . import fields
+from . import utils
+from .events import Event
+from .events import Events
+from .fields import Field
+from .zentropian import Zentropian
 
 __version__ = "0.1.0"
+
+BASE_PATH = os.path.abspath(os.path.dirname(__file__))
+
+__all__ = [
+    '__version__',
+    'BASE_PATH',
+    'Event',
+    'Events',
+    'Field',
+    'fields',
+    'utils',
+    'Zentropian',
+]
