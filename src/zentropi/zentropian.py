@@ -7,17 +7,11 @@ from .frames import Frame
 from .handlers import Handler
 from .states import States
 from .symbols import KINDS
-from .utils import log_to_stream
-from .utils import logger
 from .utils import validate_name
 
 
 class Zentropian(object):
-    logger = logger
-    log_to_stream()
-
     def __init__(self, name=None):
-        # self.logger = logger
         callback = self._trigger_frame_handler
         self.states = States(callback=callback)
         self.events = Events(callback=callback)
@@ -38,7 +32,6 @@ class Zentropian(object):
                 continue
             if hasattr(attr, 'meta'):
                 for handler in attr.meta:
-                    # self.logger.debug('Inspect handler: {}:{}'.format(KINDS_NAMES[kind], name))
                     if handler.kind == KINDS.EVENT:
                         self.events.add_handler(handler.name, handler)
                     elif handler.kind == KINDS.STATE:
@@ -57,8 +50,6 @@ class Zentropian(object):
             return_value = handler(self, frame)
         else:
             return_value = handler(frame)
-        self.logger.debug('Called handler: {} with frame: {}, it returned: {}'
-                          ''.format(handler.name, frame.name, return_value))
         if not internal:
             pass  # todo: broadcast over connections.
         return return_value
@@ -88,6 +79,19 @@ class Zentropian(object):
 def on_event(name, *, exact=True, parse=False, fuzzy=False):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.EVENT, name=name, handler=handler,
+                              exact=exact, parse=parse, fuzzy=fuzzy)
+        if hasattr(handler, 'meta'):
+            handler.meta.append(handler_obj)
+        else:
+            handler.meta = [handler_obj, ]
+        return handler
+
+    return wrapper
+
+
+def on_state(name, *, exact=True, parse=False, fuzzy=False):
+    def wrapper(handler):
+        handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
                               exact=exact, parse=parse, fuzzy=fuzzy)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)

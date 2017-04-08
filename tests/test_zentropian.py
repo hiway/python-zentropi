@@ -41,16 +41,28 @@ def test_zentropian_fails_on_async():
 def test_zentropian_sub_class():
     from zentropi import Zentropian
     from zentropi import on_event
+    from zentropi import on_state
 
     class Test(Zentropian):
+        def __init__(self, name=None):
+            super().__init__(name=name)
+            self.states.the_answer = 0
+            self.states.the_answer_2 = ""
+
         @on_event('test-event')
+        @on_event('test-event-2')
         def on_test(self, event):
-            assert event.name == 'test-event'
+            assert event.name.startswith('test-event')
+            self.states.the_answer = 42
+            self.states.the_answer_2 = "Don't Panic"
+
+        @on_state('the_answer')
+        @on_state('the_answer_2')
+        def on_the_answer(self, state):
+            assert state.name.startswith('the_answer')
+            return True
 
     zen = Test()
     zen.inspect_handlers()
     zen.emit('test-event')
-
-
-if __name__ == '__main__':
-    test_zentropian_sub_class()
+    zen.emit('test-event-2')

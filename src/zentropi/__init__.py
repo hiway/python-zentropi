@@ -23,6 +23,7 @@ from .events import Events
 from .fields import Field
 from .zentropian import Zentropian
 from .zentropian import on_event
+from .zentropian import on_state
 
 __version__ = "0.1.0"
 
@@ -36,6 +37,7 @@ __all__ = [
     'Field',
     'fields',
     'on_event',
+    'on_state',
     'utils',
     'Zentropian',
 ]

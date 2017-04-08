@@ -102,11 +102,11 @@ class HandlerRegistry(object):
                              ''.format(handler, name))
         self._handlers[name].add(handler)
         if handler.match_exact:
-            self._index_exact.append(name)
+            self._index_exact.add(name)
         elif handler.match_parse:
-            self._index_parse.append(name)
+            self._index_parse.add(name)
         else:  # handler.match_fuzzy:
-            self._index_fuzzy.append(name)
+            self._index_fuzzy.add(name)
 
     def remove_handler(self, name, handler):
         self._handlers[name].remove(handler)
