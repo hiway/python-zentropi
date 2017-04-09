@@ -51,3 +51,4 @@ class Events(object):
                 frame=frame, handler=handler, internal=internal)
             if ret_val is not None:
                 raise ValueError('Returning values from event handler has no effect.')
+        return frame

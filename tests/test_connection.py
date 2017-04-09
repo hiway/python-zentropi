@@ -18,7 +18,7 @@ def test_connection_connect():
 @pytest.mark.xfail(raises=NotImplementedError, strict=True)
 def test_connection_bind():
     conn = Connection()
-    conn.bind('dummy', None)
+    conn.bind('dummy', None, None)
 
 
 @pytest.mark.xfail(raises=NotImplementedError, strict=True)

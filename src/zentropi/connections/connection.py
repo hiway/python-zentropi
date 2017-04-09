@@ -19,16 +19,16 @@ class Connection(Zentropian):
     def endpoint(self) -> Optional[str]:
         return self.states.endpoint
 
-    def connect(self, endpoint: str, agent, frame_handler) -> None:
+    def connect(self, endpoint: str, agent_name: str, frame_handler) -> None:
         raise NotImplementedError()
 
-    def bind(self, endpoint: str, frame_handler, **kwargs) -> None:
+    def bind(self, endpoint: str, agent_name: str, frame_handler) -> None:
         raise NotImplementedError()
 
     def close(self) -> None:
         raise NotImplementedError()
 
-    def broadcast(self, frame, space=None) -> bool:
+    def broadcast(self, frame) -> bool:
         raise NotImplementedError()
 
     def join(self, space: str) -> bool:

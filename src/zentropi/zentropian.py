@@ -73,7 +73,8 @@ class Zentropian(object):
         return wrapper
 
     def emit(self, name, data=None, space=None, internal=False):
-        self.events.emit(name=name, data=data, space=space, internal=internal)
+        emitted_event = self.events.emit(name=name, data=data, space=space, internal=internal)
+        return emitted_event
 
 
 def on_event(name, *, exact=True, parse=False, fuzzy=False):

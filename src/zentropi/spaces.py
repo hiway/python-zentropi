@@ -3,8 +3,6 @@ from .connections.connection import Connection
 from .frames import Command
 from .zentropian import Zentropian
 
-SPACES = None
-
 
 class Space(object):
     def __init__(self, name):
@@ -21,7 +19,7 @@ class Space(object):
 
     def join(self, agent_name):
         if agent_name in self._agents:  # todo: is exception needed/useful/harmful?
-            raise ValueError('Agent: {} failed to join space: {} because'
+            raise ValueError('Agent {!r} failed to join space {!r} because'
                              'another agent by same name had already joined.'
                              ''.format(agent_name, self._name))
         self._agents.add(agent_name)
@@ -60,9 +58,9 @@ class Spaces(Zentropian):
         try:
             space.join(agent_name)
             self.states.spaces[space_name] = space
-            return Command('join', data={'space': space.name})
+            return Command('join', data={'space': str(space.name)})
         except ValueError:
-            return Command('join-failed', data={'space': space.name})
+            return Command('join-failed', data={'space': str(space.name)})
 
     def agent_connect(self, agent_name, connection):
         agents = self.states.agents
@@ -73,16 +71,21 @@ class Spaces(Zentropian):
         if connection and not isinstance(connection, Connection):
             raise ValueError('Expected instance of Connection, got: {}'
                              ''.format(connection))
-        agents[agent_name] = connection
+        self.states.agents[agent_name] = connection
 
     def broadcast(self, frame):
+        if isinstance(frame, Command):
+            return self.handle_command(frame)
         space = frame.space
         if space and space in self.states.spaces:
-            spaces = [self.states.spaces[space]]
+            spaces_ = [self.states.spaces[space]]
         else:
-            spaces = self.states.spaces.values()
-        for connection in spaces:
-            connection.broadcast(frame=frame)
+            spaces_ = self.states.spaces.values()
+        spaces = [self.states.spaces[s.name] for s in spaces_]
+        print(self.states.agents)
+        for space in spaces:
+            for connection in [self.states.agents[a] for a in space.agents]:
+                connection.broadcast(frame=frame)
 
     def handle_command(self, command):
         if not isinstance(command, Command):
@@ -90,7 +93,7 @@ class Spaces(Zentropian):
                              ''.format(command))
         connection = self.states.agents[command.source]
         # todo: handle joins and leaves
-        if command.name == 'join' and command.data.space:
+        if command.name == 'join':
             frame = self._join(command.source, command.data.space)
             connection.broadcast(frame)
 
