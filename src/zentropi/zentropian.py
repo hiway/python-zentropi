@@ -102,6 +102,20 @@ class Zentropian(object):
     def join(self, space, *, tags: Optional[Union[list, str]] = None):
         self._connections.join(space, tags=tags)
 
+    def close(self, *, endpoint: Optional[str] = None, tags: Optional[Union[list, str]] = None):
+        """Closes all connections if no endpoint or tags given."""
+        if endpoint and tags:
+            raise ValueError('Expected either endpoint: {!r} or tags: {!r}.'
+                             ''.format(endpoint, tags))
+        elif endpoint:
+            connections = self._connections.connections_by_endpoint(endpoint)
+        elif tags:
+            connections = self._connections.connections_by_tags(tags)
+        else:
+            connections = self._connections.connections
+        for connection in connections:
+            connection.close()
+
 
 def on_event(name, *, exact=True, parse=False, fuzzy=False):
     def wrapper(handler):

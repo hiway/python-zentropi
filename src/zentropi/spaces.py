@@ -82,7 +82,7 @@ class Spaces(Zentropian):
         if space and space in self.spaces(source):
             spaces_ = [self.states.spaces[space]]
         else:
-            spaces_ = self.spaces(source)
+            spaces_ = [self.states.spaces[s] for s in self.spaces(source)]
         spaces = [self.states.spaces[s.name] for s in spaces_]
         # print(self.states.agents)
         for space in spaces:
@@ -100,5 +100,6 @@ class Spaces(Zentropian):
             connection.broadcast(frame)
 
     def agent_close(self, agent_name):
-        connection = self.states.agents[agent_name]
-        connection.close()
+        # connection = self.states.agents[agent_name]
+        print('*** noop closing')
+        # connection.close()

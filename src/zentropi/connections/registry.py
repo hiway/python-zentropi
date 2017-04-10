@@ -25,23 +25,30 @@ class ConnectionRegistry(object):
     def __init__(self, agent: Zentropian) -> None:
         self._agent = agent
         self._tags = defaultdict(set)  # type: dict
+        self._endpoints = defaultdict(set)  # type: dict
         self._connections = set()  # type: set
 
     @property
     def connected(self):
         return len(self._connections) > 0
 
+    @property
+    def connections(self):
+        return [c for c in self._connections]
+
     def connect(self, endpoint, *, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
         connection.connect(endpoint)
         self._connections.add(connection)
         self._tags[tag].add(connection)
+        self._endpoints[endpoint].add(connection)
 
     def bind(self, endpoint, *, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
         connection.bind(endpoint)
         self._connections.add(connection)
         self._tags[tag].add(connection)
+        self._endpoints[endpoint].add(connection)
 
     def broadcast(self, frame, *, tags: Optional[Union[list, str]] = None):
         for connection in self.connections_by_tags(tags):
@@ -65,3 +72,8 @@ class ConnectionRegistry(object):
         for tag in tags:
             for connection in self._tags[tag]:
                 yield connection
+
+    def connections_by_endpoint(self, endpoint):
+        if not endpoint:
+            return self.connections
+        return [c for c in self._endpoints[endpoint]]

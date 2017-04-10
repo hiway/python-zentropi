@@ -20,6 +20,7 @@ def test_default_zentropian():
 
         @on_event('*** started')
         def on_test(self, event):
+            self.emit('test-event')
             self.emit('test-event', space='test-space')
             print('client')
 
@@ -32,6 +33,4 @@ def test_default_zentropian():
     client1.join('test-space')
 
     client1.emit('*** started', internal=True)
-
-if __name__ == '__main__':
-    test_default_zentropian()
+    client1.close()
