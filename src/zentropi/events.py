@@ -32,6 +32,10 @@ class Events(object):
     def remove_handler(self, name, handler):
         self._handlers.remove_handler(name, handler)
 
+    def match(self, frame):
+        """Returns (frame, {handlers})"""
+        return self._handlers.match(frame)
+
     @property
     def callback(self):
         return self._trigger_frame_handler
@@ -43,11 +47,12 @@ class Events(object):
                              ''.format(callback))
         self._trigger_frame_handler = callback
 
-    def emit(self, name, data=None, space=None, internal=False):
-        frame_ = Event(name=name, data=data, space=space)
+    def emit(self, name, data=None, space=None, internal=False, source=None):
+        frame_ = Event(name=name, data=data, space=space, source=source)
         frame, handlers = self._handlers.match(frame=frame_)
         for handler in handlers:
             ret_val = self._trigger_frame_handler(
                 frame=frame, handler=handler, internal=internal)
             if ret_val is not None:
                 raise ValueError('Returning values from event handler has no effect.')
+        return frame

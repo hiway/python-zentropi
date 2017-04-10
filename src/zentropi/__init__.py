@@ -18,9 +18,14 @@ import os
 
 from . import fields
 from . import utils
-from .events import Event
+from .connections import Connection
+from .connections.in_memory import InMemoryConnection
 from .events import Events
 from .fields import Field
+from .frames import Command
+from .frames import Event
+from .frames import State
+from .spaces import Spaces
 from .zentropian import Zentropian
 from .zentropian import on_event
 from .zentropian import on_state
@@ -32,12 +37,17 @@ BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 __all__ = [
     '__version__',
     'BASE_PATH',
+    'Command',
+    'Connection',
     'Event',
     'Events',
     'Field',
     'fields',
+    'InMemoryConnection',
     'on_event',
     'on_state',
+    'Spaces',
+    'State',
     'utils',
     'Zentropian',
 ]

@@ -7,6 +7,7 @@ import locale as lib_locale
 import logging
 import os
 import sys
+
 import warnings
 from typing import Any
 from typing import Optional
@@ -136,3 +137,14 @@ def validate_id(id: str = None) -> Optional[str]:
         return None
     assert isinstance(id, str)
     return id
+
+
+def validate_endpoint(endpoint: str) -> str:
+    if not isinstance(endpoint, str):
+        raise ValueError('Expected endpoint to be a string.'
+                         'Got: {!r}'.format(endpoint))
+    endpoint = endpoint.strip().lower()
+    if not endpoint.startswith('inmemory://'):
+        raise ValueError('Expected inmemory:// endpoint.'
+                         'Got: {!r}'.format(endpoint))
+    return endpoint
