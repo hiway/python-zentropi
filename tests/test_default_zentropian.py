@@ -1,5 +1,4 @@
 # coding=utf-8
-from zentropi import InMemoryConnection
 from zentropi import Zentropian
 from zentropi import on_event
 

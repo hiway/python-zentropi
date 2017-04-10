@@ -70,7 +70,7 @@ class InMemoryConnection(Connection):
 
     def join(self, space: str):  # type: ignore
         self.validate_is_connected()
-        self._spaces._join(self._agent.name, space)  # type: ignore
+        self._spaces.join(self._agent.name, space)  # type: ignore
         # cmd = Command(name='join', space=space, source=self.name)
         # self.broadcast(cmd)
         print('*** join', space)
