@@ -32,6 +32,10 @@ class Events(object):
     def remove_handler(self, name, handler):
         self._handlers.remove_handler(name, handler)
 
+    def match(self, frame):
+        """Returns (frame, {handlers})"""
+        return self._handlers.match(frame)
+
     @property
     def callback(self):
         return self._trigger_frame_handler

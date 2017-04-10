@@ -1,46 +1,47 @@
 # coding=utf-8
 from typing import List
+from typing import Optional
 
 from ..connections.connection import Connection
-from ..frames import Command
 from ..spaces import Spaces
 from ..utils import validate_endpoint
-from ..utils import validate_name
-from ..zentropian import on_event
+from ..zentropian import Zentropian
 
 
 SPACES = {}  # type: dict
 
 
 class InMemoryConnection(Connection):
-    def __init__(self, name=None):
+    def __init__(self, agent: Zentropian, name=None) -> None:
         super().__init__(name=name)
-        self._spaces = None
+        self._agent = agent
+        self._endpoint = None  # type: Optional[str]
+        self._spaces = None  # type: Optional[Spaces]
 
     def _validate_connection(self, endpoint):
         if self._spaces:
             raise ConnectionError('Unable to connect as {} is already connected or bound to endpoint {!r}'
                                   ''.format(self.__class__.__name__, endpoint))
 
-    def connect(self, endpoint: str, agent_name: str, frame_handler):
+    def connect(self, endpoint: str):   # type: ignore
         global SPACES
-        self.states.agent_name = validate_name(agent_name)
-        self.states.endpoint = validate_endpoint(endpoint)
+        agent_name = self._agent.name
+        endpoint = validate_endpoint(endpoint)
         if endpoint not in SPACES:
             raise ConnectionError('Expected another connection to have run {}.bind("{}") .'
                                   'No endpoint available to connect.'
                                   ''.format(self.__class__.__name__, endpoint))
-        endpoint = self.states.endpoint
         self._validate_connection(endpoint)
         self._spaces = SPACES[endpoint]
-        self._spaces.agent_connect(agent_name, self)
+        self._spaces.agent_connect(agent_name, self)   # type: ignore
         self.states.connected = True
+        self._endpoint = endpoint
+        print('*** connected', endpoint)
 
-    def bind(self, endpoint: str, agent_name: str, frame_handler):
+    def bind(self, endpoint: str):   # type: ignore
         global SPACES
-        self.states.agent_name = validate_name(agent_name)
-        self.states.endpoint = validate_endpoint(endpoint)
-        endpoint = self.states.endpoint
+        agent_name = self._agent.name
+        endpoint = validate_endpoint(endpoint)
         self._validate_connection(endpoint)
         if endpoint in SPACES:
             raise ConnectionError('Unable to bind to endpoint {!r} '
@@ -50,42 +51,51 @@ class InMemoryConnection(Connection):
         self._spaces = spaces
         self._spaces.agent_connect(agent_name, self)
         self.states.connected = True
+        self._endpoint = endpoint
+        print('*** bound', endpoint)
 
     def close(self):
         if not self._spaces:
             raise ConnectionError('Unable to close; not connected.')
-        self._spaces.agent_close(self.states.agent_name)
+        self._spaces.agent_close(self._agent.name)
         self._spaces = None
         self.states.connected = False
+        print('*** closed')
 
     def broadcast(self, frame):
-        if not self._spaces:
-            raise ConnectionError('Unable to broadcast; not connected.')
+        self.validate_is_connected()
         self._spaces.broadcast(frame)
+        print('*** broadcast', frame.name)
         return True
 
-    def join(self, space: str):
-        self._spaces._join(self.states.agent_name, space)
+    def join(self, space: str):  # type: ignore
+        self.validate_is_connected()
+        self._spaces._join(self._agent.name, space)  # type: ignore
         # cmd = Command(name='join', space=space, source=self.name)
         # self.broadcast(cmd)
+        print('*** join', space)
 
-    def leave(self, space: str):
-        cmd = Command(name='leave', space=space, source=self.states.agent_name)
-        self.broadcast(cmd)
+    # def leave(self, space: str):
+    #     self._spaces._leave(self._agent.name, space)
+    #     # cmd = Command(name='leave', space=space, source=self._agent.name)
+    #     # self.broadcast(cmd)
+    #     print('*** leave', space)
 
     def spaces(self) -> List[str]:
-        return self._spaces.spaces()
+        self.validate_is_connected()
+        return self._spaces.spaces()  # type: ignore
 
-    def agents(self, space=None) -> List[str]:
-        return self._spaces.agents(space)
+    def agents(self, space: Optional[str] = None) -> List[str]:
+        self.validate_is_connected()
+        return self._spaces.agents(space)  # type: ignore
 
-    def incoming_frame_handler(self, frame):
+    def send(self, frame, internal=False):
+        if internal:
+            self._agent.handle_frame(frame)
+            print('*** send internal', frame.name)
+        else:
+            raise NotImplementedError()
 
-
-    @on_event('join')
-    def on_join(self, command):
-        pass
-
-    @on_event('join-failed')
-    def on_join_failed(self, command):  # todo: check event names <+^
-        pass
+    def validate_is_connected(self):
+        if not self._spaces:
+            raise AssertionError('Not connected or bound. Call connect() or bind() first.')

@@ -99,6 +99,10 @@ class States(UserDict):
                              ''.format(callback))
         self._trigger_frame_handler = callback
 
+    def match(self, frame):
+        """Returns (frame, {handlers})"""
+        return self._handlers.match(frame)
+
     def describe(self):
         fields = [{'name': name, 'field': field.describe()}
                   for name, field in self.data.items()]

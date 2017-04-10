@@ -22,3 +22,4 @@ recursive-include locale *.dic
 recursive-include locale *.txt
 
 global-exclude *.py[cod] __pycache__ *.so *.dylib
+global-exclude .DS_Store

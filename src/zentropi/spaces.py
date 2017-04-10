@@ -82,10 +82,10 @@ class Spaces(Zentropian):
         else:
             spaces_ = self.states.spaces.values()
         spaces = [self.states.spaces[s.name] for s in spaces_]
-        print(self.states.agents)
+        # print(self.states.agents)
         for space in spaces:
             for connection in [self.states.agents[a] for a in space.agents]:
-                connection.broadcast(frame=frame)
+                connection.send(frame=frame, internal=True)
 
     def handle_command(self, command):
         if not isinstance(command, Command):

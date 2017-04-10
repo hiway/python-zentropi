@@ -1,4 +1,5 @@
 # coding=utf-8
+
 from typing import List
 from typing import Optional
 
@@ -19,10 +20,10 @@ class Connection(Zentropian):
     def endpoint(self) -> Optional[str]:
         return self.states.endpoint
 
-    def connect(self, endpoint: str, agent_name: str, frame_handler) -> None:
+    def connect(self, endpoint: str) -> None:  # type: ignore
         raise NotImplementedError()
 
-    def bind(self, endpoint: str, agent_name: str, frame_handler) -> None:
+    def bind(self, endpoint: str) -> None:  # type: ignore
         raise NotImplementedError()
 
     def close(self) -> None:
@@ -31,7 +32,7 @@ class Connection(Zentropian):
     def broadcast(self, frame) -> bool:
         raise NotImplementedError()
 
-    def join(self, space: str) -> bool:
+    def join(self, space: str) -> bool:  # type: ignore
         raise NotImplementedError()
 
     def leave(self, space: str) -> bool:
