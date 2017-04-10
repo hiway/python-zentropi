@@ -80,16 +80,16 @@ def test_spaces_join():
     assert spaces.agents() == []
     assert spaces.spaces() == []
     spaces.agent_connect(agent_name, connection=None)
-    cmd = spaces._join(agent_name, space_name)
+    cmd = spaces.join(agent_name, space_name)
     assert cmd.name == 'join'
     assert cmd.data == {'space': space_name}
     assert spaces.agents() == [agent_name]
     assert spaces.agents(space_name) == [agent_name]
     assert spaces.spaces() == [space_name]
-    cmd2 = spaces._join(agent_name, space_name + '2')
+    cmd2 = spaces.join(agent_name, space_name + '2')
     assert cmd2.data == {'space': space_name + '2'}
     assert spaces.spaces() == [space_name, space_name + '2']
-    cmd3 = spaces._join(agent_name + '3', space_name)
+    cmd3 = spaces.join(agent_name + '3', space_name)
     assert agent_name in spaces.agents(space_name)
     assert agent_name + '3' in spaces.agents(space_name)
 
@@ -99,8 +99,8 @@ def test_spaces_join_fails():
     space_name = 'test-space'
     spaces = Spaces()
     spaces.agent_connect(agent_name, connection=None)
-    cmd = spaces._join(agent_name, space_name)
+    cmd = spaces.join(agent_name, space_name)
     assert cmd.name == 'join'
-    cmd = spaces._join(agent_name, space_name)
+    cmd = spaces.join(agent_name, space_name)
     assert cmd.name == 'join-failed'
 
