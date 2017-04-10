@@ -1,8 +1,6 @@
 # coding=utf-8
 from .connections.connection import Connection
 from .frames import Command
-from .zentropian import Zentropian
-
 
 class Space(object):
     def __init__(self, name):
