@@ -32,7 +32,5 @@ def test_inmemory():
             # self.connection.broadcast(emitted_event)
 
     server = DummyServer(name='dummy-server')
-    server.inspect_handlers()
     client1 = DummyClient(name='dummy-client')
-    client1.inspect_handlers()  # todo: move to Zentropian.init
     client1.emit('*** started')

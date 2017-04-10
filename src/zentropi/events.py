@@ -47,8 +47,8 @@ class Events(object):
                              ''.format(callback))
         self._trigger_frame_handler = callback
 
-    def emit(self, name, data=None, space=None, internal=False):
-        frame_ = Event(name=name, data=data, space=space)
+    def emit(self, name, data=None, space=None, internal=False, source=None):
+        frame_ = Event(name=name, data=data, space=space, source=source)
         frame, handlers = self._handlers.match(frame=frame_)
         for handler in handlers:
             ret_val = self._trigger_frame_handler(

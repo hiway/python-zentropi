@@ -63,6 +63,5 @@ def test_zentropian_sub_class():
             return True
 
     zen = Test()
-    zen.inspect_handlers()
     zen.emit('test-event')
     zen.emit('test-event-2')

@@ -22,7 +22,7 @@ class Zentropian(object):
         self.states = States(callback=callback)
         self.events = Events(callback=callback)
         self._connections = ConnectionRegistry(self)
-        # self.inspect_handlers()
+        self.inspect_handlers()
 
     @property
     def name(self):
@@ -88,7 +88,7 @@ class Zentropian(object):
         return wrapper
 
     def emit(self, name, data=None, space=None, internal=False):
-        event = self.events.emit(name=name, data=data, space=space, internal=internal)
+        event = self.events.emit(name=name, data=data, space=space, internal=internal, source=self.name)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=event)
         return event

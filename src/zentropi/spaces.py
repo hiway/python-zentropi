@@ -45,9 +45,10 @@ class Spaces(Zentropian):
                              ''.format(space))
         return [a for a in self.states.spaces[space].agents]  # ['agent_name', ]
 
-    def spaces(self):
-        return list(self.states.spaces.keys())
-        # return [s for s in self.states.spaces]  # ['space_name', ]
+    def spaces(self, agent=None):
+        if not agent:
+            return list(self.states.spaces.keys())
+        return [n for n, s in self.states.spaces.items() if agent in s.agents]
 
     def _join(self, agent_name, space_name):
         spaces = self.states.spaces
@@ -77,10 +78,11 @@ class Spaces(Zentropian):
         if isinstance(frame, Command):
             return self.handle_command(frame)
         space = frame.space
-        if space and space in self.states.spaces:
+        source = frame.source
+        if space and space in self.spaces(source):
             spaces_ = [self.states.spaces[space]]
         else:
-            spaces_ = self.states.spaces.values()
+            spaces_ = self.spaces(source)
         spaces = [self.states.spaces[s.name] for s in spaces_]
         # print(self.states.agents)
         for space in spaces:
