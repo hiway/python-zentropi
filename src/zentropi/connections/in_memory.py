@@ -12,8 +12,8 @@ SPACES = {}  # type: dict
 
 
 class InMemoryConnection(Connection):
-    def __init__(self, agent: Zentropian, name=None) -> None:
-        super().__init__(name=name)
+    def __init__(self, agent: Zentropian) -> None:
+        super().__init__()
         self._agent = agent
         self._endpoint = None  # type: Optional[str]
         self._spaces = None  # type: Optional[Spaces]
@@ -34,7 +34,7 @@ class InMemoryConnection(Connection):
         self._validate_connection(endpoint)
         self._spaces = SPACES[endpoint]
         self._spaces.agent_connect(agent_name, self)   # type: ignore
-        self.states.connected = True
+        self._connected = True
         self._endpoint = endpoint
         print('*** connected', endpoint)
 
@@ -50,7 +50,7 @@ class InMemoryConnection(Connection):
         SPACES[endpoint] = spaces
         self._spaces = spaces
         self._spaces.agent_connect(agent_name, self)
-        self.states.connected = True
+        self._connected = True
         self._endpoint = endpoint
         print('*** bound', endpoint)
 
@@ -59,7 +59,7 @@ class InMemoryConnection(Connection):
             raise ConnectionError('Unable to close; not connected.')
         self._spaces.agent_close(self._agent.name)
         self._spaces = None
-        self.states.connected = False
+        self._connected = False
         print('*** closed')
 
     def broadcast(self, frame):

@@ -3,22 +3,19 @@
 from typing import List
 from typing import Optional
 
-from ..zentropian import Zentropian
 
-
-class Connection(Zentropian):
-    def __init__(self, name=None):
-        super().__init__(name=name)
-        self.states.connected = False
-        self.states.endpoint = None
+class Connection(object):
+    def __init__(self):
+        self._connected = False
+        self._endpoint = None
 
     @property
     def connected(self) -> bool:
-        return self.states.connected
+        return self._connected
 
     @property
     def endpoint(self) -> Optional[str]:
-        return self.states.endpoint
+        return self._endpoint
 
     def connect(self, endpoint: str) -> None:  # type: ignore
         raise NotImplementedError()
