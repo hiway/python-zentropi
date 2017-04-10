@@ -82,7 +82,6 @@ class Spaces(object):
         else:
             spaces_ = [self._spaces[s] for s in self.spaces(source)]
         spaces = [self._spaces[s.name] for s in spaces_]
-        # print(self._agents)
         for space in spaces:
             for connection in [self._agents[a] for a in space.agents]:
                 connection.send(frame=frame, internal=True)
@@ -92,12 +91,12 @@ class Spaces(object):
             raise ValueError('Expected command to be instance of Command, got: {}'
                              ''.format(command))
         connection = self._agents[command.source]
-        # todo: handle joins and leaves
+        # todo: handle leaves
         if command.name == 'join':
             frame = self.join(command.source, command.data.space)
             connection.broadcast(frame)
 
     def agent_close(self, agent_name):
         # connection = self._agents[agent_name]
-        print('*** noop closing')
         # connection.close()
+        print('*** noop closing')

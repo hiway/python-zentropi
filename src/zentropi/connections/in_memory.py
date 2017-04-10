@@ -36,7 +36,6 @@ class InMemoryConnection(Connection):
         self._spaces.agent_connect(agent_name, self)   # type: ignore
         self._connected = True
         self._endpoint = endpoint
-        print('*** connected', endpoint)
 
     def bind(self, endpoint: str):   # type: ignore
         global SPACES
@@ -52,7 +51,6 @@ class InMemoryConnection(Connection):
         self._spaces.agent_connect(agent_name, self)
         self._connected = True
         self._endpoint = endpoint
-        print('*** bound', endpoint)
 
     def close(self):
         if not self._spaces:
@@ -60,20 +58,15 @@ class InMemoryConnection(Connection):
         self._spaces.agent_close(self._agent.name)
         self._spaces = None
         self._connected = False
-        print('*** closed')
 
     def broadcast(self, frame):
         self.validate_is_connected()
         self._spaces.broadcast(frame)
-        print('*** broadcast', frame.name)
         return True
 
     def join(self, space: str):  # type: ignore
         self.validate_is_connected()
         self._spaces.join(self._agent.name, space)  # type: ignore
-        # cmd = Command(name='join', space=space, source=self.name)
-        # self.broadcast(cmd)
-        print('*** join', space)
 
     # def leave(self, space: str):
     #     self._spaces._leave(self._agent.name, space)
@@ -92,7 +85,6 @@ class InMemoryConnection(Connection):
     def send(self, frame, internal=False):
         if internal:
             self._agent.handle_frame(frame)
-            print('*** send internal', frame.name)
         else:
             raise NotImplementedError()
 
