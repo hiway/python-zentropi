@@ -59,15 +59,17 @@ class Zentropian(object):
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
+        payload = []  # type: list
         if handler.run_async:
             raise NotImplementedError(
                 'Async handlers are not supported '
                 'by the base Zentropian class. '
                 'Please use Agent.')
         if handler.pass_self:
-            return_value = handler(self, frame)
-        else:
-            return_value = handler(frame)
+            payload.append(self)
+        if handler.kind != KINDS.TIMER:
+            payload.append(frame)
+        return_value = handler(*payload)
         return return_value
 
     def on_state(self, name, *, exact=True, parse=False, fuzzy=False):

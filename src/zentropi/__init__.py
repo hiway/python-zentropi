@@ -19,6 +19,7 @@ import os
 from . import fields
 from . import utils
 from .agent import Agent
+from .agent import on_timer
 from .connections import Connection
 from .connections.in_memory import InMemoryConnection
 from .events import Events
@@ -30,6 +31,7 @@ from .spaces import Spaces
 from .zentropian import Zentropian
 from .zentropian import on_event
 from .zentropian import on_state
+
 
 __version__ = "0.1.0"
 
@@ -48,6 +50,7 @@ __all__ = [
     'InMemoryConnection',
     'on_event',
     'on_state',
+    'on_timer',
     'Spaces',
     'State',
     'utils',

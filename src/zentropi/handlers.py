@@ -162,3 +162,33 @@ class HandlerRegistry(object):
         if not pattern or pattern[1] < MATCH_FUZZY_THRESHOLD:
             return frame, set()
         return frame, self._handlers[pattern[0]]
+
+
+class Registry(object):
+    def __init__(self, callback=None):
+        self._handlers = HandlerRegistry()
+        if callback and not callable(callback):
+            raise ValueError('Expected a callable for callback, got: {}'
+                             ''.format(callback))
+        self._trigger_frame_handler = callback
+
+    def add_handler(self, name, handler):
+        self._handlers.add_handler(name, handler)
+
+    def remove_handler(self, name, handler):
+        self._handlers.remove_handler(name, handler)
+
+    def match(self, frame):
+        """Returns (frame, {handlers})"""
+        return self._handlers.match(frame)
+
+    @property
+    def callback(self):
+        return self._trigger_frame_handler
+
+    @callback.setter
+    def callback(self, callback):
+        if callback and not callable(callback):
+            raise ValueError('Expected a callable for callback, got: {}'
+                             ''.format(callback))
+        self._trigger_frame_handler = callback

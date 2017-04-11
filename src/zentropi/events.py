@@ -1,10 +1,10 @@
 # coding=utf-8
 
 from .frames import Event
-from .handlers import HandlerRegistry
+from .handlers import Registry
 
 
-class Events(object):
+class Events(Registry):
     """
     class Zentropian:
         self.events = Events(callback=self._trigger_frame_handler)
@@ -16,37 +16,6 @@ class Events(object):
     def handle_event_name(event):
         pass
     """
-
-    # todo: describe
-
-    def __init__(self, callback=None):
-        self._handlers = HandlerRegistry()
-        if callback and not callable(callback):
-            raise ValueError('Expected a callable for callback, got: {}'
-                             ''.format(callback))
-        self._trigger_frame_handler = callback
-
-    def add_handler(self, name, handler):
-        self._handlers.add_handler(name, handler)
-
-    def remove_handler(self, name, handler):
-        self._handlers.remove_handler(name, handler)
-
-    def match(self, frame):
-        """Returns (frame, {handlers})"""
-        return self._handlers.match(frame)
-
-    @property
-    def callback(self):
-        return self._trigger_frame_handler
-
-    @callback.setter
-    def callback(self, callback):
-        if callback and not callable(callback):
-            raise ValueError('Expected a callable for callback, got: {}'
-                             ''.format(callback))
-        self._trigger_frame_handler = callback
-
     def emit(self, name, data=None, space=None, internal=False, source=None):
         frame_ = Event(name=name, data=data, space=space, source=source)
         frame, handlers = self._handlers.match(frame=frame_)

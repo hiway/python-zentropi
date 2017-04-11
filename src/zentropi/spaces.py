@@ -2,6 +2,7 @@
 from .connections.connection import Connection
 from .frames import Command
 
+
 class Space(object):
     def __init__(self, name):
         self._name = name
