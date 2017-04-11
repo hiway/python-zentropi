@@ -4,9 +4,11 @@ import asyncio
 import threading
 
 from inspect import isgeneratorfunction
-from pybloom_live import ScalableBloomFilter
 from typing import Optional
 from typing import Union
+
+from pybloom_live import ScalableBloomFilter
+
 from .frames import Frame
 from .handlers import Handler
 from .symbols import KINDS

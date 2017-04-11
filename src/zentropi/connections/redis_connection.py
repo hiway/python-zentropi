@@ -1,13 +1,16 @@
 # coding=utf-8
-import aioredis
 import asyncio
 from typing import Optional
 
+import aioredis
+
+from ..agent import Agent
 from ..connections.connection import Connection
 from ..frames import Frame
 from ..utils import validate_endpoint
 from ..utils import validate_name
-from ..agent import Agent
+
+assert Optional  # ignore unused error for now.
 
 
 class RedisConnection(Connection):
@@ -18,7 +21,7 @@ class RedisConnection(Connection):
         self._connection = None  # type: ignore
         self._agent = agent
         self._endpoint = None  # type: Optional[str]
-        self._spaces = set()
+        self._spaces = set()  # type: set
         self._listener_task = None
 
     async def _connection_listener(self):
@@ -33,10 +36,10 @@ class RedisConnection(Connection):
                 #       self._agent.name, frame.source,  frame.name, frame.data)
                 self._agent.handle_frame(frame)
 
-    def bind(self, endpoint: str):
+    def bind(self, endpoint: str) -> None:
         self.connect(endpoint)
 
-    async def connect(self, endpoint: str):
+    async def connect(self, endpoint: str) -> None:  # type: ignore
         endpoint = validate_endpoint(endpoint)
         # print('*** redis connecting to ', endpoint, flush=True)
         if self._connected:
@@ -72,13 +75,13 @@ class RedisConnection(Connection):
         if self._publisher:
             self._publisher.close()
 
-    async def join(self, space: str):
+    async def join(self, space: str) -> None:  # type: ignore
 
         space = validate_name(space)
         self._spaces.add(space)
         await self._reconnect()
 
-    async def leave(self, space: str):
+    async def leave(self, space: str) -> None:  # type: ignore
         space = validate_name(space)
         self._spaces.remove(space)
         await self._reconnect()

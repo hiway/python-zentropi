@@ -40,7 +40,7 @@ class InMemoryConnection(Connection):
         self._connected = True
         self._endpoint = endpoint
 
-    def bind(self, endpoint: str):   # type: ignore
+    def bind(self, endpoint: str) -> None:   # type: ignore
         global SPACES
         agent_name = self._agent.name
         endpoint = validate_endpoint(endpoint)
@@ -67,7 +67,7 @@ class InMemoryConnection(Connection):
         self._spaces.broadcast(frame)
         return True
 
-    def join(self, space: str):  # type: ignore
+    def join(self, space: str) -> None:  # type: ignore
         self.validate_is_connected()
         self._spaces.join(self._agent.name, space)  # type: ignore
 

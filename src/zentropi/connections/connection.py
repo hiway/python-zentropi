@@ -17,22 +17,22 @@ class Connection(object):
     def endpoint(self) -> Optional[str]:
         return self._endpoint
 
-    def connect(self, endpoint: str) -> None:  # type: ignore
+    def connect(self, endpoint: str) -> None:
         raise NotImplementedError()
 
-    def bind(self, endpoint: str) -> None:  # type: ignore
+    def bind(self, endpoint: str) -> None:
         raise NotImplementedError()
 
     def close(self) -> None:
         raise NotImplementedError()
 
-    def broadcast(self, frame) -> bool:
+    def broadcast(self, frame) -> None:
         raise NotImplementedError()
 
-    def join(self, space: str) -> bool:  # type: ignore
+    def join(self, space: str) -> None:
         raise NotImplementedError()
 
-    def leave(self, space: str) -> bool:
+    def leave(self, space: str) -> None:
         raise NotImplementedError()
 
     def spaces(self) -> List[str]:

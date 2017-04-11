@@ -5,6 +5,7 @@ from inspect import iscoroutinefunction
 from typing import Optional
 from typing import Union
 
+from ..agent import Agent
 from ..zentropian import Zentropian
 from .connection import Connection
 from .in_memory import InMemoryConnection
@@ -16,7 +17,7 @@ def build_connection_instance(endpoint: str, connection_class: Connection, agent
         raise ValueError('Expected connection_class to subclass zentropi.Connection. '
                          'Got: {!r}'.format(connection_class))
     if isinstance(connection_class, Connection):
-        return connection_class(agent=agent)
+        return connection_class(agent=agent)  # type: ignore
     if endpoint.startswith('inmemory://'):
         return InMemoryConnection(agent=agent)
     elif endpoint.startswith('redis://'):
@@ -27,7 +28,7 @@ def build_connection_instance(endpoint: str, connection_class: Connection, agent
 
 
 class ConnectionRegistry(object):
-    def __init__(self, agent: Zentropian) -> None:
+    def __init__(self, agent: Agent) -> None:
         self._agent = agent
         self._tags = defaultdict(set)  # type: dict
         self._endpoints = defaultdict(set)  # type: dict
