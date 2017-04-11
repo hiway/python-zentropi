@@ -2,6 +2,8 @@
 import asyncio
 import threading
 
+
+from .frames import Frame
 from .handlers import Handler
 from .symbols import KINDS
 from .timer import TimerRegistry
@@ -15,7 +17,7 @@ class Agent(Zentropian):
         super().__init__(name=name)
         self.states.should_stop = False
         self.states.running = False
-        self._loop = None
+        self.loop = None
 
     @on_state('should_stop')
     def _on_should_stop(self, state):
@@ -31,12 +33,23 @@ class Agent(Zentropian):
         self.emit('*** stopped', internal=True)
 
     def _set_asyncio_loop(self, loop=None):
-        if self._loop and loop:
+        if self.loop and loop:
             raise AssertionError('Agent already has an event loop set.')
         if loop:
-            self._loop = loop
-        if not self._loop:
-            self._loop = asyncio.get_event_loop()
+            self.loop = loop
+        if not self.loop:
+            self.loop = asyncio.get_event_loop()
+
+    def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
+        payload = []  # type: list
+        if handler.pass_self:
+            payload.append(self)
+        if handler.kind != KINDS.TIMER:
+            payload.append(frame)
+        if handler.run_async:
+            self.spawn(handler(*payload))
+        else:
+            return handler(*payload)
 
     def add_handler(self, handler):
         if handler.kind == KINDS.TIMER:
@@ -55,14 +68,14 @@ class Agent(Zentropian):
 
     def start(self, loop=None):
         self._set_asyncio_loop(loop)
-        self._loop.create_task(self._run_forever())
+        self.loop.create_task(self._run_forever())
 
     def run(self):
         self._set_asyncio_loop()
-        self._loop.run_until_complete(self._run_forever())
+        self.loop.run_until_complete(self._run_forever())
 
     def spawn(self, coro):
-        return self._loop.create_task(coro)
+        return self.loop.create_task(coro)
 
     @staticmethod
     def spawn_in_thread(func, *args, **kwargs):

@@ -23,5 +23,6 @@ class Events(Registry):
             ret_val = self._trigger_frame_handler(
                 frame=frame, handler=handler, internal=internal)
             if ret_val is not None:
-                raise ValueError('Returning values from event handler has no effect.')
+                raise ValueError('Returning values from event handler has no effect. '
+                                 'Got: {}'.format(ret_val))
         return frame
