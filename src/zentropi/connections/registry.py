@@ -63,6 +63,7 @@ class ConnectionRegistry(object):
 
     def broadcast(self, frame, *, tags: Optional[Union[list, str]] = None):
         for connection in self.connections_by_tags(tags):
+            # print('broadcasting on', connection, frame.name)
             if iscoroutinefunction(connection.broadcast):
                 self._agent.spawn(connection.broadcast(frame))
             else:

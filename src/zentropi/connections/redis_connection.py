@@ -29,7 +29,8 @@ class RedisConnection(Connection):
                 if not frame_as_dict:
                     break
                 frame = Frame.from_dict(frame_as_dict)
-                print('*** incoming frame', frame.name)
+                # print('*** redis: incoming frame',
+                #       self._agent.name, frame.source,  frame.name, frame.data)
                 self._agent.handle_frame(frame)
 
     def bind(self, endpoint: str):
@@ -37,7 +38,7 @@ class RedisConnection(Connection):
 
     async def connect(self, endpoint: str):
         endpoint = validate_endpoint(endpoint)
-        print('*** redis connecting to ', endpoint, flush=True)
+        # print('*** redis connecting to ', endpoint, flush=True)
         if self._connected:
             raise ConnectionError('Already connected.')
         if not endpoint.startswith('redis://'):
@@ -53,8 +54,6 @@ class RedisConnection(Connection):
         while not self._connected and timeout:
             await asyncio.sleep(0.1)
             timeout -= 1
-        print('*** subscriber', self._subscriber)
-        print('*** connected', self._connected)
         connection, *_ = await self._subscriber.subscribe(*self._spaces)
         if self._connection:
             self._connection.close()

@@ -26,14 +26,19 @@ class TelegramAgent(Agent):
             text = message['text']
             if len(text) > 128:
                 text = text[:127] + '…'
+            name = '{} {}'.format(message['from']['first_name'], message['from']['last_name'])
             sent_msg = self.emit('telegram-message', data={
                 'text': text,
                 'message_id': message['message_id'],
                 'chat_id': message['chat']['id'],
                 'user_id': message['from']['id'],
+                'username': message['from']['username'],
+                'name': name,
             })
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
         except Exception:
+            print(message)
+            print(traceback.format_exc())
             self.emit('telegram-error', data={'traceback': traceback.format_exc()})
 
     @on_event('telegram-reply')
@@ -42,14 +47,15 @@ class TelegramAgent(Agent):
             return
         try:
             chat_id = self.sent_telegram_messages[event.reply_to]
-            await self._bot.send_message(chat_id=chat_id, text=event.data.text)
             del self.sent_telegram_messages[event.reply_to]
+            await self._bot.send_message(chat_id=chat_id, text=event.data.text)
         except Exception:
             self.emit('telegram-error', data={'traceback': traceback.format_exc()})
 
     @on_event('*** started')
     def on_started(self, event):
         self.emit('*** connecting')
+        print('*** starting telegram bot')
         self.spawn(self._bot.loop())
 
     @on_event('*** stopped')
@@ -61,27 +67,25 @@ class TelegramAgent(Agent):
 class MyBot(Agent):
     @on_event('telegram-message')
     def on_telegram_message(self, event):
-        reply = 'Echo: {!r}'.format(event.data.text)
-        print(reply)
+        text = event.data.text
+        user = event.data.username
+        reply = 'Echo: @{} said {!r}'.format(user, text)
+        print('@{}: {!r} => {!r}'.format(user, text, reply))
         self.emit('telegram-reply', data={'text': reply}, reply_to=event.id)
 
 
 if __name__ == '__main__':
     loop = asyncio.get_event_loop()
+    endpoint = 'redis://localhost:6379'
+    telegram = TelegramAgent('telegram')
+    my_bot = MyBot('my_bot')
 
-    server = Agent()
-    server.bind('inmemory://telegram-bot')
-    server.join('telegram')
-    server.start(loop)
+    telegram.connect(endpoint)
+    my_bot.connect(endpoint)
 
-    telegram = TelegramAgent()
-    telegram.connect('inmemory://telegram-bot')
     telegram.join('telegram')
-    telegram.start(loop)
-
-    my_bot = MyBot()
-    my_bot.connect('inmemory://telegram-bot')
     my_bot.join('telegram')
-    my_bot.start(loop)
 
+    telegram.start(loop)
+    my_bot.start(loop)
     loop.run_forever()

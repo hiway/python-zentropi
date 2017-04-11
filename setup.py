@@ -70,6 +70,7 @@ setup(
         'click',
         'fuzzywuzzy',
         'parse',
+        'pybloom_live',
         'sortedcontainers',
     ],
     extras_require={
