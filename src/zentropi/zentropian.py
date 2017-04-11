@@ -64,7 +64,7 @@ class Zentropian(object):
             raise NotImplementedError(
                 'Async handlers are not supported '
                 'by the base Zentropian class. '
-                'Please use Entity or Agent.')
+                'Please use Agent.')
         if 'self' in inspect.getfullargspec(handler._handler).args:
             return_value = handler(self, frame)
         else:
