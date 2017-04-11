@@ -18,6 +18,7 @@ import os
 
 from . import fields
 from . import utils
+from .agent import Agent
 from .connections import Connection
 from .connections.in_memory import InMemoryConnection
 from .events import Events
@@ -36,6 +37,7 @@ BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
 __all__ = [
     '__version__',
+    'Agent',
     'BASE_PATH',
     'Command',
     'Connection',
