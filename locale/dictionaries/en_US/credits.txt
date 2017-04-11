@@ -1,0 +1,5 @@
+Thank
+
+1. us_english_10k.dic
+
+    https://github.com/first20hours/google-10000-english
