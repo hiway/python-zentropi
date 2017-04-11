@@ -1,5 +1,6 @@
 # coding=utf-8
 from collections import defaultdict
+from inspect import getfullargspec
 from inspect import iscoroutinefunction
 
 from fuzzywuzzy import fuzz
@@ -16,7 +17,7 @@ from .utils import validate_name
 class Handler(object):
     __slots__ = [
         '_kind', '_name', '_handler',
-        '_meta', '_async',
+        '_meta', '_async', '_pass_self',
         '_match_exact', '_match_parse', '_match_fuzzy',
         '_length',
     ]
@@ -31,6 +32,10 @@ class Handler(object):
             raise ValueError('Expected handler to be a callable '
                              '(function, method) or a coroutine function. '
                              'Got: {!r}'.format(handler))
+        if 'self' in getfullargspec(handler).args:
+            self._pass_self = True
+        else:
+            self._pass_self = False
         if meta is not None and not isinstance(meta, dict):
             raise ValueError('Expected meta to be of type dict. '
                              'Got: {!r}'.format(meta))
@@ -66,6 +71,10 @@ class Handler(object):
     @property
     def run_async(self):
         return self._async
+
+    @property
+    def pass_self(self):
+        return self._pass_self
 
     @property
     def match_exact(self):

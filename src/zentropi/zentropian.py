@@ -1,5 +1,4 @@
 # coding=utf-8
-import inspect
 from typing import Optional
 from typing import Union
 from uuid import uuid4
@@ -65,7 +64,7 @@ class Zentropian(object):
                 'Async handlers are not supported '
                 'by the base Zentropian class. '
                 'Please use Agent.')
-        if 'self' in inspect.getfullargspec(handler._handler).args:
+        if handler.pass_self:
             return_value = handler(self, frame)
         else:
             return_value = handler(frame)
