@@ -90,8 +90,9 @@ class Zentropian(object):
 
         return wrapper
 
-    def emit(self, name, data=None, space=None, internal=False):
-        event = self.events.emit(name=name, data=data, space=space, internal=internal, source=self.name)
+    def emit(self, name, data=None, space=None, internal=False, reply_to=None):
+        event = self.events.emit(name=name, data=data, space=space, internal=internal,
+                                 source=self.name, reply_to=reply_to)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=event)
         return event
