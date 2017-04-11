@@ -92,11 +92,16 @@ class Shell(Agent):
 
     @on_event('*** started')
     async def on_started(self, event):
+        print('started!')
         self.spawn(self.interact())
 
     @on_event('about')
     def on_about(self, event):
         print('An interactive-shell example.')
+
+    @on_event('telegram-message')
+    def on_about(self, event):
+        print(event.data)
 
     @on_event('help {topic}', parse=True)
     def on_help(self, event):
@@ -105,13 +110,15 @@ class Shell(Agent):
 
 
 if __name__ == '__main__':
-    server = Agent()
+    endpoint = 'redis://localhost:6379'
+
+    # server = Agent()
     shell = Shell()
 
-    server.bind('inmemory://shell-agent')
-    server.join('shell')
-    server.start(shell.loop)
+    # server.bind('inmemory://shell-agent')
+    # server.join('shell')
+    # server.start(shell.loop)
 
-    shell.connect('inmemory://shell-agent')
-    shell.join('shell')
+    shell.connect(endpoint)
+    shell.join('telegram')
     shell.run()
