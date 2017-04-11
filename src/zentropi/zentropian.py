@@ -35,16 +35,15 @@ class Zentropian(object):
     def inspect_handlers(self):
         for attribute_name in self.__dir__():
             attr = getattr(self, attribute_name)
-            if not callable(attr):
+            if not callable(attr) or not hasattr(attr, 'meta'):
                 continue
-            if hasattr(attr, 'meta'):
-                for handler in attr.meta:
-                    if handler.kind == KINDS.EVENT:
-                        self.events.add_handler(handler.name, handler)
-                    elif handler.kind == KINDS.STATE:
-                        self.states.add_handler(handler.name, handler)
-                    else:  # pragma: no cover
-                        raise ValueError('Unknown handler kind: {}'.format(handler.kind))
+            for handler in attr.meta:
+                if handler.kind == KINDS.EVENT:
+                    self.events.add_handler(handler.name, handler)
+                elif handler.kind == KINDS.STATE:
+                    self.states.add_handler(handler.name, handler)
+                else:  # pragma: no cover
+                    raise ValueError('Unknown handler kind: {}'.format(handler.kind))
 
     def handle_frame(self, frame):
         if isinstance(frame, Event):
