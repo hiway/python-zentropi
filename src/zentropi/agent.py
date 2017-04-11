@@ -1,8 +1,11 @@
 # coding=utf-8
 import asyncio
+# import atexit
 import threading
 
-
+from inspect import iscoroutinefunction, isgeneratorfunction
+from typing import Optional
+from typing import Union
 from .frames import Frame
 from .handlers import Handler
 from .symbols import KINDS
@@ -17,7 +20,8 @@ class Agent(Zentropian):
         super().__init__(name=name)
         self.states.should_stop = False
         self.states.running = False
-        self.loop = None
+        self.loop = None  # asyncio.get_event_loop()
+        self._spawn_on_start = set()
 
     @on_state('should_stop')
     def _on_should_stop(self, state):
@@ -26,8 +30,14 @@ class Agent(Zentropian):
         return True
 
     async def _run_forever(self):
+        # atexit.register(self.loop.close)
+        if self._spawn_on_start:
+            [self.spawn(coro) for coro in self._spawn_on_start]
+            self._spawn_on_start = None
+        await asyncio.sleep(10)
         self.emit('*** started', internal=True)
         self.timers.start_timers(self.spawn)
+        await asyncio.sleep(2)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
         self.emit('*** stopped', internal=True)
@@ -75,6 +85,11 @@ class Agent(Zentropian):
         self.loop.run_until_complete(self._run_forever())
 
     def spawn(self, coro):
+        if not self.loop:
+            print('No loop defined; coroutine will be executed after attach/start/run.', coro)
+            self._spawn_on_start.add(coro)
+            return
+        print('spawning', coro)
         return self.loop.create_task(coro)
 
     @staticmethod
@@ -85,6 +100,47 @@ class Agent(Zentropian):
     def stop(self):
         self.states.should_stop = True
         self.timers.should_stop = True
+
+    def connect(self, endpoint, *, tag='default'):
+        retval = super().connect(endpoint, tag=tag)
+        if not isgeneratorfunction(retval):
+            print('direct connect')
+            return
+        print('spawning connect')
+        self.spawn(retval)
+
+    def bind(self, endpoint, *, tag='default'):
+        retval = super().bind(endpoint, tag=tag)
+        if not isgeneratorfunction(retval):
+            print('spawning bind')
+            return
+        print('spawning bind')
+        self.spawn(retval)
+
+    def join(self, space, *, tags: Optional[Union[list, str]] = None):
+        retval = super().join(space, tags=tags)
+        if not isgeneratorfunction(retval):
+            print('spawning join')
+            return
+        print('spawning join')
+        self.spawn(retval)
+
+    def close(self, *, endpoint: Optional[str] = None, tags: Optional[Union[list, str]] = None):
+        """Closes all connections if no endpoint or tags given."""
+        if endpoint and tags:
+            raise ValueError('Expected either endpoint: {!r} or tags: {!r}.'
+                             ''.format(endpoint, tags))
+        elif endpoint:
+            connections = self._connections.connections_by_endpoint(endpoint)
+        elif tags:
+            connections = self._connections.connections_by_tags(tags)
+        else:
+            connections = self._connections.connections
+        for connection in connections:
+            connection.close()
+
+
+
 
 
 def on_timer(interval):

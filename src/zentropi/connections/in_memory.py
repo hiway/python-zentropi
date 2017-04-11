@@ -27,6 +27,9 @@ class InMemoryConnection(Connection):
         global SPACES
         agent_name = self._agent.name
         endpoint = validate_endpoint(endpoint)
+        if not endpoint.startswith('inmemory://'):
+            raise ValueError('Expected inmemory:// endpoint.'
+                             'Got: {!r}'.format(endpoint))
         if endpoint not in SPACES:
             raise ConnectionError('Expected another connection to have run {}.bind("{}") .'
                                   'No endpoint available to connect.'

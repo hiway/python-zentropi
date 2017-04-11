@@ -144,7 +144,4 @@ def validate_endpoint(endpoint: str) -> str:
         raise ValueError('Expected endpoint to be a string.'
                          'Got: {!r}'.format(endpoint))
     endpoint = endpoint.strip().lower()
-    if not endpoint.startswith('inmemory://'):
-        raise ValueError('Expected inmemory:// endpoint.'
-                         'Got: {!r}'.format(endpoint))
     return endpoint

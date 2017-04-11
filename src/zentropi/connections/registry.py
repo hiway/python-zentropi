@@ -1,21 +1,26 @@
 # coding=utf-8
+
 from collections import defaultdict
+from inspect import iscoroutinefunction
 from typing import Optional
 from typing import Union
 
 from ..zentropian import Zentropian
 from .connection import Connection
 from .in_memory import InMemoryConnection
+from .redis_connection import RedisConnection
 
 
 def build_connection_instance(endpoint: str, connection_class: Connection, agent: Zentropian):
-    if connection_class is None:
-        return InMemoryConnection(agent=agent)
-    elif not isinstance(connection_class, Connection):
+    if connection_class and not isinstance(connection_class, Connection):
         raise ValueError('Expected connection_class to subclass zentropi.Connection. '
                          'Got: {!r}'.format(connection_class))
+    if isinstance(connection_class, Connection):
+        return connection_class(agent=agent)
     if endpoint.startswith('inmemory://'):
         return InMemoryConnection(agent=agent)
+    elif endpoint.startswith('redis://'):
+        return RedisConnection(agent=agent)
     else:
         raise ValueError('Expected endpoint to be in {!r}. Got: {!r}.'
                          ''.format(['inmemory://'], endpoint))  # todo: generic list
@@ -38,25 +43,37 @@ class ConnectionRegistry(object):
 
     def connect(self, endpoint, *, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
-        connection.connect(endpoint)
+        if iscoroutinefunction(connection.connect):
+            self._agent.spawn(connection.connect(endpoint))
+        else:
+            connection.connect(endpoint)
         self._connections.add(connection)
         self._tags[tag].add(connection)
         self._endpoints[endpoint].add(connection)
 
     def bind(self, endpoint, *, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
-        connection.bind(endpoint)
+        if iscoroutinefunction(connection.bind):
+            self._agent.spawn(connection.bind(endpoint))
+        else:
+            connection.bind(endpoint)
         self._connections.add(connection)
         self._tags[tag].add(connection)
         self._endpoints[endpoint].add(connection)
 
     def broadcast(self, frame, *, tags: Optional[Union[list, str]] = None):
         for connection in self.connections_by_tags(tags):
-            connection.broadcast(frame)
+            if iscoroutinefunction(connection.broadcast):
+                self._agent.spawn(connection.broadcast(frame))
+            else:
+                connection.broadcast(frame)
 
     def join(self, space: str, *, tags: Optional[Union[list, str]] = None):
         for connection in self.connections_by_tags(tags):
-            connection.join(space)
+            if iscoroutinefunction(connection.join):
+                self._agent.spawn(connection.join(space))
+            else:
+                connection.join(space)
 
     def connections_by_tags(self, tags: Optional[Union[list, str]] = None):
         if isinstance(tags, str):

@@ -66,6 +66,7 @@ setup(
         'pub-sub',
     ],
     install_requires=[
+        'aioredis',
         'click',
         'fuzzywuzzy',
         'parse',
