@@ -13,8 +13,8 @@ Overview
       - | |travis| |requires|
         |
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - | |license| |version| |wheel| |supported_versions| |supported_implementations|
+        | |commits_since|
 
 .. |docs| image:: https://readthedocs.org/projects/zentropi/badge/?style=flat
     :target: https://readthedocs.org/projects/zentropi
