@@ -16,17 +16,17 @@ Overview
       - | |version| |wheel| |supported-versions| |supported-implementations|
         | |commits-since|
 
-.. |docs| image:: https://readthedocs.org/projects/python-zentropi/badge/?style=flat
+.. |docs| image:: https://readthedocs.org/projects/zentropi/badge/?style=flat
     :target: https://readthedocs.org/projects/zentropi
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/zentropi/python-zentropi.svg?branch=master
+.. |travis| image:: https://travis-ci.org/zentropi/zentropi.svg?branch=master
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/zentropi/zentropi
 
-.. |requires| image:: https://requires.io/github/zentropi/python-zentropi/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/zentropi/zentropi/requirements.svg?branch=master
     :alt: Requirements Status
-    :target: https://requires.io/github/zentropi/python-zentropi/requirements/?branch=master
+    :target: https://requires.io/github/zentropi/zentropi/requirements/?branch=master
 
 .. |version| image:: https://img.shields.io/pypi/v/zentropi.svg
     :alt: PyPI Package latest release
