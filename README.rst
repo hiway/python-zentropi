@@ -24,9 +24,9 @@ Overview
     :alt: Travis-CI Build Status
     :target: https://travis-ci.org/zentropi/zentropi
 
-.. |requires| image:: https://requires.io/github/zentropi/zentropi/requirements.svg?branch=master
+.. |requires| image:: https://requires.io/github/zentropi/python-zentropi/requirements.svg?branch=master
     :alt: Requirements Status
-    :target: https://requires.io/github/zentropi/zentropi/requirements/?branch=master
+    :target: https://requires.io/github/zentropi/python-zentropi/requirements/?branch=master
 
 .. |version| image:: https://img.shields.io/pypi/v/zentropi.svg
     :alt: PyPI Package latest release
