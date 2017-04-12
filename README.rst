@@ -32,7 +32,7 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/zentropi
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.0.svg
+.. |commits_since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.0.svg
     :alt: Commits since latest release
     :target: https://github.com/zentropi/python-zentropi/compare/v0.1.0...master
 
@@ -40,14 +40,16 @@ Overview
     :alt: PyPI Wheel
     :target: https://pypi.python.org/pypi/zentropi
 
-.. |supported-versions| image:: https://img.shields.io/pypi/pyversions/zentropi.svg
+.. |supported_versions| image:: https://img.shields.io/pypi/pyversions/zentropi.svg
     :alt: Supported versions
     :target: https://pypi.python.org/pypi/zentropi
 
-.. |supported-implementations| image:: https://img.shields.io/pypi/implementation/zentropi.svg
+.. |supported_implementations| image:: https://img.shields.io/pypi/implementation/zentropi.svg
     :alt: Supported implementations
     :target: https://pypi.python.org/pypi/zentropi
 
+.. |license| image:: https://img.shields.io/badge/license-Apache%202-blue.svg
+    :target: https://raw.githubusercontent.com/zentropi/python-zentropi/master/LICENSE
 
 .. end-badges
 
