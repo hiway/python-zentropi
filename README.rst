@@ -17,12 +17,12 @@ Overview
         | |commits-since|
 
 .. |docs| image:: https://readthedocs.org/projects/python-zentropi/badge/?style=flat
-    :target: https://readthedocs.org/projects/python-zentropi
+    :target: https://readthedocs.org/projects/zentropi
     :alt: Documentation Status
 
 .. |travis| image:: https://travis-ci.org/zentropi/python-zentropi.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/zentropi/python-zentropi
+    :target: https://travis-ci.org/zentropi/zentropi
 
 .. |requires| image:: https://requires.io/github/zentropi/python-zentropi/requirements.svg?branch=master
     :alt: Requirements Status
@@ -65,4 +65,4 @@ Installation
 Documentation
 =============
 
-https://python-zentropi.readthedocs.io/
+https://zentropi.readthedocs.io/
