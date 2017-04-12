@@ -20,9 +20,9 @@ Overview
     :target: https://readthedocs.org/projects/zentropi
     :alt: Documentation Status
 
-.. |travis| image:: https://travis-ci.org/zentropi/zentropi.svg?branch=master
+.. |travis| image:: https://travis-ci.org/zentropi/python-zentropi.svg?branch=master
     :alt: Travis-CI Build Status
-    :target: https://travis-ci.org/zentropi/zentropi
+    :target: https://travis-ci.org/zentropi/python-zentropi
 
 .. |requires| image:: https://requires.io/github/zentropi/python-zentropi/requirements.svg?branch=master
     :alt: Requirements Status
