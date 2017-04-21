@@ -39,10 +39,8 @@ class Agent(Zentropian):
         if self._spawn_on_start:
             [self.spawn(coro) for coro in self._spawn_on_start]
             self._spawn_on_start = None
-        await asyncio.sleep(10)
         self.emit('*** started', internal=True)
         self.timers.start_timers(self.spawn)
-        await asyncio.sleep(2)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
         self.emit('*** stopped', internal=True)
@@ -56,9 +54,10 @@ class Agent(Zentropian):
             self.loop = asyncio.get_event_loop()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
-        if frame.id in self._seen_frames:
+        if frame and frame.id in self._seen_frames:
             return
-        self._seen_frames.add(frame.id)
+        if frame:
+            self._seen_frames.add(frame.id)
         payload = []  # type: list
         if handler.pass_self:
             payload.append(self)
