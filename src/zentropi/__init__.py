@@ -32,8 +32,8 @@ from .spaces import Spaces
 from .symbols import KINDS
 from .zentropian import Zentropian
 from .zentropian import on_event
-from .zentropian import on_state
 from .zentropian import on_message
+from .zentropian import on_state
 
 __version__ = "0.1.0"
 
