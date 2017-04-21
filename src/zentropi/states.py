@@ -32,7 +32,7 @@ class States(UserDict):
         return state.value
 
     def _update_state(self, name, value):
-        should_update = True
+        should_update = [True]
         state = self.data[name]
         if not isinstance(state, Field):
             raise ValueError('Expected instance of Field, got: {}'
@@ -40,14 +40,15 @@ class States(UserDict):
         if self._trigger_frame_handler:
             frame = State(name, data={'value': value, 'last': state.value})
             frame, handlers = self._handlers.match(frame)
-            for handler in handlers:  # todo: should_update tied to last handler's return value, use all()/any()? Why?
-                should_update = self._trigger_frame_handler(
+            for handler in handlers:
+                _should_update = self._trigger_frame_handler(
                     frame=frame, handler=handler, internal=True)
-            if not isinstance(should_update, bool):
-                raise ValueError('Expected bool as return value '
-                                 'from state callback, got: {}'
-                                 ''.format(should_update))
-        if should_update:  # Default is True if not callback set.
+                if not isinstance(_should_update, bool):
+                    raise ValueError('Expected bool as return value '
+                                     'from state callback, got: {}'
+                                     ''.format(_should_update))
+                should_update.append(_should_update)
+        if all(should_update):  # Default is True if not callback set.
             state.value = value
             self.data[name] = state
 
