@@ -26,10 +26,11 @@ def main():
 @main.command()
 @click.option('--name', default='zentropi_shell')
 @click.option('--endpoint', default='redis://localhost:6379')
-@click.option('--join', default='test')
+@click.option('--join', default='')
 def shell(name, endpoint, join):
     from .shell import ZentropiShell
     shell_agent = ZentropiShell(name)
     shell_agent.connect(endpoint)
-    shell_agent.join(space=join)
+    if join:
+        shell_agent.join(space=join)
     shell_agent.run()

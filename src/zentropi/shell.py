@@ -70,7 +70,8 @@ class ZentropiShell(Agent):
                 self._exit_on_next_kb_interrupt = False  # We have new input; relax.
                 if command in ['exit', 'q']:
                     break
-                self.message(command, internal=True)
+                if command:
+                    self.message(command, internal=True)
             except EOFError:
                 break
             except KeyboardInterrupt:
@@ -92,11 +93,10 @@ class ZentropiShell(Agent):
     def on_any_message(self, message):
         if message.source == self.name:
             return
-        print('Received: ', end='')
         if message.data:
-            print('{!r} {!r}'.format(message.name, message.data))
+            print('@{}: {!r} {!r}'.format(message.source, message.name, message.data))
         else:
-            print('{!r}'.format(message.name))
+            print('@{}: {!r}'.format(message.source, message.name))
 
     @on_message('join {space}', parse=True)
     def join_space(self, message):
