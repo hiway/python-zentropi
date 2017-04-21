@@ -6,7 +6,7 @@ from zentropi import on_message
 agent = Agent('hello_bot')
 
 
-# Trigger on "hello"; fuzzy matching allows slight variations and punctuation.
+# Trigger on "hello"
 @agent.on_message('hello')
 def say_hello(message):
     # Send reply to the incoming message.

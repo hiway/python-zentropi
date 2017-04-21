@@ -76,7 +76,7 @@ and easy to use API.
 Example
 =======
 
-Let us make an agent that will reply to a "Hello" message with "Hello, world!"
+Let us make an agent that will reply to a "hello" message with "Hello, world!"
 
 ::
 
@@ -87,8 +87,8 @@ Let us make an agent that will reply to a "Hello" message with "Hello, world!"
     # Create an instance of Agent.
     agent = Agent('hello_bot')
 
-    # Trigger on "hello"; fuzzy matching allows slight variations and punctuation.
-    @agent.on_message('hello', fuzzy=True)
+    # Trigger on "hello"
+    @agent.on_message('hello')
     def say_hello(message):
         # Send reply to the incoming message.
         return 'Hello, world!'
