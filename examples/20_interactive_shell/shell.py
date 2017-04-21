@@ -14,6 +14,7 @@ from pygments.token import Token
 from pytz import all_timezones_set
 from zentropi import Agent
 from zentropi import on_event
+from zentropi import on_message
 
 asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
@@ -30,16 +31,16 @@ def extract_urls(text):
 
 
 class Shell(Agent):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, name=None):
         ptk_loop = create_asyncio_eventloop()
         self.loop = ptk_loop.loop
         self.cli = self._get_cli(ptk_loop)
+        sys.stdout = self.cli.stdout_proxy(raw=True)
+        super().__init__(name=name)
         self._prompt = PROMPT
         self._prompt_more = PROMPT_MORE
         self._multi_line = False
         self._exit_on_next_kb_interrupt = False
-        sys.stdout = self.cli.stdout_proxy(raw=True)
 
     def _get_cli(self, loop):
         global history
@@ -78,6 +79,7 @@ class Shell(Agent):
                 if command in ['exit', 'q']:
                     break
                 self.emit(command, internal=True)
+                self.message(command)
             except EOFError:
                 break
             except KeyboardInterrupt:
@@ -92,16 +94,15 @@ class Shell(Agent):
 
     @on_event('*** started')
     async def on_started(self, event):
-        print('started!')
         self.spawn(self.interact())
 
     @on_event('about')
     def on_about(self, event):
         print('An interactive-shell example.')
 
-    @on_event('telegram-message')
-    def on_about(self, event):
-        print(event.data)
+    @on_message('*')
+    def on_any_message(self, message):
+        print(message.name, message.data)
 
     @on_event('help {topic}', parse=True)
     def on_help(self, event):
@@ -110,15 +111,7 @@ class Shell(Agent):
 
 
 if __name__ == '__main__':
-    endpoint = 'redis://localhost:6379'
-
-    # server = Agent()
-    shell = Shell()
-
-    # server.bind('inmemory://shell-agent')
-    # server.join('shell')
-    # server.start(shell.loop)
-
-    shell.connect(endpoint)
+    shell = Shell('shell')
+    shell.connect('redis://localhost:6379')
     shell.join('telegram')
     shell.run()

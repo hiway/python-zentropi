@@ -65,9 +65,16 @@ class Agent(Zentropian):
         if handler.kind != KINDS.TIMER:
             payload.append(frame)
         if handler.run_async:
-            self.spawn(handler(*payload))
+            async def return_handler():
+                ret_val = await handler(*payload)
+                if ret_val:
+                    self.handle_return(frame, return_value=ret_val)
+
+            self.spawn(return_handler())
         else:
-            return handler(*payload)
+            ret_val = handler(*payload)
+            if ret_val:
+                return self.handle_return(frame, return_value=ret_val)
 
     def add_handler(self, handler):
         if handler.kind == KINDS.TIMER:
@@ -94,7 +101,6 @@ class Agent(Zentropian):
 
     def spawn(self, coro):
         if not self.loop:
-            # print('No loop defined; coroutine will be executed after attach/start/run.', coro)
             self._spawn_on_start.add(coro)
             return
         return self.loop.create_task(coro)

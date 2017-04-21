@@ -26,15 +26,16 @@ from .events import Events
 from .fields import Field
 from .frames import Command
 from .frames import Event
+from .frames import Frame
 from .frames import State
 from .spaces import Spaces
 from .symbols import KINDS
 from .zentropian import Zentropian
 from .zentropian import on_event
+from .zentropian import on_message
 from .zentropian import on_state
 
-
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
@@ -46,11 +47,13 @@ __all__ = [
     'Connection',
     'Event',
     'Events',
+    'Frame',
     'Field',
     'fields',
     'InMemoryConnection',
     'KINDS',
     'on_event',
+    'on_message',
     'on_state',
     'on_timer',
     'Spaces',

@@ -26,15 +26,15 @@ class RedisConnection(Connection):
 
     async def _connection_listener(self):
         connection = self._connection
-        while self._connected:
-            while await connection.wait_message() and self._connected:
-                frame_as_dict = await connection.get_json()
-                if not frame_as_dict:
-                    break
-                frame = Frame.from_dict(frame_as_dict)
-                # print('*** redis: incoming frame',
-                #       self._agent.name, frame.source,  frame.name, frame.data)
-                self._agent.handle_frame(frame)
+        while await connection.wait_message() and self._connected:
+            frame_as_dict = await connection.get_json()
+            if not frame_as_dict:
+                break
+            frame = Frame.from_dict(frame_as_dict)
+            # print('*** redis: incoming frame',
+            #       self._agent.name, frame.source,  frame.name, frame.data)
+            self._agent.handle_frame(frame)
+        print('*** redis disconnected')
 
     def bind(self, endpoint: str) -> None:
         self.connect(endpoint)
@@ -62,6 +62,7 @@ class RedisConnection(Connection):
             self._connection.close()
         if self._listener_task:
             self._listener_task.cancel()
+            self._connected = False
         self._connection = connection
         self._listener_task = self._agent.spawn(self._connection_listener())
 
