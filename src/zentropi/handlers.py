@@ -133,6 +133,8 @@ class HandlerRegistry(object):
                 continue
             return frame, handlers
         else:
+            if '*' in self._handlers:
+                return frame, self._handlers['*']
             return frame, set()
 
     def match_exact(self, frame):
