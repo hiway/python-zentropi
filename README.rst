@@ -69,10 +69,9 @@ Zentropi is for you if:
 ..where were we? Ah, yes, if any of these ^^ sound familiar, you are not alone!
 
 Zentropi makes it easier to write agents that can communicate with each other using
-concepts such as State, Event, Message and Request-Response*, each is implemented as
-a simple to learn and easy to use API.
+concepts such as State, Event and Message, each is implemented as a simple to learn
+and easy to use API.
 
-*Request-Response will be available soon.
 
 Example:
 --------
