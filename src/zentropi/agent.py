@@ -66,18 +66,14 @@ class Agent(Zentropian):
             payload.append(frame)
         if handler.run_async:
             async def return_handler():
-                # print('*** async handler', handler.name, payload)
                 ret_val = await handler(*payload)
                 if ret_val:
-                    # print('*** returned', ret_val)
                     self.handle_return(frame, return_value=ret_val)
 
             self.spawn(return_handler())
         else:
-            # print('*** handler', handler, payload)
             ret_val = handler(*payload)
             if ret_val:
-                # print('*** returned', ret_val)
                 return self.handle_return(frame, return_value=ret_val)
 
     def add_handler(self, handler):
@@ -105,7 +101,6 @@ class Agent(Zentropian):
 
     def spawn(self, coro):
         if not self.loop:
-            # print('No loop defined; coroutine will be executed after attach/start/run.', coro)
             self._spawn_on_start.add(coro)
             return
         return self.loop.create_task(coro)
