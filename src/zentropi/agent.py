@@ -65,9 +65,20 @@ class Agent(Zentropian):
         if handler.kind != KINDS.TIMER:
             payload.append(frame)
         if handler.run_async:
-            self.spawn(handler(*payload))
+            async def return_handler():
+                # print('*** async handler', handler.name, payload)
+                ret_val = await handler(*payload)
+                if ret_val:
+                    # print('*** returned', ret_val)
+                    self.handle_return(frame, return_value=ret_val)
+
+            self.spawn(return_handler())
         else:
-            return handler(*payload)
+            # print('*** handler', handler, payload)
+            ret_val = handler(*payload)
+            if ret_val:
+                # print('*** returned', ret_val)
+                return self.handle_return(frame, return_value=ret_val)
 
     def add_handler(self, handler):
         if handler.kind == KINDS.TIMER:

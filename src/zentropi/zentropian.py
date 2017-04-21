@@ -7,6 +7,8 @@ from .events import Event
 from .events import Events
 from .frames import Frame
 from .handlers import Handler
+from .messages import Message
+from .messages import Messages
 from .states import State
 from .states import States
 from .symbols import KINDS
@@ -20,6 +22,7 @@ class Zentropian(object):
         callback = self._trigger_frame_handler
         self.states = States(callback=callback)
         self.events = Events(callback=callback)
+        self.messages = Messages(callback=callback)
         self._connections = ConnectionRegistry(self)
         self.inspect_handlers()
 
@@ -36,6 +39,8 @@ class Zentropian(object):
             self.events.add_handler(handler.name, handler)
         elif handler.kind == KINDS.STATE:
             self.states.add_handler(handler.name, handler)
+        elif handler.kind == KINDS.MESSAGE:
+            self.messages.add_handler(handler.name, handler)
         else:  # pragma: no cover
             raise ValueError('Unknown handler kind: {}'.format(handler.kind))
 
@@ -52,11 +57,23 @@ class Zentropian(object):
             frame, handlers = self.events.match(frame)
         elif isinstance(frame, State):
             frame, handlers = self.states.match(frame)
+        elif isinstance(frame, Message):
+            frame, handlers = self.messages.match(frame)
         else:
             raise ValueError('Unknown frame {!r} with kind {!r}'
                              ''.format(frame.name, KINDS(frame.kind)))  # todo: KINDS might throw an exception?
         for handler in handlers:
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
+
+    def handle_return(self, frame, return_value):
+        if isinstance(frame, Event):
+            return return_value
+        elif isinstance(frame, State):
+            return return_value
+        elif isinstance(frame, Message):
+            self.message(name=return_value, reply_to=frame.id)
+        else:
+            raise NotImplementedError()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
         payload = []  # type: list
@@ -70,7 +87,7 @@ class Zentropian(object):
         if handler.kind != KINDS.TIMER:
             payload.append(frame)
         return_value = handler(*payload)
-        return return_value
+        return self.handle_return(frame, return_value)
 
     def on_state(self, name, *, exact=True, parse=False, fuzzy=False):
         def wrapper(handler):
@@ -90,12 +107,29 @@ class Zentropian(object):
 
         return wrapper
 
+    def on_message(self, name, *, exact=True, parse=False, fuzzy=False):
+        def wrapper(handler):
+            handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
+                                  exact=exact, parse=parse, fuzzy=fuzzy)
+            self.messages.add_handler(name, handler_obj)
+            return handler
+
+        return wrapper
+
     def emit(self, name, data=None, space=None, internal=False, reply_to=None):
         event = self.events.emit(name=name, data=data, space=space, internal=internal,
                                  source=self.name, reply_to=reply_to)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=event)
         return event
+
+    def message(self, name, data=None, space=None, internal=False, reply_to=None):
+        message = self.messages.message(name=name, data=data, space=space, internal=internal,
+                                        source=self.name, reply_to=reply_to)
+        if not internal and self._connections.connected:
+            self._connections.broadcast(frame=message)
+            # print('broadcasting')
+        return message
 
     def connect(self, endpoint, *, tag='default'):
         self._connections.connect(endpoint, tag=tag)
@@ -137,6 +171,19 @@ def on_event(name, *, exact=True, parse=False, fuzzy=False):
 def on_state(name, *, exact=True, parse=False, fuzzy=False):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
+                              exact=exact, parse=parse, fuzzy=fuzzy)
+        if hasattr(handler, 'meta'):
+            handler.meta.append(handler_obj)
+        else:
+            handler.meta = [handler_obj, ]
+        return handler
+
+    return wrapper
+
+
+def on_message(name, *, exact=True, parse=False, fuzzy=False):
+    def wrapper(handler):
+        handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
                               exact=exact, parse=parse, fuzzy=fuzzy)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
