@@ -131,6 +131,12 @@ class Agent(Zentropian):
             return
         self.spawn(retval)
 
+    def leave(self, space, *, tags: Optional[Union[list, str]] = None):
+        retval = super().leave(space, tags=tags)
+        if not isgeneratorfunction(retval):
+            return
+        self.spawn(retval)
+
     def close(self, *, endpoint: Optional[str] = None, tags: Optional[Union[list, str]] = None):
         """Closes all connections if no endpoint or tags given."""
         if endpoint and tags:

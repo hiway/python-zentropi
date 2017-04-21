@@ -140,6 +140,10 @@ class Zentropian(object):
     def join(self, space, *, tags: Optional[Union[list, str]] = None):
         self._connections.join(space, tags=tags)
 
+    def leave(self, space, *, tags: Optional[Union[list, str]] = None):
+        self._connections.leave(space, tags=tags)
+
+
     def close(self, *, endpoint: Optional[str] = None, tags: Optional[Union[list, str]] = None):
         """Closes all connections if no endpoint or tags given."""
         if endpoint and tags:
