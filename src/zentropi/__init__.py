@@ -35,7 +35,7 @@ from .zentropian import on_event
 from .zentropian import on_message
 from .zentropian import on_state
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
