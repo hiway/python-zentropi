@@ -16,24 +16,30 @@ limitations under the License.
 """
 import os
 
-from . import fields
-from . import utils
-from .agent import Agent
-from .agent import on_timer
-from .connections import Connection
-from .connections.in_memory import InMemoryConnection
-from .events import Events
-from .fields import Field
-from .frames import Command
-from .frames import Event
-from .frames import Frame
-from .frames import State
-from .spaces import Spaces
-from .symbols import KINDS
-from .zentropian import Zentropian
-from .zentropian import on_event
-from .zentropian import on_message
-from .zentropian import on_state
+import zentropi.fields as fields
+import zentropi.utils as utils
+from zentropi.agent import (
+    Agent,
+    on_timer,
+)
+from zentropi.connections import Connection
+from zentropi.connections.in_memory import InMemoryConnection
+from zentropi.events import Events
+from zentropi.fields import Field
+from zentropi.frames import (
+    Command,
+    Event,
+    Frame,
+    State,
+)
+from zentropi.spaces import Spaces
+from zentropi.symbols import KINDS
+from zentropi.zentropian import (
+    on_event,
+    on_message,
+    on_state,
+    Zentropian,
+)
 
 __version__ = "0.1.1"
 

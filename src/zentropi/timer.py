@@ -1,6 +1,7 @@
 # coding=utf-8
 import asyncio
-from .handlers import Registry
+
+from zentropi.handlers import Registry
 
 
 class TimerRegistry(Registry):

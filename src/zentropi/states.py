@@ -1,10 +1,9 @@
 # coding=utf-8
-
 from collections import UserDict
 
-from .fields import Field
-from .frames import State
-from .handlers import HandlerRegistry
+from zentropi.fields import Field
+from zentropi.frames import State
+from zentropi.handlers import HandlerRegistry
 
 
 class States(UserDict):

@@ -1,18 +1,26 @@
 # coding=utf-8
-from typing import Optional
-from typing import Union
+from typing import (
+    Optional,
+    Union,
+)
 from uuid import uuid4
 
-from .events import Event
-from .events import Events
-from .frames import Frame
-from .handlers import Handler
-from .messages import Message
-from .messages import Messages
-from .states import State
-from .states import States
-from .symbols import KINDS
-from .utils import validate_name
+from zentropi.events import (
+    Event,
+    Events,
+)
+from zentropi.frames import Frame
+from zentropi.handlers import Handler
+from zentropi.messages import (
+    Message,
+    Messages,
+)
+from zentropi.states import (
+    State,
+    States,
+)
+from zentropi.symbols import KINDS
+from zentropi.utils import validate_name
 
 
 class Zentropian(object):

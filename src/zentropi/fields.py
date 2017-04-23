@@ -1,6 +1,8 @@
 # coding=utf-8
-from typing import Any
-from typing import Optional
+from typing import (
+    Any,
+    Optional,
+)
 
 
 class Field(object):

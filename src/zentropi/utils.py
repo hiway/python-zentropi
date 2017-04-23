@@ -1,16 +1,16 @@
 # coding=utf-8
-
-
 import gettext
 import json
 import locale as lib_locale
 import logging
 import os
 import sys
-
 import warnings
-from typing import Any
-from typing import Optional
+from typing import (
+    Any,
+    Optional,
+)
+
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

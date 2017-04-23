@@ -2,19 +2,20 @@
 import asyncio
 # import atexit
 import threading
-
 from inspect import isgeneratorfunction
-from typing import Optional
-from typing import Union
+from typing import (
+    Optional,
+    Union,
+)
 
 from pybloom_live import ScalableBloomFilter
 
-from .frames import Frame
-from .handlers import Handler
-from .symbols import KINDS
-from .timer import TimerRegistry
-from .zentropian import Zentropian
-from .zentropian import on_state
+from zentropi.frames import Frame
+from zentropi.handlers import Handler
+from zentropi.symbols import KINDS
+from zentropi.timer import TimerRegistry
+from zentropi.zentropian import Zentropian
+from zentropi.zentropian import on_state
 
 
 class Agent(Zentropian):

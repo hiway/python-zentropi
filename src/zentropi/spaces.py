@@ -1,6 +1,6 @@
 # coding=utf-8
-from .connections.connection import Connection
-from .frames import Command
+from zentropi.connections.connection import Connection
+from zentropi.frames import Command
 
 
 class Space(object):
