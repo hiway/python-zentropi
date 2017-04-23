@@ -45,7 +45,7 @@ class Zentropian(object):
             raise ValueError('Unknown handler kind: {}'.format(handler.kind))
 
     def inspect_handlers(self):
-        for attribute_name in self.__dir__():
+        for attribute_name in dir(self):
             attr = getattr(self, attribute_name)
             if not callable(attr) or not hasattr(attr, 'meta'):
                 continue
