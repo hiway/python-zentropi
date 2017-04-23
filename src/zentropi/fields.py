@@ -40,7 +40,7 @@ class Field(object):
 
     @property
     def kind(self) -> str:
-        return self.__class__.__name__
+        return type(self).__name__
 
     @property
     def name(self) -> str:

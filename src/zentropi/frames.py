@@ -19,7 +19,7 @@ from zentropi.utils import (
 
 class FrameData(UserDict):
     def __init__(self, *args, **kwargs):
-        super(FrameData, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __getattr__(self, item):
         if item in self.data:

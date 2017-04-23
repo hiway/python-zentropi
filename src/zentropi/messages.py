@@ -1,5 +1,4 @@
 # coding=utf-8
-
 from zentropi.frames import Message
 from zentropi.handlers import Registry
 

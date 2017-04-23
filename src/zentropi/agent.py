@@ -14,8 +14,10 @@ from zentropi.frames import Frame
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
-from zentropi.zentropian import Zentropian
-from zentropi.zentropian import on_state
+from zentropi.zentropian import (
+    on_state,
+    Zentropian,
+)
 
 
 class Agent(Zentropian):

@@ -34,7 +34,9 @@ def log_to_stream(stream: Optional[Any] = None, *,
         >>> _ = log_to_stream(level=logging.WARNING)  # Only warning and higher
     """
     from zentropi.defaults import LOG_LEVEL
+
     global logger
+
     if not stream:
         stream = sys.stdout  # pragma: no cover
     handler = logging.StreamHandler(stream)
@@ -60,8 +62,9 @@ def i18n_wrapper(locale: Optional[str] = None) -> Any:
         >>> print(_('Hello, world.'))
         Hello, world.
     """
-    from . import BASE_PATH
-    from .defaults import LOCALE
+    from zentropi import BASE_PATH
+    from zentropi.defaults import LOCALE
+
     locale = locale or lib_locale.getlocale()[0] or LOCALE
     locale_dir = os.path.join(BASE_PATH, 'locale')
     locale_file = os.path.join(locale_dir, '{}.mo'.format(locale))
@@ -80,7 +83,8 @@ def deflate_dict(frame_as_dict):
 
 
 def validate_handler(handler):
-    from .handlers import Handler
+    from zentropi.handlers import Handler
+
     if handler is None:
         return None
     if isinstance(handler, Handler):
@@ -102,7 +106,8 @@ def validate_name(name):
 
 
 def validate_kind(kind):
-    from .symbols import KINDS
+    from zentropi.symbols import KINDS
+
     if kind is None:
         return KINDS.UNSET
     if isinstance(kind, int):
@@ -114,7 +119,8 @@ def validate_kind(kind):
 
 
 def validate_data(data):
-    from .frames import FrameData
+    from zentropi.frames import FrameData
+
     if data is None:
         return FrameData()  # type: ignore
     assert isinstance(data, (dict, FrameData)), data
