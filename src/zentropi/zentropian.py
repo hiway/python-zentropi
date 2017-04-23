@@ -162,7 +162,7 @@ def on_event(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper
@@ -175,7 +175,7 @@ def on_state(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper
@@ -188,7 +188,7 @@ def on_message(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper
