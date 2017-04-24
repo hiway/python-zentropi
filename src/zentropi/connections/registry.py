@@ -77,6 +77,13 @@ class ConnectionRegistry(object):
             else:
                 connection.join(space)
 
+    def leave(self, space: str, *, tags: Optional[Union[list, str]] = None):
+        for connection in self.connections_by_tags(tags):
+            if iscoroutinefunction(connection.leave):
+                self._agent.spawn(connection.leave(space))
+            else:
+                connection.leave(space)
+
     def connections_by_tags(self, tags: Optional[Union[list, str]] = None):
         if isinstance(tags, str):
             if ',' in tags:

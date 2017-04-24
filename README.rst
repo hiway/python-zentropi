@@ -73,56 +73,46 @@ concepts such as State, Event and Message, each is implemented as a simple to le
 and easy to use API.
 
 
-Example:
---------
+Example
+=======
+
+Let us make an agent that will reply to a "hello" message with "Hello, world!"
 
 ::
 
     # coding=utf-8
     from zentropi import Agent
-    from zentropi import on_timer
+    from zentropi import on_message
 
+    # Create an instance of Agent.
+    agent = Agent('hello_bot')
 
-    class Hello(Agent):
-        @on_timer(1)
-        def every_second(self):
-            print('Hello, world!')
+    # Trigger on "hello"
+    @agent.on_message('hello')
+    def say_hello(message):
+        # Send reply to the incoming message.
+        return 'Hello, world!'
 
-        @on_timer(3)
-        def on_three_seconds(self):
-            self.stop()
+    # Connect to local redis.
+    agent.connect('redis://localhost:6379')
 
+    # Join "test" space.
+    agent.join('test')
 
-    agent = Hello()
     agent.run()
 
 
-The above code can be saved as "hello.py" and run with "python hello.py"
+Save this as "hello.py", and run it using the command "python hello.py"
 
-It will print out "Hello, world!" a few times and stop.
+We can now interact with our newly created agent using the following commands:
 
+::
 
-Example: Telegram Bot + Relay Agent:
-------------------------------------
-
-Have a look at the examples folder, after you have installed zentropi,
-you can try the examples with ::
-
-    python {example_name.py}
-
-Run these commands in examples folder in a separate terminal window/tab ::
-
-    export TELEGRAM_BOT_API_TOKEN="{get your telegram api token from @botfather}"
-    export TELEGRAM_BOT_NAME="ExampleBot"
-
-    python 10_telegram_bot/telegram_bot.py
-
-    python 11_relay/relay_agent.py
-
-Now send "switch on" or "switch off" from your telegram account to your bot.
-
-It should respond with "Switching power [on|off]" depending on your command,
-as well as print out GPIO state in terminal.
+    $ zentropi shell
+    〉join test
+    〉. hello
+    @hello_bot: 'Hello, world!'
+    〉exit
 
 
 Installation

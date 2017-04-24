@@ -35,6 +35,7 @@ class SimpleTelegramAgent(Agent):
                 'username': message['from']['username'],
                 'name': name,
             })
+            print('>>>', text)
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
         except Exception:
             print(traceback.format_exc())
@@ -48,6 +49,7 @@ class SimpleTelegramAgent(Agent):
             chat_id = self.sent_telegram_messages[message.reply_to]
             del self.sent_telegram_messages[message.reply_to]
             await self._bot.send_message(chat_id=chat_id, text=message.name)
+            print('<<<', message.name)
         except Exception:
             print(traceback.format_exc())
             print(message.name, message.data)

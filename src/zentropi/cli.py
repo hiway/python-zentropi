@@ -18,7 +18,19 @@ Why does this file exist, and why not put this in __main__?
 import click
 
 
-@click.command()
-@click.argument('names', nargs=-1)
-def main(names):
-    click.echo(repr(names))
+@click.group()
+def main():
+    pass
+
+
+@main.command()
+@click.option('--name', default='zentropi_shell')
+@click.option('--endpoint', default='redis://localhost:6379')
+@click.option('--join', default='')
+def shell(name, endpoint, join):
+    from .shell import ZentropiShell
+    shell_agent = ZentropiShell(name)
+    shell_agent.connect(endpoint)
+    if join:
+        shell_agent.join(space=join)
+    shell_agent.run()

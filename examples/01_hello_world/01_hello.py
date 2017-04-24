@@ -1,17 +1,22 @@
 # coding=utf-8
 from zentropi import Agent
-from zentropi import on_timer
+from zentropi import on_message
+
+# Create an instance of Agent.
+agent = Agent('hello_bot')
 
 
-class Hello(Agent):
-    @on_timer(1)
-    def every_second(self):
-        print('Hello, world!')
-
-    @on_timer(3)
-    def on_three_seconds(self):
-        self.stop()
+# Trigger on "hello"
+@agent.on_message('hello')
+def say_hello(message):
+    # Send reply to the incoming message.
+    return 'Hello, world!'
 
 
-agent = Hello()
+# Connect to local redis.
+agent.connect('redis://localhost:6379')
+
+# Join "test" space.
+agent.join('test')
+
 agent.run()
