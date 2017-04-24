@@ -1,6 +1,6 @@
 # coding=utf-8
-from .connections.connection import Connection
-from .frames import Command
+from zentropi.connections.connection import Connection
+from zentropi.frames import Command
 
 
 class Space(object):
@@ -46,7 +46,7 @@ class Spaces(object):
 
     def spaces(self, agent=None):
         if not agent:
-            return list(self._spaces.keys())
+            return list(self._spaces)
         return [n for n, s in self._spaces.items() if agent in s.agents]
 
     def join(self, agent_name, space_name):

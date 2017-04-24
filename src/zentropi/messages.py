@@ -1,7 +1,6 @@
 # coding=utf-8
-
-from .frames import Message
-from .handlers import Registry
+from zentropi.frames import Message
+from zentropi.handlers import Registry
 
 
 class Messages(Registry):

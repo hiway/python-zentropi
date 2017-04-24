@@ -1,18 +1,26 @@
 # coding=utf-8
-from typing import Optional
-from typing import Union
+from typing import (
+    Optional,
+    Union,
+)
 from uuid import uuid4
 
-from .events import Event
-from .events import Events
-from .frames import Frame
-from .handlers import Handler
-from .messages import Message
-from .messages import Messages
-from .states import State
-from .states import States
-from .symbols import KINDS
-from .utils import validate_name
+from zentropi.events import (
+    Event,
+    Events,
+)
+from zentropi.frames import Frame
+from zentropi.handlers import Handler
+from zentropi.messages import (
+    Message,
+    Messages,
+)
+from zentropi.states import (
+    State,
+    States,
+)
+from zentropi.symbols import KINDS
+from zentropi.utils import validate_name
 
 
 class Zentropian(object):
@@ -45,7 +53,7 @@ class Zentropian(object):
             raise ValueError('Unknown handler kind: {}'.format(handler.kind))
 
     def inspect_handlers(self):
-        for attribute_name in self.__dir__():
+        for attribute_name in dir(self):
             attr = getattr(self, attribute_name)
             if not callable(attr) or not hasattr(attr, 'meta'):
                 continue
@@ -162,7 +170,7 @@ def on_event(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper
@@ -175,7 +183,7 @@ def on_state(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper
@@ -188,7 +196,7 @@ def on_message(name, *, exact=True, parse=False, fuzzy=False):
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
-            handler.meta = [handler_obj, ]
+            handler.meta = [handler_obj]
         return handler
 
     return wrapper

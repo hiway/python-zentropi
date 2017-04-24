@@ -6,19 +6,20 @@ from typing import Optional
 from typing import Union
 from uuid import uuid4
 
-from zentropi.utils import deflate_dict
-
-from .symbols import KINDS
-from .utils import validate_data
-from .utils import validate_id
-from .utils import validate_kind
-from .utils import validate_meta
-from .utils import validate_name
+from zentropi.symbols import KINDS
+from zentropi.utils import (
+    deflate_dict,
+    validate_data,
+    validate_id,
+    validate_kind,
+    validate_meta,
+    validate_name,
+)
 
 
 class FrameData(UserDict):
     def __init__(self, *args, **kwargs):
-        super(FrameData, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __getattr__(self, item):
         if item in self.data:

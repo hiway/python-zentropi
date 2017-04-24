@@ -1,6 +1,8 @@
 # coding=utf-8
-from typing import Any
-from typing import Optional
+from typing import (
+    Any,
+    Optional,
+)
 
 
 class Field(object):
@@ -38,7 +40,7 @@ class Field(object):
 
     @property
     def kind(self) -> str:
-        return self.__class__.__name__
+        return type(self).__name__
 
     @property
     def name(self) -> str:
