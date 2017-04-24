@@ -70,7 +70,9 @@ setup(
         'click',
         'fuzzywuzzy',
         'parse',
+        'prompt_toolkit',
         'pybloom_live',
+        'pygments',
         'sortedcontainers',
     ],
     extras_require={
