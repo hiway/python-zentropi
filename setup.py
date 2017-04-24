@@ -22,9 +22,14 @@ def read(*names, **kwargs):
     ).read()
 
 
+redis = [
+    'aioredis==0.3.0, <0.4',
+]
+
+
 setup(
     name='zentropi',
-    version='0.1.1',
+    version='0.1.2',
     license='Apache 2.0',
     description='Script Your World.',
     long_description='%s\n%s' % (
@@ -66,17 +71,16 @@ setup(
         'pub-sub',
     ],
     install_requires=[
-        'aioredis',
-        'click',
-        'fuzzywuzzy',
-        'parse',
-        'pybloom_live',
-        'sortedcontainers',
+        'click>=6.7, <7.0',
+        'fuzzywuzzy>=0.15.0, <0.20',
+        'parse>=1.8.0, <2.0',
+        'prompt_toolkit==1.0.14, <1.1',
+        'pybloom_live>=2.2.0, <2.3',
+        'Pygments>=2.2.0, <2.3',
+        'sortedcontainers>=1.5.7, <1.6',
     ],
     extras_require={
-        # eg:
-        #   'rst': ['docutils>=0.11'],
-        #   ':python_version=="2.6"': ['argparse'],
+        'redis': redis,
     },
     entry_points={
         'console_scripts': [

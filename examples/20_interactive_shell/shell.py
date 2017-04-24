@@ -3,7 +3,6 @@ import asyncio
 import sys
 import os
 import re
-import uvloop
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
@@ -11,19 +10,14 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import create_prompt_application
 from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
-from pytz import all_timezones_set
 from zentropi import Agent
 from zentropi import on_event
 from zentropi import on_message
-
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
 PROMPT_MORE = '  '
 history = FileHistory(os.path.expanduser('~/.maya_history'))
-
-ALL_TIMEZONES = all_timezones_set
 
 
 def extract_urls(text):
