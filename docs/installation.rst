@@ -78,7 +78,8 @@ You can run ``deactivate`` to disable the virtualenv in current session.
 Remember to run ``source zen/bin/activate`` in a new terminal session to activate the virtualenv.
 
 
-6. Install zentropi inside virtualenv
+5. Install zentropi inside virtualenv
+-------------------------------------
 
 ::
 
