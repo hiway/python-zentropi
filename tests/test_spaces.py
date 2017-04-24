@@ -88,7 +88,7 @@ def test_spaces_join():
     assert spaces.spaces() == [space_name]
     cmd2 = spaces.join(agent_name, space_name + '2')
     assert cmd2.data == {'space': space_name + '2'}
-    assert spaces.spaces() == [space_name, space_name + '2']
+    assert sorted(spaces.spaces()) == sorted([space_name, space_name + '2'])
     cmd3 = spaces.join(agent_name + '3', space_name)
     assert agent_name in spaces.agents(space_name)
     assert agent_name + '3' in spaces.agents(space_name)
