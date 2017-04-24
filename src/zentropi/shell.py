@@ -1,8 +1,6 @@
 # coding=utf-8
-import asyncio
 import sys
 import os
-import uvloop
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
@@ -13,8 +11,6 @@ from pygments.token import Token
 from zentropi import Agent
 from zentropi import on_event
 from zentropi import on_message
-
-asyncio.set_event_loop_policy(uvloop.EventLoopPolicy())
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
