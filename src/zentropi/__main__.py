@@ -11,5 +11,6 @@ Why does this file exist, and why __main__? For more info, read:
 """  # pragma: no cover
 from zentropi.cli import main  # pragma: no cover
 
+
 if __name__ == "__main__":  # pragma: no cover
     main()

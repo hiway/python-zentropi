@@ -1,17 +1,20 @@
 # coding=utf-8
 from collections import defaultdict
-from inspect import getfullargspec
-from inspect import iscoroutinefunction
+from inspect import (
+    getfullargspec,
+    iscoroutinefunction,
+)
 
-from fuzzywuzzy import fuzz
-from fuzzywuzzy import process
+from fuzzywuzzy import fuzz, process
 from parse import parse as string_parse
 from sortedcontainers import SortedListWithKey
 
-from .defaults import MATCH_FUZZY_THRESHOLD
-from .utils import validate_handler
-from .utils import validate_kind
-from .utils import validate_name
+from zentropi.defaults import MATCH_FUZZY_THRESHOLD
+from zentropi.utils import (
+    validate_handler,
+    validate_kind,
+    validate_name,
+)
 
 
 class Handler(object):

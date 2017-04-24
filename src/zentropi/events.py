@@ -1,7 +1,6 @@
 # coding=utf-8
-
-from .frames import Event
-from .handlers import Registry
+from zentropi.frames import Event
+from zentropi.handlers import Registry
 
 
 class Events(Registry):
