@@ -1,6 +1,4 @@
 # coding=utf-8
-
-from zentropi import on_event
 from zentropi import on_message
 from zentropi import Agent
 
