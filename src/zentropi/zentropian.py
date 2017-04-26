@@ -93,12 +93,14 @@ class Zentropian(object):
             raise NotImplementedError()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
-        payload = []  # type: list
+        if isinstance(frame, Message) and frame.source == self.name:
+            return
         if handler.run_async:
             raise NotImplementedError(
                 'Async handlers are not supported '
                 'by the base Zentropian class. '
                 'Please use Agent.')
+        payload = []  # type: list
         if handler.pass_self:
             payload.append(self)
         if handler.kind != KINDS.TIMER:
