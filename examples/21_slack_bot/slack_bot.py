@@ -5,11 +5,11 @@ from zentropi import Agent
 
 class MyBot(Agent):
     @on_message('help')
-    async def help(self, message):
-        return 'Hi, I am an example slack bot. I respond to: help, hello and a few greetings.'
+    def help(self, message):
+        return 'Hi, I am an example slack bot.'
 
     @on_message('good {time_of_day}', parse=True)
-    async def greeting(self, message):
+    def greeting(self, message):
         """
         Matches text pattern "good [time_of_day]"
         Replies only if time_of_day is a known value.
@@ -33,6 +33,6 @@ if __name__ == '__main__':
     from zentropi import run_agents
 
     slack_agent = SlackAgent()
-    my_bot = MyBot('slacker')
+    my_bot = MyBot()
 
     run_agents(slack_agent, my_bot, join='slack', endpoint='inmemory://slack')
