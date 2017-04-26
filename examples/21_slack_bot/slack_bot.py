@@ -12,15 +12,30 @@ class MySlackAgent(Agent):
     async def help(self, message):
         return 'Hi, I am an example slack bot. I respond to: help, hello and a few greetings.'
 
-    @on_message('good {timeofday}', parse=True)
+    @on_message('good {time_of_day}', parse=True)
     async def greeting(self, message):
+        """
+        Matches text pattern "good [time_of_day]"
+        Replies only if time_of_day is a known value.
+        """
         if message.source == self.name:
+            # We don't want to trigger on our own messages;
+            # useful elsewhere, but will put us in a loop
+            # if we reply to 'good morning' with 'good morning!'.
+            # instead, if we are the source of the message, skip.
             return
-        timeofday = message.data.timeofday.strip().lower()
-        if timeofday == 'morning':
+
+        # Extract the parsed field (time_of_day) from message.data, remove any extra spaces and lower-case it.
+        time_of_day = message.data.time_of_day.strip().lower()
+
+        # Make a decision
+        if time_of_day == 'morning':
+            # Returning a string will send a reply to the appropriate channel.
             return 'Top of the morning to you!'
-        elif timeofday in ['afternoon', 'evening', 'night']:
-            return 'Good {}!'.format(timeofday)
+        elif time_of_day in ['afternoon', 'evening', 'night']:
+            return 'Good {}!'.format(time_of_day)
+        # For "Good [whatever]", we won't respond.
+        return
 
 
 if __name__ == '__main__':
