@@ -94,14 +94,16 @@ def validate_handler(handler):
 
 
 def validate_name(name):
+    from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+
     if name is None:
         return None
     if not name or not isinstance(name, str) or len(name.strip()) == 0:
         raise ValueError('Expected name to be a non-empty string. '
                          'Got: {!r}'.format(name))
-    if len(name) > 128:
-        raise ValueError('Expected name to be <= 128 unicode characters long. '
-                         'Got: {} characters'.format(len(name)))
+    if len(name) > FRAME_NAME_MAX_LENGTH:
+        raise ValueError('Expected name to be <= {} unicode characters long. '
+                         'Got: {} characters: {!r}'.format(FRAME_NAME_MAX_LENGTH, len(name), name))
     return name
 
 
@@ -151,3 +153,55 @@ def validate_endpoint(endpoint: str) -> str:
                          'Got: {!r}'.format(endpoint))
     endpoint = endpoint.strip().lower()
     return endpoint
+
+
+def run_agents(*agents, join=None, endpoint=None):
+    import asyncio
+    from zentropi import Agent
+
+    if not isinstance(join, str) or not isinstance(endpoint, str):
+        raise ValueError('Expected join and connect to be a strings. '
+                         'Got join={!r} and connect={!r}\n'
+                         'Hint: pass them as keyword args: \n'
+                         '  run_agents(*agents, join="space_name", endpoint="endpoint://")'
+                         ''.format(join, endpoint))
+    if not agents:
+        return
+    for agent in agents:
+        if not isinstance(agent, Agent):
+            raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
+    loop = asyncio.get_event_loop()
+
+    if len(agents) == 1:
+        agent = agents[0]
+        agent.connect(endpoint)
+        agent.join(join)
+        agent.run()
+        return
+    if len(agents) == 2:
+        first_agent = agents[0]
+        last_agent = agents[1]
+        more_agents = []
+    else:  # if len(agents) > 2:
+        first_agent = agents[0]
+        last_agent = agents[-1]
+        more_agents = agents[1:-1]
+
+    if endpoint.startswith('inmemory://'):
+        # bind the first agent for inmemory:// connections
+        first_agent.start(loop=loop)
+        first_agent.bind(endpoint)
+        first_agent.join(join)
+        connect_agents = more_agents
+    else:
+        connect_agents = [first_agent] + more_agents
+
+    for agent in connect_agents:
+        agent.start(loop=loop)
+        agent.connect(endpoint)
+        agent.join(join)
+
+    last_agent.connect(endpoint)
+    last_agent.join(join)
+    last_agent.loop = loop
+    last_agent.run()

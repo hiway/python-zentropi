@@ -5,6 +5,7 @@ from typing import (
 )
 from uuid import uuid4
 
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 from zentropi.events import (
     Event,
     Events,
@@ -74,22 +75,34 @@ class Zentropian(object):
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
 
     def handle_return(self, frame, return_value):
+        """Original frame and returned value from handler."""
         if isinstance(frame, Event):
             return return_value
         elif isinstance(frame, State):
             return return_value
         elif isinstance(frame, Message):
-            self.message(name=return_value, reply_to=frame.id)
+            print('*** return value:', return_value)
+            if len(return_value) > FRAME_NAME_MAX_LENGTH:
+                name = return_value[:FRAME_NAME_MAX_LENGTH - 5] + '...'
+            else:
+                name = return_value
+            self.message(name=name,
+                         data={'text': return_value},
+                         reply_to=frame.id)
         else:
             raise NotImplementedError()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
-        payload = []  # type: list
+        if isinstance(frame, Message) and frame.source == self.name:
+            return
+        if isinstance(frame, Event) and frame.source != self.name and frame.name.startswith('***'):
+            return
         if handler.run_async:
             raise NotImplementedError(
                 'Async handlers are not supported '
                 'by the base Zentropian class. '
                 'Please use Agent.')
+        payload = []  # type: list
         if handler.pass_self:
             payload.append(self)
         if handler.kind != KINDS.TIMER:
