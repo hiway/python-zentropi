@@ -1,7 +1,5 @@
 # coding=utf-8
-import asyncio
 
-from zentropi.contrib.agents import SlackAgent
 from zentropi import on_event
 from zentropi import on_message
 from zentropi import Agent
@@ -45,7 +43,9 @@ class MySlackAgent(Agent):
 
 if __name__ == '__main__':
     # Execute the following only if run as a script.
+    from zentropi.contrib.agents import SlackAgent
     from zentropi import run_agents
+
     slack_agent = SlackAgent()
     agent = MySlackAgent('slacker')
 
