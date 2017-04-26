@@ -15,7 +15,7 @@ from zentropi import on_message
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
 PROMPT_MORE = '  '
-history = FileHistory(os.path.expanduser('~/.maya_history'))
+history = FileHistory(os.path.expanduser('~/.zentropi_history'))
 
 
 class ZentropiShell(Agent):
@@ -86,13 +86,14 @@ class ZentropiShell(Agent):
         self.spawn(self.interact())
 
     @on_message('*')
-    def on_any_message(self, message):
-        if message.source == self.name:
+    @on_event('*')
+    def on_any_message(self, frame):
+        if frame.source == self.name:
             return
-        if message.data:
-            print('@{}: {!r} {!r}'.format(message.source, message.name, message.data))
+        if frame.data:
+            print('@{}: {!r} {!r}'.format(frame.source, frame.name, frame.data))
         else:
-            print('@{}: {!r}'.format(message.source, message.name))
+            print('@{}: {!r}'.format(frame.source, frame.name))
 
     @on_message('join {space}', parse=True)
     def join_space(self, message):

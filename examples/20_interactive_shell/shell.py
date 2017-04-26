@@ -17,7 +17,7 @@ from zentropi import on_message
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
 PROMPT_MORE = '  '
-history = FileHistory(os.path.expanduser('~/.maya_history'))
+history = FileHistory(os.path.expanduser('~/.zentropi_history'))
 
 
 def extract_urls(text):
