@@ -16,14 +16,7 @@ class MySlackAgent(Agent):
         Matches text pattern "good [time_of_day]"
         Replies only if time_of_day is a known value.
         """
-        if message.source == self.name:
-            # We don't want to trigger on our own messages;
-            # useful elsewhere, but will put us in a loop
-            # if we reply to 'good morning' with 'good morning!'.
-            # instead, if we are the source of the message, skip.
-            return
-
-        # Extract the parsed field (time_of_day) from message.data, remove any extra spaces and lower-case it.
+        # Extract field time_of_day from message.data, remove any extra spaces and lower-case it.
         time_of_day = message.data.time_of_day.strip().lower()
 
         # Make a decision
