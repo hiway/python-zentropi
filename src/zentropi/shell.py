@@ -8,7 +8,7 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import create_prompt_application
 from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
-from zentropi import Agent
+from zentropi import Agent, KINDS
 from zentropi import on_event
 from zentropi import on_message
 
@@ -16,6 +16,15 @@ BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
 PROMPT_MORE = '  '
 history = FileHistory(os.path.expanduser('~/.zentropi_history'))
+
+FRAME_PREFIX = {
+    KINDS.EVENT: '⚡ ︎',
+    KINDS.MESSAGE: '✉️ ',
+    KINDS.STATE: '⇥ ',
+    KINDS.COMMAND: '⎈ ',
+    KINDS.REQUEST: '🔺 ',
+    KINDS.RESPONSE: '🔻 ',
+}
 
 
 class ZentropiShell(Agent):
@@ -90,10 +99,11 @@ class ZentropiShell(Agent):
     def on_any_message(self, frame):
         if frame.source == self.name:
             return
+        prefix = FRAME_PREFIX[frame.kind]
         if frame.data:
-            print('@{}: {!r} {!r}'.format(frame.source, frame.name, frame.data))
+            print('{} @{}: {!r} {!r}'.format(prefix, frame.source, frame.name, frame.data))
         else:
-            print('@{}: {!r}'.format(frame.source, frame.name))
+            print('{} @{}: {!r}'.format(prefix, frame.source, frame.name))
 
     @on_message('join {space}', parse=True)
     def join_space(self, message):
