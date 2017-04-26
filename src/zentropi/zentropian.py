@@ -95,6 +95,8 @@ class Zentropian(object):
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
         if isinstance(frame, Message) and frame.source == self.name:
             return
+        if isinstance(frame, Event) and frame.source != self.name and frame.name.startswith('***'):
+            return
         if handler.run_async:
             raise NotImplementedError(
                 'Async handlers are not supported '
