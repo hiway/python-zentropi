@@ -3,7 +3,7 @@ from zentropi import on_message
 from zentropi import Agent
 
 
-class MySlackAgent(Agent):
+class MyBot(Agent):
     @on_message('help')
     async def help(self, message):
         return 'Hi, I am an example slack bot. I respond to: help, hello and a few greetings.'
@@ -33,6 +33,6 @@ if __name__ == '__main__':
     from zentropi import run_agents
 
     slack_agent = SlackAgent()
-    agent = MySlackAgent('slacker')
+    my_bot = MyBot('slacker')
 
-    run_agents(slack_agent, agent, join='slack', endpoint='inmemory://slack')
+    run_agents(slack_agent, my_bot, join='slack', endpoint='inmemory://slack')
