@@ -37,29 +37,16 @@ class MySlackAgent(Agent):
         # For "Good [whatever]", we won't respond.
         return
 
+    @on_event('*** started')
+    def startup(self, event):
+        self.connect('redis://localhost:6379')
+        self.join('slack')
+
 
 if __name__ == '__main__':
     # Execute the following only if run as a script.
-
-    # Make an instance of SlackAgent and bind it to `inmemory://slack`
-    # Also join a space, so the two agents can communicate.
+    from zentropi import run_agents
     slack_agent = SlackAgent()
-    slack_agent.bind('inmemory://slack')
-    slack_agent.join('slack')
-
-    # Make an instance of our custom agent that interacts with SlackAgent
-    # to build our Slack bot, connect and join same as slack_agent.
     agent = MySlackAgent('slacker')
-    agent.connect('inmemory://slack')
-    agent.join('slack')
 
-    # Start the first agent, which will create an asyncio event loop
-    slack_agent.start()
-
-    # Use the loop from first agent to initialize other agents...
-    # another_agent.start(slack_agent.loop)
-
-    # The last agent will run with all other agents, give it the
-    # event loop and run()!
-    agent.loop = slack_agent.loop
-    agent.run()
+    run_agents(slack_agent, agent, join='slack', endpoint='inmemory://slack')
