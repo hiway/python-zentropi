@@ -94,14 +94,16 @@ def validate_handler(handler):
 
 
 def validate_name(name):
+    from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+
     if name is None:
         return None
     if not name or not isinstance(name, str) or len(name.strip()) == 0:
         raise ValueError('Expected name to be a non-empty string. '
                          'Got: {!r}'.format(name))
-    if len(name) > 128:
-        raise ValueError('Expected name to be <= 128 unicode characters long. '
-                         'Got: {} characters'.format(len(name)))
+    if len(name) > FRAME_NAME_MAX_LENGTH:
+        raise ValueError('Expected name to be <= {} unicode characters long. '
+                         'Got: {} characters: {!r}'.format(FRAME_NAME_MAX_LENGTH, len(name), name))
     return name
 
 

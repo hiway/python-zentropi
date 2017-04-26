@@ -5,6 +5,7 @@ from typing import (
 )
 from uuid import uuid4
 
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 from zentropi.events import (
     Event,
     Events,
@@ -74,12 +75,20 @@ class Zentropian(object):
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
 
     def handle_return(self, frame, return_value):
+        """Original frame and returned value from handler."""
         if isinstance(frame, Event):
             return return_value
         elif isinstance(frame, State):
             return return_value
         elif isinstance(frame, Message):
-            self.message(name=return_value, reply_to=frame.id)
+            print('*** return value:', return_value)
+            if len(return_value) > FRAME_NAME_MAX_LENGTH:
+                name = return_value[:FRAME_NAME_MAX_LENGTH - 5] + '...'
+            else:
+                name = return_value
+            self.message(name=name,
+                         data={'text': return_value},
+                         reply_to=frame.id)
         else:
             raise NotImplementedError()
 
