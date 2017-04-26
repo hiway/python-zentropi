@@ -45,14 +45,14 @@ class SlackAgent(Agent):
                                             'reconnect_url',
                                             'user_typing',
                                             'desktop_notification']:
-                        print('*** skipping', slack_event)
+                        print('Skipping', slack_event)
                         continue
                     elif slack_event_type in ['presence_change',
                                               'message']:
+                        print('Emitting', slack_event)
                         self.emit('slack_{}'.format(slack_event_type))
-                        print('*** emitting', slack_event)
                     else:
-                        print('*** ignoring', slack_event)
+                        print('Unknown', slack_event)
 
     @on_event('*** started')
     def start_streaming(self, event):
