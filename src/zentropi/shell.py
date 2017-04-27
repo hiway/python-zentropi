@@ -115,7 +115,11 @@ class ZentropiShell(Agent):
         space = message.data.space.strip()
         self.leave(space)
 
-    @on_message('.{text}', parse=True)
+    @on_message('*', parse=True)
     def broadcast_message(self, message):
-        text = message.data.text.strip()
-        self.message(text)
+        if message.internal is True:
+            if 'text' in message.data:
+                text = message.data.text.strip()
+            else:
+                text = message.name
+            self.message(text)
