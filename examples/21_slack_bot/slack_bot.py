@@ -1,4 +1,6 @@
 # coding=utf-8
+import random
+
 from zentropi import on_message
 from zentropi import Agent
 
@@ -28,6 +30,10 @@ class MyBot(Agent):
             return 'Good {}!'.format(time_of_day)
         # For "Good [whatever]", we won't respond.
         return
+
+    @on_message('will it rain?', fuzzy=True)
+    def rain_forecast(self, message):
+        return random.choice(['Maybe?', 'Umm...', 'I am not sure'])
 
 
 if __name__ == '__main__':
