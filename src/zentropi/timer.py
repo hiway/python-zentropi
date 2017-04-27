@@ -10,7 +10,7 @@ class TimerRegistry(Registry):
         self.should_stop = False
 
     def start_timers(self, spawn_func):
-        for interval, handlers in self._handlers._handlers.items():
+        for interval, handlers in self._registry._handlers.items():
             for handler in handlers:
                 spawn_func(self._timer_wrapper(handler))
 

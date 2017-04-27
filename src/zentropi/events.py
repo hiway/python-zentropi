@@ -17,7 +17,7 @@ class Events(Registry):
     """
     def emit(self, name, data=None, space=None, internal=False, source=None, reply_to=None):
         frame_ = Event(name=name, data=data, space=space, source=source, reply_to=reply_to)
-        frame, handlers = self._handlers.match(frame=frame_)
+        frame, handlers = self._registry.match(frame=frame_)
         for handler in handlers:
             ret_val = self._trigger_frame_handler(
                 frame=frame, handler=handler, internal=internal)
