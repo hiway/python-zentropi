@@ -46,12 +46,14 @@ class Frame(object):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         self._name = validate_name(name)
         self._data = validate_data(data)
         self._meta = validate_meta(meta)
         self._id = validate_id(id) or uuid4().hex
         self._kind = validate_kind(kind) or KINDS.UNSET
+        self._meta.update({'internal': bool(internal)})
         if source:
             self._meta.update({'source': validate_name(source)})
         if target:
@@ -125,6 +127,10 @@ class Frame(object):
     def timestamp(self) -> Optional[str]:
         return self._meta.get('timestamp', None)
 
+    @property
+    def internal(self) -> bool:
+        return self._meta.get('internal', False)
+
     @staticmethod
     def build(name: str, *,
               data: dict = None,
@@ -180,10 +186,11 @@ class Command(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.COMMAND, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.COMMAND
 
 
@@ -200,10 +207,11 @@ class Event(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.EVENT, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.EVENT
 
 
@@ -220,10 +228,11 @@ class Message(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.MESSAGE, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.MESSAGE
 
 
@@ -240,10 +249,11 @@ class Request(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.REQUEST, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.REQUEST
 
 
@@ -260,10 +270,11 @@ class Response(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.RESPONSE, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.RESPONSE
 
 
@@ -280,8 +291,9 @@ class State(Frame):
                  target: str = None,
                  space: str = None,
                  reply_to: str = None,
-                 timestamp: int = None) -> None:
+                 timestamp: int = None,
+                 internal: bool = False) -> None:
         super().__init__(name, data=data, meta=meta, kind=KINDS.STATE, id=id,
                          source=source, target=target, space=space,
-                         reply_to=reply_to, timestamp=timestamp)
+                         reply_to=reply_to, timestamp=timestamp, internal=internal)
         self._kind = KINDS.STATE
