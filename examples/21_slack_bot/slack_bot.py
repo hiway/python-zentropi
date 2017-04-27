@@ -1,17 +1,20 @@
 # coding=utf-8
+import random
 
-from zentropi import on_event
 from zentropi import on_message
 from zentropi import Agent
 
 
-class MySlackAgent(Agent):
+class MyBot(Agent):
     @on_message('help')
-    async def help(self, message):
-        return 'Hi, I am an example slack bot. I respond to: help, hello and a few greetings.'
+    def help(self, message):
+        commands = ''
+        for name in self.messages._handlers._handlers:
+            commands += '{}\n'.format(name)
+        return 'Hi, I am an example slack bot. I can respond to:\n' + commands
 
     @on_message('good {time_of_day}', parse=True)
-    async def greeting(self, message):
+    def greeting(self, message):
         """
         Matches text pattern "good [time_of_day]"
         Replies only if time_of_day is a known value.
@@ -28,6 +31,10 @@ class MySlackAgent(Agent):
         # For "Good [whatever]", we won't respond.
         return
 
+    @on_message('will it rain?', fuzzy=True)
+    def rain_forecast(self, message):
+        return random.choice(['Maybe?', 'Umm...', 'I am not sure'])
+
 
 if __name__ == '__main__':
     # Execute the following only if run as a script.
@@ -35,6 +42,6 @@ if __name__ == '__main__':
     from zentropi import run_agents
 
     slack_agent = SlackAgent()
-    agent = MySlackAgent('slacker')
+    my_bot = MyBot()
 
-    run_agents(slack_agent, agent, join='slack', endpoint='inmemory://slack')
+    run_agents(slack_agent, my_bot, join='slack', endpoint='inmemory://slack')
