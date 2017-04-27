@@ -102,6 +102,10 @@ class HandlerRegistry(object):
                                 self.match_parse,
                                 self.match_fuzzy]
 
+    @property
+    def handlers(self):
+        return self._handlers.keys()
+
     def add_handler(self, name, handler):
         validate_handler(handler)
         if not any([handler.match_exact,
@@ -176,6 +180,10 @@ class Registry(object):
             raise ValueError('Expected a callable for callback, got: {}'
                              ''.format(callback))
         self._trigger_frame_handler = callback
+
+    @property
+    def handlers(self):
+        return self._registry.handlers
 
     def add_handler(self, name, handler):
         self._registry.add_handler(name, handler)
