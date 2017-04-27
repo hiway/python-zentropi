@@ -1,6 +1,12 @@
 language: python
 sudo: false
 cache: pip
+addons:
+  apt:
+    sources:
+      - deadsnakes
+    packages:
+      - python3.5
 env:
   global:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
@@ -21,7 +27,7 @@ before_install:
   - uname -a
   - lsb_release -a
 install:
-  - pip install tox
+  - pip install tox-travis
   - virtualenv --version
   - easy_install --version
   - pip --version
