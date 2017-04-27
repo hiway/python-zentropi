@@ -8,9 +8,13 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import create_prompt_application
 from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
-from zentropi import Agent, KINDS
-from zentropi import on_event
-from zentropi import on_message
+from zentropi import (
+    Agent,
+    KINDS,
+    Message,
+    on_event,
+    on_message,
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
@@ -98,6 +102,15 @@ class ZentropiShell(Agent):
     @on_event('*')
     def on_any_message(self, frame):
         if frame.source == self.name:
+            if frame.internal is False:
+                return
+            if not isinstance(frame, Message):
+                return
+            if 'text' in frame.data:
+                text = frame.data.text.strip()
+            else:
+                text = frame.name
+            self.message(text)
             return
         prefix = FRAME_PREFIX[frame.kind]
         if frame.data:
@@ -114,12 +127,3 @@ class ZentropiShell(Agent):
     def leave_space(self, message):
         space = message.data.space.strip()
         self.leave(space)
-
-    @on_message('*', parse=True)
-    def broadcast_message(self, message):
-        if message.internal is True:
-            if 'text' in message.data:
-                text = message.data.text.strip()
-            else:
-                text = message.name
-            self.message(text)
