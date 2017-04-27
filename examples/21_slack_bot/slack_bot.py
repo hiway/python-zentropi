@@ -9,7 +9,7 @@ class MyBot(Agent):
     @on_message('help')
     def help(self, message):
         commands = ''
-        for name in self.messages._handlers._handlers:
+        for name in self.messages._registry._handlers:  # todo: implement a better way.
             commands += '{}\n'.format(name)
         return 'Hi, I am an example slack bot. I can respond to:\n' + commands
 
