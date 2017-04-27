@@ -30,6 +30,7 @@ from zentropi.frames import (
     Command,
     Event,
     Frame,
+    Message,
     State,
 )
 from zentropi.spaces import Spaces
@@ -60,6 +61,7 @@ __all__ = [
     'fields',
     'InMemoryConnection',
     'KINDS',
+    'Message',
     'on_event',
     'on_message',
     'on_state',
