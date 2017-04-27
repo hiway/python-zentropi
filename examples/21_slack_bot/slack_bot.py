@@ -6,7 +6,10 @@ from zentropi import Agent
 class MyBot(Agent):
     @on_message('help')
     def help(self, message):
-        return 'Hi, I am an example slack bot.'
+        commands = ''
+        for name in self.messages._handlers._handlers:
+            commands += '{}\n'.format(name)
+        return 'Hi, I am an example slack bot. I can respond to:\n' + commands
 
     @on_message('good {time_of_day}', parse=True)
     def greeting(self, message):
