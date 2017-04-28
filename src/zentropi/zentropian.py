@@ -81,7 +81,6 @@ class Zentropian(object):
         elif isinstance(frame, State):
             return return_value
         elif isinstance(frame, Message):
-            print('*** return value:', return_value)
             if len(return_value) > FRAME_NAME_MAX_LENGTH:
                 name = return_value[:FRAME_NAME_MAX_LENGTH - 5] + '...'
             else:

@@ -10,6 +10,6 @@ class Messages(Registry):
         for handler in handlers:
             ret_val = self._trigger_frame_handler(
                 frame=frame, handler=handler, internal=internal)
-            if ret_val is not None:
+            if ret_val is not None:  # todo: is this needed? (see: agent.handle_return())
                 raise NotImplementedError('Send message as reply.')
         return frame
