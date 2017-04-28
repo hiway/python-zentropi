@@ -73,6 +73,19 @@ concepts such as State, Event and Message, each is implemented as a simple to le
 and easy to use API.
 
 
+Installation
+============
+
+::
+
+    pip install zentropi
+
+Documentation
+=============
+
+https://zentropi.readthedocs.io/
+
+
 Example
 =======
 
@@ -188,16 +201,3 @@ to consider them in our original plans.
 
 There is more, much more on the way, watch this repo or better, fork this repo,
 contribute and help us make it all real sooner!
-
-
-Installation
-============
-
-::
-
-    pip install zentropi
-
-Documentation
-=============
-
-https://zentropi.readthedocs.io/
