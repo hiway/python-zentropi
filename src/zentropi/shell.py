@@ -101,11 +101,7 @@ class ZentropiShell(Agent):
     @on_message('*')
     @on_event('*')
     def on_any_message(self, frame):
-        if frame.source == self.name:
-            if frame.internal is False:
-                return
-            if not isinstance(frame, Message):
-                return
+        if frame.source == self.name and frame.internal is True and isinstance(frame, Message):
             if 'text' in frame.data:
                 text = frame.data.text.strip()
             else:
