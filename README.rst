@@ -81,38 +81,113 @@ Let us make an agent that will reply to a "hello" message with "Hello, world!"
 ::
 
     # coding=utf-8
-    from zentropi import Agent
-    from zentropi import on_message
-
-    # Create an instance of Agent.
-    agent = Agent('hello_bot')
-
-    # Trigger on "hello"
-    @agent.on_message('hello')
-    def say_hello(message):
-        # Send reply to the incoming message.
-        return 'Hello, world!'
-
-    # Connect to local redis.
-    agent.connect('redis://localhost:6379')
-
-    # Join "test" space.
-    agent.join('test')
-
-    agent.run()
+    from zentropi.shell import ZentropiShell
+    from zentropi import (
+        Agent,
+        on_message,
+        run_agents
+    )
 
 
-Save this as "hello.py", and run it using the command "python hello.py"
+    class HelloBot(Agent):
+        @on_message('hello')
+        def on_hello(self, message):
+            return 'Hi!'
 
-We can now interact with our newly created agent using the following commands:
+
+    hello_bot = HelloBot('hello_bot')
+    shell = ZentropiShell('shell')
+    run_agents(shell, hello_bot, join='test_space', endpoint='inmemory://test')
+
+
+Save this as "hello.py"
+
+Let us run it using the command:
+::
+
+    $ python hello.py
+
+
+We can now interact with our newly created agent using our built-in shell prompt.
+While starting up, the shell itself emits events, which you can see displayed
+on the screen as ``⚡ ︎ @shell: 'shell-starting'`` followed by ``⚡ ︎ @shell: 'shell-ready'``.
+
+You will be presented with a prompt ``〉``, where you can type in messages to be broadcast
+to all the spaces that the shell has joined. Go ahead and type "hello", followed by ENTER key.
 
 ::
 
-    $ zentropi shell
-    〉join test
-    〉. hello
-    @hello_bot: 'Hello, world!'
-    〉exit
+    $ python hello.py
+    ⚡ ︎ @shell: 'shell-starting'
+    ⚡ ︎ @shell: 'shell-ready'
+    〉hello
+    ✉️  @shell: 'hello'
+    ✉️  @hello_bot: 'Hi!' {'text': 'Hi!'}
+    ⚡ ︎ @shell: 'shell-ready'
+    〉
+
+
+Right after you hit ENTER, you will see ``✉️  @shell: 'hello'``, which is the shell broadcasting
+your input as Message to 'test_space', which triggers the ``on_hello()`` method on ``hello_bot``
+which we decorated with ``@on_message('hello')``.
+
+The ``on_hello()`` "handler", as we call them in this codebase, simply returns a 'Hi!', which
+is broadcast back to the space as a ``message`` with its ``reply_to`` set to the ``message.id``
+of the message that triggered the handler.
+
+This shows up in our shell as ``✉️  @hello_bot: 'Hi!' {'text': 'Hi!'}`` followed by the shell
+emitting ``shell-ready`` event.
+
+Seems like a lot for a hello world? Wait, let me show you this little trick... how much effort
+do you think it would be, say, to create a slack bot that simply responds to "hello" with "hi"?
+
+1. Add ``from zentropi.extra.agents import SlackAgent`` with rest of the imports
+   at the top of ``hello.py``. This imports a helper agent that will relay messages between
+   Slack and Zentropi.
+2. Add ``slack_agent = SlackAgent('hello_slack')`` just before the last line.
+3. Update the last line:
+
+::
+
+    run_agents(shell, hello_bot, join='test_space', endpoint='inmemory://test')
+
+To look like this:
+
+::
+
+    run_agents(shell, hello_bot, slack_agent, join='test_space', endpoint='inmemory://test')
+
+4. And finally, add ``export SLACK_BOT_API_KEY="[YOUR-API-KEY]"`` to your ``.bash_profile``
+   or another preferred way to set environment variables, and run ``python hello.py`` again.
+
+Yup, that's it :)
+
+Would you think it cool if you could say, add an agent for Twitter in as many steps and
+have a bot that works with Slack *and* Twitter, from the same Python process?
+
+However, don't let this example make you think Zentropi is a tool to make chat-bots;
+using this feature, we can build agents that can be accessed by humans with simple
+text-commands as well as by software through states, events, requests and of course,
+messages as well.
+
+Zentropi is your medium and toolbox to make software that draws no unnecessary lines
+between machines and people. We are all computing machines of varying capacities,
+and an inclusive approach that enables each one of us to be better at what we want
+to do is a honking good strategy!
+
+It should not matter whether machines are big or small - as long as Python-3.5+
+(and soon, Micropython) is available and minimum security expectations are met, we can
+run Zentropian agents. It should not matter whether people access the agent from a mobile
+phone app, a webapp, a command line interface or an accessibility device - a human mind
+is as capable as another, irregardless of the body they occupy. We admit, that like
+untrained neural networks and hardware that does not cooperate - human (and animal)
+brains, the hardware our minds run on, can be less than perfect; the frustrations of
+a conscious mind operating a faulty body, on a ill-cooperating hardware are many;
+and it would be a shame if we left out machines or humans because we were too lazy
+to consider them in our original plans.
+
+There is more, much more on the way, watch this repo or better, fork this repo,
+contribute and help us make it all real sooner!
 
 
 Installation
