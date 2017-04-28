@@ -188,16 +188,5 @@ between machines and people. We are all computing machines of varying capacities
 and an inclusive approach that enables each one of us to be better at what we want
 to do is a honking good strategy!
 
-It should not matter whether machines are big or small - as long as Python-3.5+
-(and soon, Micropython) is available and minimum security expectations are met, we can
-run Zentropian agents. It should not matter whether people access the agent from a mobile
-phone app, a webapp, a command line interface or an accessibility device - a human mind
-is as capable as another, irregardless of the body they occupy. We admit, that like
-untrained neural networks and hardware that does not cooperate - human (and animal)
-brains, the hardware our minds run on, can be less than perfect; the frustrations of
-a conscious mind operating a faulty body, on a ill-cooperating hardware are many;
-and it would be a shame if we left out machines or humans because we were too lazy
-to consider them in our original plans.
-
 There is more, much more on the way, watch this repo or better, fork this repo,
 contribute and help us make it all real sooner!
