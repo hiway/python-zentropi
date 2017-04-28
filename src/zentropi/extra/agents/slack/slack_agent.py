@@ -7,7 +7,6 @@ except ImportError:
 
 import json
 import os
-import pprint
 
 from aiohttp.web_ws import MsgType
 from zentropi import (Agent,
@@ -30,7 +29,7 @@ class SlackAgent(Agent):
     async def api_call(self, method, data=None):
         """
         Slack API call.
-        
+
         https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f
         """
         with aiohttp.ClientSession() as session:
