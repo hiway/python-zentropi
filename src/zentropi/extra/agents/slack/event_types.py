@@ -6,11 +6,6 @@ except ImportError:
     raise ImportError('Please run `pip install beautifulsoup4`')
 
 try:
-    import lxml
-except ImportError:
-    raise ImportError('Please run `pip install lxml`')
-
-try:
     import aiohttp
 except ImportError:
     raise ImportError('Please run `pip install aiohttp`')
@@ -126,9 +121,8 @@ def get_event_types():
 
 
 if __name__ == '__main__':
-    """
-    You can run this module directly to get the latest API documentation 
-    and extract EVENT_TYPES when the docs are updated. Remember to paste 
-    back the output into this file (EVENT_TYPES = {...} at top of file).
-    """
+    # You can run this module directly to get the latest API documentation
+    # and extract EVENT_TYPES when the docs are updated. Remember to paste
+    # back the output into this file (EVENT_TYPES = {...} at top of file).
+
     pprint.pprint(get_event_types())

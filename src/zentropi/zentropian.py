@@ -81,7 +81,6 @@ class Zentropian(object):
         elif isinstance(frame, State):
             return return_value
         elif isinstance(frame, Message):
-            print('*** return value:', return_value)
             if len(return_value) > FRAME_NAME_MAX_LENGTH:
                 name = return_value[:FRAME_NAME_MAX_LENGTH - 5] + '...'
             else:
@@ -163,7 +162,6 @@ class Zentropian(object):
 
     def leave(self, space, *, tags: Optional[Union[list, str]] = None):
         self._connections.leave(space, tags=tags)
-
 
     def close(self, *, endpoint: Optional[str] = None, tags: Optional[Union[list, str]] = None):
         """Closes all connections if no endpoint or tags given."""

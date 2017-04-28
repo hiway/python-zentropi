@@ -7,7 +7,6 @@ except ImportError:
 
 import json
 import os
-import pprint
 
 from aiohttp.web_ws import MsgType
 from zentropi import (Agent,
@@ -30,7 +29,7 @@ class SlackAgent(Agent):
     async def api_call(self, method, data=None):
         """
         Slack API call.
-        
+
         https://medium.com/@greut/a-slack-bot-with-pythons-3-5-asyncio-ad766d8b5d8f
         """
         with aiohttp.ClientSession() as session:
@@ -56,17 +55,18 @@ class SlackAgent(Agent):
                         continue
                     slack_event = json.loads(msg.data)
                     if 'type' not in slack_event:
-                        print('Skipping', slack_event)
+                        # print('Skipping', slack_event)
                         continue
                     slack_event_type = slack_event['type']
                     if slack_event_type in EVENT_TYPES:
-                        print('Emitting', slack_event)
+                        # print('Emitting', slack_event)
                         self.emit('slack_{}'.format(slack_event_type), data=slack_event)
                         if slack_event_type.startswith('message'):
                             msg = self.message(name=slack_event['text'], data=slack_event)
                             self._sent_messages.update({msg.id: msg.data})
                     else:
-                        print('Unknown', slack_event)
+                        # print('Unknown', slack_event)
+                        pass
 
     @on_event('*** started')
     def start_streaming(self, event):

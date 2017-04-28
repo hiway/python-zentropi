@@ -9,7 +9,7 @@ class MyBot(Agent):
     @on_message('help')
     def help(self, message):
         commands = ''
-        for name in self.messages._handlers._handlers:
+        for name in self.messages.handlers:
             commands += '{}\n'.format(name)
         return 'Hi, I am an example slack bot. I can respond to:\n' + commands
 
@@ -38,7 +38,7 @@ class MyBot(Agent):
 
 if __name__ == '__main__':
     # Execute the following only if run as a script.
-    from zentropi.contrib.agents import SlackAgent
+    from zentropi.extra.agents import SlackAgent
     from zentropi import run_agents
 
     slack_agent = SlackAgent()

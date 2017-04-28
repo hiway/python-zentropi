@@ -21,9 +21,9 @@ def test_events():
     handler = Handler(KINDS.STATE, 'the_answer', test_handler)
     events.add_handler('ping', handler=handler)
     events.emit('ping')
-    assert handler in events._handlers._handlers['ping']
+    assert handler in events._registry._handlers['ping']
     events.remove_handler('ping', handler=handler)
-    assert handler not in events._handlers._handlers['ping']
+    assert handler not in events._registry._handlers['ping']
 
 
 def test_events_set_callback_later():

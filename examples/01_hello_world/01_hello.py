@@ -1,22 +1,18 @@
 # coding=utf-8
-from zentropi import Agent
-from zentropi import on_message
-
-# Create an instance of Agent.
-agent = Agent('hello_bot')
-
-
-# Trigger on "hello"
-@agent.on_message('hello')
-def say_hello(message):
-    # Send reply to the incoming message.
-    return 'Hello, world!'
+from zentropi.shell import ZentropiShell
+from zentropi import (
+    Agent,
+    on_message,
+    run_agents
+)
 
 
-# Connect to local redis.
-agent.connect('redis://localhost:6379')
+class HelloBot(Agent):
+    @on_message('hello', fuzzy=True)
+    def on_hello(self, message):
+        return 'Hi!'
 
-# Join "test" space.
-agent.join('test')
 
-agent.run()
+hello_bot = HelloBot()
+shell = ZentropiShell()
+run_agents(shell, hello_bot, join='slack', endpoint='inmemory://test')
