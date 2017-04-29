@@ -155,16 +155,20 @@ def validate_endpoint(endpoint: str) -> str:
     return endpoint
 
 
-def run_agents(*agents, join=None, endpoint=None):
+def validate_space(space):
+    if not isinstance(space, str):
+        raise ValueError('Expected space to be a string.'
+                         'Got: {!r}'.format(space))
+    return space
+
+
+def run_agents(*agents, endpoint='inmemory://', space='zentropia'):
     import asyncio
     from zentropi import Agent
 
-    if not isinstance(join, str) or not isinstance(endpoint, str):
-        raise ValueError('Expected join and connect to be a strings. '
-                         'Got join={!r} and connect={!r}\n'
-                         'Hint: pass them as keyword args: \n'
-                         '  run_agents(*agents, join="space_name", endpoint="endpoint://")'
-                         ''.format(join, endpoint))
+    endpoint = validate_endpoint(endpoint)
+    space = validate_space(space)
+
     if not agents:
         return
     for agent in agents:
@@ -175,7 +179,7 @@ def run_agents(*agents, join=None, endpoint=None):
     if len(agents) == 1:
         agent = agents[0]
         agent.connect(endpoint)
-        agent.join(join)
+        agent.join(space)
         agent.run()
         return
     if len(agents) == 2:
@@ -191,7 +195,7 @@ def run_agents(*agents, join=None, endpoint=None):
         # bind the first agent for inmemory:// connections
         first_agent.start(loop=loop)
         first_agent.bind(endpoint)
-        first_agent.join(join)
+        first_agent.join(space)
         connect_agents = more_agents
     else:
         connect_agents = [first_agent] + more_agents
@@ -199,9 +203,9 @@ def run_agents(*agents, join=None, endpoint=None):
     for agent in connect_agents:
         agent.start(loop=loop)
         agent.connect(endpoint)
-        agent.join(join)
+        agent.join(space)
 
     last_agent.connect(endpoint)
-    last_agent.join(join)
+    last_agent.join(space)
     last_agent.loop = loop
     last_agent.run()
