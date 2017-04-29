@@ -125,24 +125,24 @@ Save this as ``hello.py`` and run with ``$ python hello.py``
 
 You should see this on your screen:
 
-```
-$ python hello.py
-⚡ ︎ @shell: '*** started'
-⚡ ︎ @shell: 'shell-starting'
-⚡ ︎ @shell: 'shell-ready'
-〉
-```
+::
+
+    $ python hello.py
+    ⚡ ︎ @shell: '*** started'
+    ⚡ ︎ @shell: 'shell-starting'
+    ⚡ ︎ @shell: 'shell-ready'
+    〉
 
 We can type any message at the prompt `〉` and the shell agent will
 broadcast it for us. Go ahead and type "hello", followed by ENTER.
 
-```
-〉hello
-✉  @shell: 'hello'
-✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
-⚡ ︎ @shell: 'shell-ready'
-〉
-```
+::
+
+    〉hello
+    ✉  @shell: 'hello'
+    ✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
+    ⚡ ︎ @shell: 'shell-ready'
+    〉
 
 If you see this, hooray! You've created your first Zentropian Agent!
 
