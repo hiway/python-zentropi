@@ -15,6 +15,8 @@ from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
 from zentropi.zentropian import (
+    on_event,
+    on_message,
     on_state,
     Zentropian,
 )
@@ -166,3 +168,12 @@ def on_timer(interval):
         return handler
 
     return wrapper
+
+
+__all__ = [
+    'Agent',
+    'on_event',
+    'on_message',
+    'on_state',
+    'on_timer',
+]

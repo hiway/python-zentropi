@@ -8,12 +8,14 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import create_prompt_application
 from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
-from zentropi import (
+from .agent import (
     Agent,
-    KINDS,
-    Message,
     on_event,
-    on_message,
+    on_message
+)
+from .frames import (
+    KINDS,
+    Message
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
@@ -23,7 +25,7 @@ history = FileHistory(os.path.expanduser('~/.zentropi_history'))
 
 FRAME_PREFIX = {
     KINDS.EVENT: '⚡ ︎',
-    KINDS.MESSAGE: '✉️ ',
+    KINDS.MESSAGE: '✉ ',
     KINDS.STATE: '⇥ ',
     KINDS.COMMAND: '⎈ ',
     KINDS.REQUEST: '🔺 ',
@@ -91,12 +93,11 @@ class ZentropiShell(Agent):
                 continue
         self.emit('shell-exiting', internal=True)
         print('Stopping...', flush=True)
-        self.close()
         self.stop()
 
-    @on_event('*** started')
-    async def on_started(self, event):
+    async def _run_forever(self):
         self.spawn(self.interact())
+        await super()._run_forever()
 
     @on_message('*')
     @on_event('*')
