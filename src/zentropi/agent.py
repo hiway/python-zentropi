@@ -48,6 +48,8 @@ class Agent(Zentropian):
         self.timers.start_timers(self.spawn)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
+        self.emit('*** stopping', internal=True)
+        await asyncio.sleep(0.1)
         self.emit('*** stopped', internal=True)
 
     def _set_asyncio_loop(self, loop=None):
