@@ -68,10 +68,25 @@ Zentropi is for you if:
 
 ..where were we? Ah, yes, if any of these ^^ sound familiar, you are not alone!
 
-Zentropi makes it easier to write agents that can communicate with each other using
-concepts such as State, Event and Message, each is implemented as a simple to learn
-and easy to use API.
+Why Zentropi?
 
+- Comes with a simple mental model to write, deploy, share and maintain distributed autonomous agents.
+- Built from ground up to be approachable and hackable, build systems you can take apart and change with confidence.
+- Friendly: uses simple and distinct names to reduce cognitive load, does not expect English to be your native language.
+- Flexible: experiment with multiple agents running in a single python process before you split each agent
+  into a separate process on the same machine or across the planet. Or perhaps, run a whole bunch of agents
+  as one process to keep their internal communication off of networks.
+- Security and privacy are built-in and expected.
+
+
+---
+
+Zentropi is built around the concepts of `Agent`s, `Space`s and
+`Frame`s. Using these concepts, we can imagine, design and create
+agents of varying capabilities.
+
+`python-zentropi` is the work-in-progress implementation of these
+concepts using Python 3.5.
 
 Installation
 ============
@@ -89,12 +104,13 @@ https://zentropi.readthedocs.io/
 Example
 =======
 
-Let us make an agent that will reply to a "hello" message with "Hello, world!"
+Let us pretend we are leading a group
 
 ::
 
+    #!/usr/bin/env python
     # coding=utf-8
-    from zentropi.shell import ZentropiShell
+
     from zentropi import (
         Agent,
         on_message,
@@ -102,23 +118,27 @@ Let us make an agent that will reply to a "hello" message with "Hello, world!"
     )
 
 
-    class HelloBot(Agent):
-        @on_message('hello')
-        def on_hello(self, message):
-            return 'Hi!'
+    class Spartan(Agent):
+        @on_message('Spartans?', fuzzy=True)
+        def war_cry(self, message):
+            return 'Ahoo!'
 
 
-    hello_bot = HelloBot('hello_bot')
-    shell = ZentropiShell('shell')
-    run_agents(shell, hello_bot, join='test_space', endpoint='inmemory://test')
+    if __name__ == '__main__':
+        from zentropi.shell import ZentropiShell
+        shell = ZentropiShell('shell')
+        warrior = Spartan(name='Spartan')
+        run_agents(shell, warrior, join='Thermopylae', endpoint='inmemory://')
 
 
-Save this as "hello.py"
+
+
+Save this as "one_spartan.py"
 
 Let us run it using the command:
 ::
 
-    $ python hello.py
+    $ python one_spartan.py
 
 
 We can now interact with our newly created agent using our built-in shell prompt.
@@ -126,22 +146,23 @@ While starting up, the shell itself emits events, which you can see displayed
 on the screen as ``⚡ ︎ @shell: 'shell-starting'`` followed by ``⚡ ︎ @shell: 'shell-ready'``.
 
 You will be presented with a prompt ``〉``, where you can type in messages to be broadcast
-to all the spaces that the shell has joined. Go ahead and type "hello", followed by ENTER key.
+to all the spaces that the shell has joined. Go ahead and call your warrior with "Spartans?",
+followed by ENTER key.
 
 ::
 
-    $ python hello.py
+    $ python one_spartan.py
     ⚡ ︎ @shell: 'shell-starting'
     ⚡ ︎ @shell: 'shell-ready'
-    〉hello
-    ✉️  @shell: 'hello'
-    ✉️  @hello_bot: 'Hi!' {'text': 'Hi!'}
+    〉Spartans?
+    ✉️  @shell: 'Spartans?'
+    ✉️  @Spartan: 'Ahoo!' {'text': 'Ahoo!'}
     ⚡ ︎ @shell: 'shell-ready'
     〉
 
 
-Right after you hit ENTER, you will see ``✉️  @shell: 'hello'``, which is the shell broadcasting
-your input as Message to 'test_space', which triggers the ``on_hello()`` method on ``hello_bot``
+Right after you hit ENTER, you will see ``✉️  @shell: 'Spartans?'``, which is the shell broadcasting
+your input as Message, which triggers the ``on_hello()`` method on ``hello_bot``
 which we decorated with ``@on_message('hello')``.
 
 The ``on_hello()`` "handler", as we call them in this codebase, simply returns a 'Hi!', which
@@ -188,5 +209,8 @@ between machines and people. We are all computing machines of varying capacities
 and an inclusive approach that enables each one of us to be better at what we want
 to do is a honking good strategy!
 
-There is more, much more on the way, watch this repo or better, fork this repo,
-contribute and help us make it all real sooner!
+What next?
+
+Play with [the examples](https://github.com/zentropi/python-zentropi/tree/master/examples)
+and put together something fun over a weekend?
+
