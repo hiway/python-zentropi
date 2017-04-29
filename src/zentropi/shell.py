@@ -25,7 +25,7 @@ history = FileHistory(os.path.expanduser('~/.zentropi_history'))
 
 FRAME_PREFIX = {
     KINDS.EVENT: '⚡ ︎',
-    KINDS.MESSAGE: '✉️ ',
+    KINDS.MESSAGE: '✉ ',
     KINDS.STATE: '⇥ ',
     KINDS.COMMAND: '⎈ ',
     KINDS.REQUEST: '🔺 ',
