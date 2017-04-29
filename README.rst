@@ -104,113 +104,53 @@ https://zentropi.readthedocs.io/
 Example
 =======
 
-Let us pretend we are leading a group
-
 ::
 
-    #!/usr/bin/env python
-    # coding=utf-8
-
-    from zentropi import (
-        Agent,
-        on_message,
-        run_agents
-    )
+    from zentropi import Agent, on_message, run_agents, ZentropiShell
 
 
-    class Spartan(Agent):
-        @on_message('Spartans?', fuzzy=True)
-        def war_cry(self, message):
-            return 'Ahoo!'
+    class HelloBot(Agent):
+        @on_message('hello')
+        def say_hello(self, message):
+            return 'hello, world'
 
 
     if __name__ == '__main__':
-        from zentropi.shell import ZentropiShell
-        shell = ZentropiShell('shell')
-        warrior = Spartan(name='Spartan')
-        run_agents(shell, warrior, join='Thermopylae', endpoint='inmemory://')
+        hello_bot = HelloBot(name='hello_bot')
+        shell = ZentropiShell(name='shell')
+        run_agents(hello_bot, shell)
 
 
+Save this as ``hello.py`` and run with ``$ python hello.py``
 
+You should see this on your screen:
 
-Save this as "one_spartan.py"
+```
+$ python hello.py
+⚡ ︎ @shell: '*** started'
+⚡ ︎ @shell: 'shell-starting'
+⚡ ︎ @shell: 'shell-ready'
+〉
+```
 
-Let us run it using the command:
-::
+We can type any message at the prompt `〉` and the shell agent will
+broadcast it for us. Go ahead and type "hello", followed by ENTER.
 
-    $ python one_spartan.py
+```
+〉hello
+✉  @shell: 'hello'
+✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
+⚡ ︎ @shell: 'shell-ready'
+〉
+```
 
+If you see this, hooray! You've created your first Zentropian Agent!
 
-We can now interact with our newly created agent using our built-in shell prompt.
-While starting up, the shell itself emits events, which you can see displayed
-on the screen as ``⚡ ︎ @shell: 'shell-starting'`` followed by ``⚡ ︎ @shell: 'shell-ready'``.
+Don't let this single example give you the impression that Zentropi is about chat-bots,
+it is a generic communication system that works for machines as well as humans, hence
+text messages are a first-class member in Zentropi, along with events that are generally
+used for asynchronous machine-to-machine communication.
 
-You will be presented with a prompt ``〉``, where you can type in messages to be broadcast
-to all the spaces that the shell has joined. Go ahead and call your warrior with "Spartans?",
-followed by ENTER key.
-
-::
-
-    $ python one_spartan.py
-    ⚡ ︎ @shell: 'shell-starting'
-    ⚡ ︎ @shell: 'shell-ready'
-    〉Spartans?
-    ✉️  @shell: 'Spartans?'
-    ✉️  @Spartan: 'Ahoo!' {'text': 'Ahoo!'}
-    ⚡ ︎ @shell: 'shell-ready'
-    〉
-
-
-Right after you hit ENTER, you will see ``✉️  @shell: 'Spartans?'``, which is the shell broadcasting
-your input as Message, which triggers the ``on_hello()`` method on ``hello_bot``
-which we decorated with ``@on_message('hello')``.
-
-The ``on_hello()`` "handler", as we call them in this codebase, simply returns a 'Hi!', which
-is broadcast back to the space as a ``message`` with its ``reply_to`` set to the ``message.id``
-of the message that triggered the handler.
-
-This shows up in our shell as ``✉️  @hello_bot: 'Hi!' {'text': 'Hi!'}`` followed by the shell
-emitting ``shell-ready`` event.
-
-Seems like a lot for a hello world? Wait, let me show you this little trick... how much effort
-do you think it would be, say, to create a slack bot that simply responds to "hello" with "hi"?
-
-1. Add ``from zentropi.extra.agents import SlackAgent`` with rest of the imports
-   at the top of ``hello.py``. This imports a helper agent that will relay messages between
-   Slack and Zentropi.
-2. Add ``slack_agent = SlackAgent('hello_slack')`` just before the last line.
-3. Update the last line:
-
-::
-
-    run_agents(shell, hello_bot, join='test_space', endpoint='inmemory://test')
-
-To look like this:
-
-::
-
-    run_agents(shell, hello_bot, slack_agent, join='test_space', endpoint='inmemory://test')
-
-4. And finally, add ``export SLACK_BOT_API_KEY="[YOUR-API-KEY]"`` to your ``.bash_profile``
-   or another preferred way to set environment variables, and run ``python hello.py`` again.
-
-Yup, that's it :)
-
-Would you think it cool if you could say, add an agent for Twitter in as many steps and
-have a bot that works with Slack *and* Twitter, from the same Python process?
-
-However, don't let this example make you think Zentropi is a tool to make chat-bots;
-using this feature, we can build agents that can be accessed by humans with simple
-text-commands as well as by software through states, events, requests and of course,
-messages as well.
-
-Zentropi is your medium and toolbox to make software that draws no unnecessary lines
-between machines and people. We are all computing machines of varying capacities,
-and an inclusive approach that enables each one of us to be better at what we want
-to do is a honking good strategy!
-
-What next?
-
-Play with [the examples](https://github.com/zentropi/python-zentropi/tree/master/examples)
-and put together something fun over a weekend?
-
+What next? See [examples](https://github.com/zentropi/python-zentropi/tree/master/examples)
+for detailed instructions along with each example agent and dig up your ideas that have
+been waiting too long to be made real!
