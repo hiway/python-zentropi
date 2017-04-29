@@ -97,6 +97,9 @@ class Agent(Zentropian):
 
         return wrapper
 
+    def sleep(self, duration: float):
+        return asyncio.sleep(duration)
+
     def start(self, loop=None):
         self._set_asyncio_loop(loop)
         self.loop.create_task(self._run_forever())
