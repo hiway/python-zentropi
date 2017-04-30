@@ -88,7 +88,7 @@ Example
 
 We will make a toy agent that responds to the message "hello" with a "hello, world".
 
-.. image:: images/hello_world/hello_world_1.png
+.. image:: https://cloud.githubusercontent.com/assets/23116/25562708/1d83f7b4-2dab-11e7-988a-bccb2862b656.png
 
 The above illustration shows how the concepts and objects are logically arranged and connected within Zentropi.
 We will go deeper into these in the READMEs along with examples, for now let us jump straight to the code:
