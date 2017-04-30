@@ -41,20 +41,25 @@ that are needed by Zentropi.
 
 
 
-3. Install and create a venv (python virtual-environment)
-
+3. Install and create venv
+--------------------------
 ::
 
     $ sudo apt install python3-venv
     $ python3 -m venv zen
 
+This creates a python virtual-environment, which keeps your installed
+libraries separate from rest of the system.
+
 4. Activate the venv
+--------------------
 
 ::
 
     $ source zen/bin/activate
 
 5. Install zentropi
+-------------------
 
 ::
 
