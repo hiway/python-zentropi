@@ -33,6 +33,7 @@ from zentropi.frames import (
     Message,
     State,
 )
+from zentropi.shell import ZentropiShell
 from zentropi.spaces import Spaces
 from zentropi.symbols import KINDS
 from zentropi.utils import run_agents
@@ -67,6 +68,7 @@ __all__ = [
     'on_state',
     'on_timer',
     'run_agents',
+    'ZentropiShell',
     'Spaces',
     'State',
     'utils',

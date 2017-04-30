@@ -8,13 +8,15 @@ from typing import (
     Union,
 )
 
-from pybloom_live import ScalableBloomFilter
+from bloom_filter import BloomFilter
 
 from zentropi.frames import Frame
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
 from zentropi.zentropian import (
+    on_event,
+    on_message,
     on_state,
     Zentropian,
 )
@@ -28,8 +30,7 @@ class Agent(Zentropian):
         self.states.running = False
         self.loop = None  # asyncio.get_event_loop()
         self._spawn_on_start = set()
-        self._seen_frames = ScalableBloomFilter(
-                    mode=ScalableBloomFilter.LARGE_SET_GROWTH, error_rate=0.001)
+        self._seen_frames = BloomFilter(max_elements=10000, error_rate=0.001)
 
     @on_state('should_stop')
     def _on_should_stop(self, state):
@@ -46,6 +47,8 @@ class Agent(Zentropian):
         self.timers.start_timers(self.spawn)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
+        self.emit('*** stopping', internal=True)
+        await asyncio.sleep(0.1)
         self.emit('*** stopped', internal=True)
 
     def _set_asyncio_loop(self, loop=None):
@@ -92,6 +95,9 @@ class Agent(Zentropian):
             return handler
 
         return wrapper
+
+    def sleep(self, duration: float):
+        return asyncio.sleep(duration)
 
     def start(self, loop=None):
         self._set_asyncio_loop(loop)
@@ -166,3 +172,12 @@ def on_timer(interval):
         return handler
 
     return wrapper
+
+
+__all__ = [
+    'Agent',
+    'on_event',
+    'on_message',
+    'on_state',
+    'on_timer',
+]

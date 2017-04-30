@@ -8,12 +8,13 @@ Overview
     :stub-columns: 1
 
     * - docs
-      - |docs|
+      - | |docs|
     * - tests
-      - | |travis| |requires|
-        |
+      - | |travis|
+        | |requires|
     * - package
-      - | |license| |version| |wheel| |supported_versions| |supported_implementations|
+      - | |license| |version| |wheel|
+        | |supported_versions| |supported_implementations|
         | |commits_since|
 
 .. |docs| image:: https://readthedocs.org/projects/zentropi/badge/?style=flat
@@ -68,61 +69,77 @@ Zentropi is for you if:
 
 ..where were we? Ah, yes, if any of these ^^ sound familiar, you are not alone!
 
-Zentropi makes it easier to write agents that can communicate with each other using
-concepts such as State, Event and Message, each is implemented as a simple to learn
-and easy to use API.
-
-
-Example
-=======
-
-Let us make an agent that will reply to a "hello" message with "Hello, world!"
-
-::
-
-    # coding=utf-8
-    from zentropi import Agent
-    from zentropi import on_message
-
-    # Create an instance of Agent.
-    agent = Agent('hello_bot')
-
-    # Trigger on "hello"
-    @agent.on_message('hello')
-    def say_hello(message):
-        # Send reply to the incoming message.
-        return 'Hello, world!'
-
-    # Connect to local redis.
-    agent.connect('redis://localhost:6379')
-
-    # Join "test" space.
-    agent.join('test')
-
-    agent.run()
-
-
-Save this as "hello.py", and run it using the command "python hello.py"
-
-We can now interact with our newly created agent using the following commands:
-
-::
-
-    $ zentropi shell
-    〉join test
-    〉. hello
-    @hello_bot: 'Hello, world!'
-    〉exit
-
 
 Installation
 ============
 
 ::
 
-    pip install zentropi
+    pip3 install zentropi
 
 Documentation
 =============
 
 https://zentropi.readthedocs.io/
+
+
+Example
+=======
+
+We will make a toy agent that responds to the message "hello" with a "hello, world".
+
+.. image:: https://cloud.githubusercontent.com/assets/23116/25562708/1d83f7b4-2dab-11e7-988a-bccb2862b656.png
+
+The above illustration shows how the concepts and objects are logically arranged and connected within Zentropi.
+We will go deeper into these in the READMEs along with examples, for now let us jump straight to the code:
+
+::
+
+    from zentropi import Agent, on_message, run_agents, ZentropiShell
+
+
+    class HelloBot(Agent):
+        @on_message('hello')
+        def say_hello(self, message):
+            return 'hello, world'
+
+
+    if __name__ == '__main__':
+        hello_bot = HelloBot(name='hello_bot')
+        shell = ZentropiShell(name='shell')
+        run_agents(hello_bot, shell)
+
+
+Save this as ``hello.py`` and run with ``$ python hello.py``
+
+You should see this on your screen:
+
+::
+
+    $ python hello.py
+    ⚡ ︎ @shell: '*** started'
+    ⚡ ︎ @shell: 'shell-starting'
+    ⚡ ︎ @shell: 'shell-ready'
+    〉
+
+We can type any message at the prompt ``〉`` and the shell agent will
+broadcast it for us. Go ahead and type ``hello``, followed by ENTER.
+
+::
+
+    〉hello
+    ✉  @shell: 'hello'
+    ✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
+    ⚡ ︎ @shell: 'shell-ready'
+    〉exit
+
+Type ``exit`` or press Ctrl-D to leave the shell.
+
+What next?
+
+Zentropi is still being developed and is not production-ready, however
+it is already useful to experiment and build toys.
+
+Check out what is already possible in the examples directory:
+
+https://github.com/zentropi/python-zentropi/tree/master/examples

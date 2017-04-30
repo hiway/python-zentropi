@@ -100,4 +100,5 @@ class Spaces(object):
     def agent_close(self, agent_name):
         # connection = self._agents[agent_name]
         # connection.close()
-        print('*** noop closing')
+        # print('*** noop closing')
+        pass

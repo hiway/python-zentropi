@@ -44,4 +44,4 @@ if __name__ == '__main__':
     slack_agent = SlackAgent()
     my_bot = MyBot()
 
-    run_agents(slack_agent, my_bot, join='slack', endpoint='inmemory://slack')
+    run_agents(slack_agent, my_bot, space='slack', endpoint='inmemory://slack')

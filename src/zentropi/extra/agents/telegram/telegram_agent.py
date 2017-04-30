@@ -1,18 +1,26 @@
 # coding=utf-8
-import traceback
+try:
+    from aiotg import Bot
+except ImportError:
+    raise ImportError('Run `pip install aiotg`')
 
 import os
-from aiotg import Bot  # pip install aiotg
-from zentropi import Agent  # pip install zentropi
-from zentropi import on_event
-from zentropi import on_message
+import traceback
 
-TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', 'ExampleBot')
+from zentropi import (
+    Agent,
+    on_event,
+    on_message
+)
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+
+TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', None)
 TELEGRAM_BOT_API_TOKEN = os.getenv('TELEGRAM_BOT_API_TOKEN', None)
-assert TELEGRAM_BOT_API_TOKEN
+assert TELEGRAM_BOT_NAME, 'Missing ENV variable: export TELEGRAM_BOT_NAME="[your-bot-name]" '
+assert TELEGRAM_BOT_API_TOKEN, 'Missing ENV variable: export TELEGRAM_BOT_API_TOKEN="[your-bot-api-token]" '
 
 
-class SimpleTelegramAgent(Agent):
+class TelegramAgent(Agent):
     def __init__(self, name=None):
         super().__init__(name=name)
         self._bot = Bot(api_token=TELEGRAM_BOT_API_TOKEN,
@@ -24,18 +32,18 @@ class SimpleTelegramAgent(Agent):
     def on_incoming_telegram_message(self, chat, message):
         try:
             text = message['text']
-            if len(text) > 128:
-                text = text[:127] + '…'
-            name = '{} {}'.format(message['from']['first_name'], message['from']['last_name'])
-            sent_msg = self.message(text, data={
+            name = text
+            if len(name) > FRAME_NAME_MAX_LENGTH:
+                name = name[:FRAME_NAME_MAX_LENGTH-1] + '…'
+            full_name = '{} {}'.format(message['from']['first_name'], message['from']['last_name'])
+            sent_msg = self.message(name, data={
                 'text': text,
                 'message_id': message['message_id'],
                 'chat_id': message['chat']['id'],
                 'user_id': message['from']['id'],
                 'username': message['from']['username'],
-                'name': name,
+                'full_name': full_name,
             })
-            print('>>>', text)
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
         except Exception:
             print(traceback.format_exc())
@@ -45,11 +53,12 @@ class SimpleTelegramAgent(Agent):
     async def telegram_message_reply(self, message):
         if message.reply_to not in self.sent_telegram_messages:
             return
+        text = message.data.text or message.name
         try:
             chat_id = self.sent_telegram_messages[message.reply_to]
             del self.sent_telegram_messages[message.reply_to]
-            await self._bot.send_message(chat_id=chat_id, text=message.name)
-            print('<<<', message.name)
+            await self._bot.send_message(chat_id=chat_id, text=text)
+            self.emit('telegram-reply-sent', data={'text': text, 'chat_id': chat_id})
         except Exception:
             print(traceback.format_exc())
             print(message.name, message.data)
@@ -58,14 +67,6 @@ class SimpleTelegramAgent(Agent):
     def on_started(self, event):
         self.spawn(self._bot.loop())
 
-    @on_event('*** stopped')
-    def on_stopped(self, event):
+    @on_event('*** stopping')
+    def on_stopping(self, event):
         self._bot.stop()
-
-
-if __name__ == '__main__':
-    endpoint = 'redis://localhost:6379'
-    agent = SimpleTelegramAgent('telegram')
-    agent.connect(endpoint)
-    agent.join('telegram')
-    agent.run()
