@@ -68,25 +68,6 @@ Zentropi is for you if:
 
 ..where were we? Ah, yes, if any of these ^^ sound familiar, you are not alone!
 
-Why Zentropi?
-
-- Comes with a simple mental model to write, deploy, share and maintain distributed autonomous agents.
-- Built from ground up to be approachable and hackable, build systems you can take apart and change with confidence.
-- Friendly: uses simple and distinct names to reduce cognitive load, does not expect English to be your native language.
-- Flexible: experiment with multiple agents running in a single python process before you split each agent
-  into a separate process on the same machine or across the planet. Or perhaps, run a whole bunch of agents
-  as one process to keep their internal communication off of networks.
-- Security and privacy are built-in and expected.
-
-
----
-
-Zentropi is built around the concepts of `Agent`s, `Space`s and
-`Frame`s. Using these concepts, we can imagine, design and create
-agents of varying capabilities.
-
-`python-zentropi` is the work-in-progress implementation of these
-concepts using Python 3.5.
 
 Installation
 ============
