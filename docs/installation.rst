@@ -20,9 +20,11 @@ system with necessary packages:
 ---------------------------------------
 
 ::
+
     $ sudo apt update
     $ sudo apt install python3
     $ python3 -V
+
 
 Above command should output text similar to ``Python 3.5.X``;
 at the time of writing, it was ``Python 3.5.2``.
