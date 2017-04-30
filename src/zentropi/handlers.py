@@ -151,8 +151,12 @@ class HandlerRegistry(object):
 
     def match_parse(self, frame):
         for pattern in reversed(self._index_parse):
+            if isinstance(frame.data.text, str):
+                match_string = frame.data.text
+            else:
+                match_string = frame.name
             res = string_parse(
-                format=pattern, string=frame.name)
+                format=pattern, string=match_string)
             if not res:
                 continue
             handlers = self._handlers[pattern]
