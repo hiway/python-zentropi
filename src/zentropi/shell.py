@@ -1,22 +1,18 @@
 # coding=utf-8
-import sys
 import os
+import sys
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import create_prompt_application
-from prompt_toolkit.shortcuts import create_asyncio_eventloop
+from prompt_toolkit.shortcuts import (
+    create_asyncio_eventloop,
+    create_prompt_application
+)
 from pygments.token import Token
-from .agent import (
-    Agent,
-    on_event,
-    on_message
-)
-from .frames import (
-    KINDS,
-    Message
-)
+
+from .agent import Agent, on_event, on_message
+from .frames import KINDS, Message
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'

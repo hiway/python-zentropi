@@ -7,8 +7,10 @@ import aioredis
 from ..agent import Agent
 from ..connections.connection import Connection
 from ..frames import Frame
-from ..utils import validate_endpoint
-from ..utils import validate_name
+from ..utils import (
+    validate_endpoint,
+    validate_name
+)
 
 assert Optional  # ignore unused error for now.
 

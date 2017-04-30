@@ -15,7 +15,6 @@ import pprint
 
 import async_timeout
 
-
 EVENT_TYPES = {
     'accounts_changed': 'The list of accounts a user is signed into has changed',
     'bot_added': 'An bot user was added',

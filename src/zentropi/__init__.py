@@ -18,12 +18,10 @@ import os
 
 import zentropi.fields as fields
 import zentropi.utils as utils
-from zentropi.agent import (
-    Agent,
-    on_timer,
-)
+from zentropi.agent import Agent, on_timer
 from zentropi.connections import Connection
-from zentropi.connections.in_memory import InMemoryConnection
+from zentropi.connections.in_memory import \
+    InMemoryConnection
 from zentropi.events import Events
 from zentropi.fields import Field
 from zentropi.frames import (
@@ -31,19 +29,18 @@ from zentropi.frames import (
     Event,
     Frame,
     Message,
-    State,
+    State
 )
 from zentropi.shell import ZentropiShell
 from zentropi.spaces import Spaces
 from zentropi.symbols import KINDS
 from zentropi.utils import run_agents
 from zentropi.zentropian import (
+    Zentropian,
     on_event,
     on_message,
-    on_state,
-    Zentropian,
+    on_state
 )
-
 
 __version__ = "0.1.2"
 

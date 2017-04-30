@@ -1,12 +1,10 @@
 # coding=utf-8
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from ..connections.connection import Connection
 from ..spaces import Spaces
 from ..utils import validate_endpoint
 from ..zentropian import Zentropian
-
 
 SPACES = {}  # type: dict
 

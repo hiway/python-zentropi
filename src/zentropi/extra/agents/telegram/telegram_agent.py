@@ -7,12 +7,9 @@ except ImportError:
 import os
 import traceback
 
-from zentropi import (
-    Agent,
-    on_event,
-    on_message
-)
-from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+from zentropi import Agent, on_event, on_message
+from zentropi.defaults import \
+    FRAME_NAME_MAX_LENGTH
 
 TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', None)
 TELEGRAM_BOT_API_TOKEN = os.getenv('TELEGRAM_BOT_API_TOKEN', None)

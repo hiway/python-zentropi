@@ -1,5 +1,6 @@
 # coding=utf-8
-from zentropi.connections.connection import Connection
+from zentropi.connections.connection import \
+    Connection
 from zentropi.frames import Command
 
 

@@ -3,10 +3,7 @@ import asyncio
 # import atexit
 import threading
 from inspect import isgeneratorfunction
-from typing import (
-    Optional,
-    Union,
-)
+from typing import Optional, Union
 
 from bloom_filter import BloomFilter
 
@@ -15,10 +12,10 @@ from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
 from zentropi.zentropian import (
+    Zentropian,
     on_event,
     on_message,
-    on_state,
-    Zentropian,
+    on_state
 )
 
 

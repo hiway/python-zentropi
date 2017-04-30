@@ -1,25 +1,14 @@
 # coding=utf-8
-from typing import (
-    Optional,
-    Union,
-)
+from typing import Optional, Union
 from uuid import uuid4
 
-from zentropi.defaults import FRAME_NAME_MAX_LENGTH
-from zentropi.events import (
-    Event,
-    Events,
-)
+from zentropi.defaults import \
+    FRAME_NAME_MAX_LENGTH
+from zentropi.events import Event, Events
 from zentropi.frames import Frame
 from zentropi.handlers import Handler
-from zentropi.messages import (
-    Message,
-    Messages,
-)
-from zentropi.states import (
-    State,
-    States,
-)
+from zentropi.messages import Message, Messages
+from zentropi.states import State, States
 from zentropi.symbols import KINDS
 from zentropi.utils import validate_name
 

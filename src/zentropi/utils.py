@@ -6,11 +6,7 @@ import logging
 import os
 import sys
 import warnings
-from typing import (
-    Any,
-    Optional,
-)
-
+from typing import Any, Optional
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

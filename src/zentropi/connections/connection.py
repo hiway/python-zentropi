@@ -1,7 +1,6 @@
 # coding=utf-8
 
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 
 class Connection(object):

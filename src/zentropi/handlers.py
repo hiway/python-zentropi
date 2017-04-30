@@ -2,18 +2,19 @@
 from collections import defaultdict
 from inspect import (
     getfullargspec,
-    iscoroutinefunction,
+    iscoroutinefunction
 )
 
 from fuzzywuzzy import fuzz, process
 from parse import parse as string_parse
 from sortedcontainers import SortedListWithKey
 
-from zentropi.defaults import MATCH_FUZZY_THRESHOLD
+from zentropi.defaults import \
+    MATCH_FUZZY_THRESHOLD
 from zentropi.utils import (
     validate_handler,
     validate_kind,
-    validate_name,
+    validate_name
 )
 
 

@@ -2,8 +2,7 @@
 
 from collections import defaultdict
 from inspect import iscoroutinefunction
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 
 from ..agent import Agent
 from ..zentropian import Zentropian

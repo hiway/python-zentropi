@@ -2,8 +2,7 @@
 import json
 import time
 from collections import UserDict
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 from uuid import uuid4
 
 from zentropi.symbols import KINDS
@@ -13,7 +12,7 @@ from zentropi.utils import (
     validate_id,
     validate_kind,
     validate_meta,
-    validate_name,
+    validate_name
 )
 
 
