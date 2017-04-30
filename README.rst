@@ -33,9 +33,9 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/zentropi
 
-.. |commits_since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.2.svg
+.. |commits_since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.3.svg
     :alt: Commits since latest release
-    :target: https://github.com/zentropi/python-zentropi/compare/v0.1.2...master
+    :target: https://github.com/zentropi/python-zentropi/compare/v0.1.3...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/zentropi.svg
     :alt: PyPI Wheel

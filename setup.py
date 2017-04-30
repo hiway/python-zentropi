@@ -29,7 +29,7 @@ redis = [
 
 setup(
     name='zentropi',
-    version='0.1.2',
+    version='0.1.3',
     license='Apache 2.0',
     description='Script Your World.',
     long_description='%s\n%s' % (
@@ -77,6 +77,7 @@ setup(
         'parse>=1.8.0, <2.0',
         'prompt_toolkit==1.0.14, <1.1',
         'Pygments>=2.2.0, <2.3',
+        'python-levenshtein >=0.12.0 <0.2',
         'sortedcontainers>=1.5.7, <1.6',
     ],
     extras_require={
