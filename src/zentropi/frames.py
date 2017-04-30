@@ -77,7 +77,7 @@ class Frame(object):
 
     @property
     def data(self) -> Optional[dict]:
-        return self._data or {}
+        return self._data or FrameData()
 
     @data.setter
     def data(self, data: dict) -> None:

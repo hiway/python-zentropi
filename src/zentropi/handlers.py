@@ -156,10 +156,10 @@ class HandlerRegistry(object):
             if not res:
                 continue
             handlers = self._handlers[pattern]
-            data = frame.data or {}
+            data = frame.data
             data.update(**res.named)
             data.update({'args': res.fixed})
-            frame.data = data
+            frame.data.update(data)
             return frame, handlers
         else:
             return frame, set()
