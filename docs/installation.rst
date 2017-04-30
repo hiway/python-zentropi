@@ -16,8 +16,8 @@ We will need to set up Ubuntu for Python development before we can
 install and use Zentropi, follow the steps below to update your
 system with necessary packages:
 
-1. Confirm that Python 3.5 is available
----------------------------------------
+1. Confirm that Python 3.5 or above is available
+------------------------------------------------
 
 ::
 
