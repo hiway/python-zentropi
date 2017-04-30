@@ -8,7 +8,7 @@ from typing import (
     Union,
 )
 
-from pybloom_live import ScalableBloomFilter
+from bloom_filter import BloomFilter
 
 from zentropi.frames import Frame
 from zentropi.handlers import Handler
@@ -30,8 +30,7 @@ class Agent(Zentropian):
         self.states.running = False
         self.loop = None  # asyncio.get_event_loop()
         self._spawn_on_start = set()
-        self._seen_frames = ScalableBloomFilter(
-                    mode=ScalableBloomFilter.LARGE_SET_GROWTH, error_rate=0.001)
+        self._seen_frames = BloomFilter(max_elements=10000, error_rate=0.001)
 
     @on_state('should_stop')
     def _on_should_stop(self, state):
