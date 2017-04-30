@@ -1,18 +1,19 @@
 # coding=utf-8
 import asyncio
-import sys
 import os
 import re
+import sys
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import create_prompt_application
-from prompt_toolkit.shortcuts import create_asyncio_eventloop
+from prompt_toolkit.shortcuts import (
+    create_asyncio_eventloop,
+    create_prompt_application
+)
 from pygments.token import Token
-from zentropi import Agent
-from zentropi import on_event
-from zentropi import on_message
+
+from zentropi import Agent, on_event, on_message
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'

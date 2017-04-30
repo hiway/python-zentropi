@@ -1,11 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 
-from zentropi import (
-    Agent,
-    on_message,
-    run_agents
-)
+from zentropi import Agent, on_message, run_agents
 
 
 class Spartan(Agent):

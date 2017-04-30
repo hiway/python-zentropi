@@ -1,8 +1,10 @@
 # coding=utf-8
-from zentropi import Agent
-from zentropi import on_event
-from zentropi import on_message
-from zentropi import on_state
+from zentropi import (
+    Agent,
+    on_event,
+    on_message,
+    on_state
+)
 
 
 class Relay(Agent):

@@ -1,10 +1,10 @@
 # coding=utf-8
 from zentropi import (
     Agent,
+    ZentropiShell,
     on_event,
     on_message,
-    run_agents,
-    ZentropiShell,
+    run_agents
 )
 
 

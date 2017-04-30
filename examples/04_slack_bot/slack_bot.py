@@ -1,8 +1,7 @@
 # coding=utf-8
 import random
 
-from zentropi import on_message
-from zentropi import Agent
+from zentropi import Agent, on_message
 
 
 class MyBot(Agent):

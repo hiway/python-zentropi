@@ -1,9 +1,9 @@
 # coding=utf-8
 from zentropi import (
     Agent,
-    on_message,
-    run_agents,
     ZentropiShell,
+    on_message,
+    run_agents
 )
 from zentropi.extra.agents import TelegramAgent
 

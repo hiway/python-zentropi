@@ -2,9 +2,9 @@
 
 from zentropi import (
     Agent,
-    on_message,
-    run_agents,
     ZentropiShell,
+    on_message,
+    run_agents
 )
 
 
