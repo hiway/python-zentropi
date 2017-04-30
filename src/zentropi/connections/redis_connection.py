@@ -2,7 +2,10 @@
 import asyncio
 from typing import Optional
 
-import aioredis
+try:
+    import aioredis
+except ImportError:
+    raise ImportError('Missing dependency: pip install aioredis')
 
 from ..agent import Agent
 from ..connections.connection import Connection
