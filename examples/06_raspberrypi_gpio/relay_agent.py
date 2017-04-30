@@ -1,8 +1,12 @@
 # coding=utf-8
-from zentropi import Agent
-from zentropi import on_event
-from zentropi import on_message
-from zentropi import on_state
+from zentropi import (
+    Agent,
+    on_event,
+    on_message,
+    on_state,
+    run_agents
+)
+from zentropi.shell import ZentropiShell
 
 
 class Relay(Agent):
@@ -29,7 +33,6 @@ class Relay(Agent):
 
 
 if __name__ == '__main__':
-    agent = Relay('Relay')
-    agent.connect('redis://localhost:6379')
-    agent.join('telegram')
-    agent.run()
+    relay = Relay('relay')
+    shell = ZentropiShell('shell')
+    run_agents(relay, shell)
