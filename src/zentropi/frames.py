@@ -77,7 +77,7 @@ class Frame(object):
 
     @property
     def data(self) -> Optional[dict]:
-        return self._data or {}
+        return self._data or FrameData()
 
     @data.setter
     def data(self, data: dict) -> None:
@@ -233,6 +233,8 @@ class Message(Frame):
         super().__init__(name, data=data, meta=meta, kind=KINDS.MESSAGE, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp, internal=internal)
+        if 'text' not in self._data:
+            self._data.text = self.name
         self._kind = KINDS.MESSAGE
 
 

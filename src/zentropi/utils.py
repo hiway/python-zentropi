@@ -123,7 +123,7 @@ def validate_kind(kind):
 def validate_data(data):
     from zentropi.frames import FrameData
 
-    if data is None:
+    if not data:
         return FrameData()  # type: ignore
     assert isinstance(data, (dict, FrameData)), data
     if isinstance(data, FrameData):
