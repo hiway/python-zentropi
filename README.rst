@@ -122,8 +122,8 @@ You should see this on your screen:
     ⚡ ︎ @shell: 'shell-ready'
     〉
 
-We can type any message at the prompt `〉` and the shell agent will
-broadcast it for us. Go ahead and type "hello", followed by ENTER.
+We can type any message at the prompt ``〉`` and the shell agent will
+broadcast it for us. Go ahead and type ``hello``, followed by ENTER.
 
 ::
 
@@ -133,11 +133,13 @@ broadcast it for us. Go ahead and type "hello", followed by ENTER.
     ⚡ ︎ @shell: 'shell-ready'
     〉exit
 
-Type exit or Ctrl-D to leave the shell.
+Type ``exit`` or press Ctrl-D to leave the shell.
 
 What next?
 
-https://github.com/zentropi/python-zentropi/tree/master/examples
+Zentropi is still being developed and is not production-ready, however
+it is already useful to experiment and build toys.
 
-We are collecting many use-cases as examples, have a look
-and make something fun and/or useful for yourself? :D
+Check out what is already possible in the examples directory:
+
+https://github.com/zentropi/python-zentropi/tree/master/examples
