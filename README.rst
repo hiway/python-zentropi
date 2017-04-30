@@ -8,12 +8,13 @@ Overview
     :stub-columns: 1
 
     * - docs
-      - |docs|
+      - | |docs|
     * - tests
-      - | |travis| |requires|
-        |
+      - | |travis|
+        | |requires|
     * - package
-      - | |license| |version| |wheel| |supported_versions| |supported_implementations|
+      - | |license| |version| |wheel|
+        | |supported_versions| |supported_implementations|
         | |commits_since|
 
 .. |docs| image:: https://readthedocs.org/projects/zentropi/badge/?style=flat
@@ -74,7 +75,7 @@ Installation
 
 ::
 
-    pip install zentropi
+    pip3 install zentropi
 
 Documentation
 =============
@@ -84,6 +85,13 @@ https://zentropi.readthedocs.io/
 
 Example
 =======
+
+We will make a toy agent that responds to the message "hello" with a "hello, world".
+
+.. image:: https://cloud.githubusercontent.com/assets/23116/25562708/1d83f7b4-2dab-11e7-988a-bccb2862b656.png
+
+The above illustration shows how the concepts and objects are logically arranged and connected within Zentropi.
+We will go deeper into these in the READMEs along with examples, for now let us jump straight to the code:
 
 ::
 
@@ -123,15 +131,13 @@ broadcast it for us. Go ahead and type "hello", followed by ENTER.
     ✉  @shell: 'hello'
     ✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
     ⚡ ︎ @shell: 'shell-ready'
-    〉
+    〉exit
 
-If you see this, hooray! You've created your first Zentropian Agent!
+Type exit or Ctrl-D to leave the shell.
 
-Don't let this single example give you the impression that Zentropi is about chat-bots,
-it is a generic communication system that works for machines as well as humans, hence
-text messages are a first-class member in Zentropi, along with events that are generally
-used for asynchronous machine-to-machine communication.
+What next?
 
-What next? See [examples](https://github.com/zentropi/python-zentropi/tree/master/examples)
-for detailed instructions along with each example agent and dig up your ideas that have
-been waiting too long to be made real!
+https://github.com/zentropi/python-zentropi/tree/master/examples
+
+We are collecting many use-cases as examples, have a look
+and make something fun and/or useful for yourself? :D
