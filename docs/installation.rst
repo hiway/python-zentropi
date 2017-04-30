@@ -2,7 +2,7 @@
 Installation
 ============
 
-At the command line::
+If you already have virtual-environment and python-dev set up::
 
     pip install zentropi
 
@@ -37,16 +37,15 @@ that are needed by Zentropi.
 
 ::
 
-    $ sudo apt install gcc libssl-dev python3-dev python3-setuptools
-
+    $ sudo apt install gcc libssl-dev python3-dev python3-setuptools python3-venv
 
 
 3. Install and create venv
 --------------------------
 ::
 
-    $ sudo apt install python3-venv
     $ python3 -m venv zen
+
 
 This creates a python virtual-environment, which keeps your installed
 libraries separate from rest of the system.
@@ -57,6 +56,19 @@ libraries separate from rest of the system.
 ::
 
     $ source zen/bin/activate
+
+
+You will need to `activate` the zen virtual-environment before working
+with zentropi. A shortcut would be to add an alias to your ``~/.profile``
+or ``~/.bash_profile``:
+
+::
+
+    alias zen="source /path/to/zen/bin/activate"
+
+
+You can run ``source ~/.profile`` or open a new terminal window
+and type ``zen`` to activate the virtual-environment.
 
 5. Install zentropi
 -------------------
