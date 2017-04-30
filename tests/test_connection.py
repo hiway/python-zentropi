@@ -1,6 +1,7 @@
 # coding=utf-8
 import pytest
-from zentropi.connections.connection import Connection
+
+from zentropi.connections import Connection
 
 
 def test_connection():

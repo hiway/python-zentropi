@@ -2,11 +2,13 @@
 import pytest
 
 from zentropi.frames import Event
-from zentropi.handlers import Handler
-from zentropi.handlers import HandlerRegistry
-from zentropi.handlers import validate_handler
-from zentropi.handlers import validate_kind
-from zentropi.handlers import validate_name
+from zentropi.handlers import (
+    Handler,
+    HandlerRegistry,
+    validate_handler,
+    validate_kind,
+    validate_name
+)
 from zentropi.symbols import KINDS
 
 
