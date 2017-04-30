@@ -29,7 +29,7 @@ redis = [
 
 setup(
     name='zentropi',
-    version='0.1.2',
+    version='0.1.3',
     license='Apache 2.0',
     description='Script Your World.',
     long_description='%s\n%s' % (
