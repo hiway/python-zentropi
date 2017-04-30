@@ -75,7 +75,12 @@ Installation
 
 ::
 
-    pip3 install zentropi
+    pip install zentropi
+
+
+Or follow more detailed installation steps for your platform here:
+https://zentropi.readthedocs.io/en/latest/installation.html
+
 
 Documentation
 =============
