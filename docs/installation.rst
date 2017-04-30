@@ -20,14 +20,14 @@ system with necessary packages:
 ---------------------------------------
 
 ::
-
-    $ python3.5 -V
+    $ sudo apt update
+    $ sudo apt install python3
+    $ python3 -V
 
 Above command should output text similar to ``Python 3.5.X``;
 at the time of writing, it was ``Python 3.5.2``.
 
-If the command fails, run ``sudo apt install python3.5``.
-
+If the command fails, run ``sudo apt install python3``.
 
 2. Install external requirements
 --------------------------------
@@ -40,48 +40,23 @@ that are needed by Zentropi.
     $ sudo apt install gcc libssl-dev python3-dev python3-setuptools
 
 
-3. Install pip
---------------
 
-Although Ubuntu 16.04 comes with python3.5 installed, it does not have
-a necessary tool (pip) needed to install additional libraries in system python.
-We can fix that with:
+3. Install and create a venv (python virtual-environment)
 
 ::
 
-    $ wget https://bootstrap.pypa.io/get-pip.py
-    $ sudo python3.5 get-pip.py
+    $ sudo apt install python3-venv
+    $ python3 -m venv zen
 
-You may want to read more on the topic here: http://pip.readthedocs.io/en/latest/installing/#install-pip
-
-
-4. Install and set up virtualenv
---------------------------------
-
-Not strictly needed, however it is highly recommended to use ``virtualenv``
-to isolate Python environments. Let us set it up because we care about our future self :)
+4. Activate the venv
 
 ::
 
-    $ sudo pip3 install virtualenv
-    $ virtualenv --python=`which python3.5` zen
     $ source zen/bin/activate
-    (zen) $
 
-You can run ``deactivate`` to disable the virtualenv in current session.
-
-::
-
-    (zen) $ deactivate
-    $
-
-Remember to run ``source zen/bin/activate`` in a new terminal session to activate the virtualenv.
-
-
-5. Install zentropi inside virtualenv
--------------------------------------
+5. Install zentropi
 
 ::
 
-    (zen) $ pip install zentropi
+    $ pip install zentropi
 
