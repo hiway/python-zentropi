@@ -65,6 +65,7 @@ class TelegramAgent(Agent):
 
     @on_event('*** started')
     def on_started(self, event):
+        self.emit('telegram-connecting')
         self.spawn(self._bot.loop())
 
     @on_event('*** stopping')
