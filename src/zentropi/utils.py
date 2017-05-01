@@ -162,18 +162,22 @@ def validate_space(space):
     return space
 
 
-def run_agents(*agents, endpoint='inmemory://', space='zentropia'):
+def run_agents(*agents, endpoint='inmemory://', space='zentropia', shell=False):
     import asyncio
-    from zentropi import Agent
+    from zentropi import Agent, ZentropiShell
 
     endpoint = validate_endpoint(endpoint)
     space = validate_space(space)
 
     if not agents:
         return
+    agents = list(agents)
     for agent in agents:
         if not isinstance(agent, Agent):
             raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
+    if shell:
+        shell = ZentropiShell('shell')
+        agents.append(shell)
     loop = asyncio.get_event_loop()
 
     if len(agents) == 1:
