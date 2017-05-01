@@ -115,7 +115,7 @@ def get_event_types():
         import aiohttp
     except ImportError:
         raise ImportError('Please run `pip install aiohttp`')
-    
+
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(async_get_event_types(loop))
 
