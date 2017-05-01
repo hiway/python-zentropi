@@ -1,15 +1,5 @@
 # coding=utf-8
 
-try:
-    from bs4 import BeautifulSoup
-except ImportError:
-    raise ImportError('Please run `pip install beautifulsoup4`')
-
-try:
-    import aiohttp
-except ImportError:
-    raise ImportError('Please run `pip install aiohttp`')
-
 import asyncio
 import pprint
 
@@ -116,6 +106,16 @@ async def async_get_event_types(loop):
 
 
 def get_event_types():
+    try:
+        from bs4 import BeautifulSoup
+    except ImportError:
+        raise ImportError('Please run `pip install beautifulsoup4`')
+
+    try:
+        import aiohttp
+    except ImportError:
+        raise ImportError('Please run `pip install aiohttp`')
+    
     loop = asyncio.get_event_loop()
     return loop.run_until_complete(async_get_event_types(loop))
 
