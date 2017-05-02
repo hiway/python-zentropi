@@ -8,6 +8,8 @@ from prompt_toolkit.history import FileHistory
 from prompt_toolkit.shortcuts import create_prompt_application
 from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+
 from .agent import (
     Agent,
     on_event,
@@ -82,7 +84,7 @@ class ZentropiShell(Agent):
                 if command in ['exit', 'q']:
                     break
                 if command:
-                    self.message(command, internal=True)
+                    self.emit(command[:FRAME_NAME_MAX_LENGTH], data={'text': command}, internal=True)
             except EOFError:
                 break
             except KeyboardInterrupt:
@@ -102,7 +104,7 @@ class ZentropiShell(Agent):
     @on_message('*')
     @on_event('*')
     def on_any_message(self, frame):
-        if frame.source == self.name and frame.internal is True and isinstance(frame, Message):
+        if frame.source == self.name and frame.internal is True and not frame.name.startswith('***'):
             if 'text' in frame.data:
                 text = frame.data.text.strip()
             else:
@@ -115,12 +117,12 @@ class ZentropiShell(Agent):
         else:
             print('{} @{}: {}'.format(prefix, frame.source, frame.name))
 
-    @on_message('join {space}', parse=True)
+    @on_event('join {space}', parse=True)
     def join_space(self, message):
         space = message.data.space.strip()
         self.join(space)
 
-    @on_message('leave {space}', parse=True)
+    @on_event('leave {space}', parse=True)
     def leave_space(self, message):
         space = message.data.space.strip()
         self.leave(space)
