@@ -94,6 +94,8 @@ class RedisConnection(Connection):
         return [s for s in self._spaces]
 
     async def broadcast(self, frame):
+        if not self._publisher:
+            return
         if frame.space:
             spaces = [frame.space]
         else:
