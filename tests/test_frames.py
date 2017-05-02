@@ -142,7 +142,7 @@ class TestZenceliumFrame(unittest.TestCase):
         message = Message('a test', data={'another': 'test'})
         assert message.id
         assert message.name == 'a test'
-        assert message.data == {'another': 'test'}
+        assert message.data == {'another': 'test', 'text': 'a test'}
         assert isinstance(Frame.build(**message.as_dict()), Message)
 
     def test_state(self):
