@@ -110,10 +110,10 @@ class ZentropiShell(Agent):
             self.message(text)
             return
         prefix = FRAME_PREFIX[frame.kind]
-        if frame.data:
+        if frame.data and frame.data.text != frame.name:
             print('{} @{}: {!r} {!r}'.format(prefix, frame.source, frame.name, frame.data))
         else:
-            print('{} @{}: {!r}'.format(prefix, frame.source, frame.name))
+            print('{} @{}: {}'.format(prefix, frame.source, frame.name))
 
     @on_message('join {space}', parse=True)
     def join_space(self, message):
