@@ -22,11 +22,11 @@ class Handler(object):
         '_kind', '_name', '_handler',
         '_meta', '_async', '_pass_self',
         '_match_exact', '_match_parse', '_match_fuzzy',
-        '_length',
+        '_ignore_case', '_length',
     ]
 
     def __init__(self, kind, name, handler, meta=None,
-                 exact=True, parse=False, fuzzy=False):
+                 exact=True, parse=False, fuzzy=False, ignore_case=False):
         if callable(handler) and not iscoroutinefunction(handler):
             self._async = False
         elif iscoroutinefunction(handler):
@@ -55,6 +55,7 @@ class Handler(object):
         self._match_parse = bool(parse)
         self._match_fuzzy = bool(fuzzy)
         self._length = len(name)
+        self._ignore_case = bool(ignore_case)
 
     def __call__(self, *args, **kwargs):
         return self._handler(*args, **kwargs)
@@ -91,6 +92,10 @@ class Handler(object):
     def match_fuzzy(self):
         return self._match_fuzzy
 
+    @property
+    def ignore_case(self):
+        return self._ignore_case
+
 
 class HandlerRegistry(object):
     def __init__(self):
@@ -113,6 +118,8 @@ class HandlerRegistry(object):
                     handler.match_fuzzy]):
             raise ValueError('Expected one of exact, parse, fuzzy'
                              'to be True.')
+        if handler.ignore_case:
+            name = name.lower()
         if handler in self._handlers[name]:
             raise ValueError('Handler: {!r} already assigned to: {!r}'
                              ''.format(handler, name))
@@ -145,9 +152,13 @@ class HandlerRegistry(object):
             return frame, set()
 
     def match_exact(self, frame):
-        if frame.name not in self._index_exact:
-            return frame, set()
-        return frame, self._handlers[frame.name]
+        name = frame.name
+        if name in self._index_exact:
+            return frame, self._handlers[frame.name]
+        if name.lower() in self._index_exact:
+            handlers_ = self._handlers[name.lower()]
+            return frame, {h for h in handlers_ if h.ignore_case is True}
+        return frame, set()
 
     def match_parse(self, frame):
         for pattern in reversed(self._index_parse):

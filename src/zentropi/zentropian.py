@@ -109,28 +109,28 @@ class Zentropian(object):
         return_value = handler(*payload)
         return self.handle_return(frame, return_value)
 
-    def on_state(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_state(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=False):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
             self.states.add_handler(name, handler_obj)
             return handler
 
         return wrapper
 
-    def on_event(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_event(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=False):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.EVENT, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
             self.events.add_handler(name, handler_obj)
             return handler
 
         return wrapper
 
-    def on_message(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_message(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=True):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
             self.messages.add_handler(name, handler_obj)
             return handler
 
@@ -178,10 +178,10 @@ class Zentropian(object):
             connection.close()
 
 
-def on_event(name, *, exact=True, parse=False, fuzzy=False):
+def on_event(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.EVENT, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
@@ -191,10 +191,10 @@ def on_event(name, *, exact=True, parse=False, fuzzy=False):
     return wrapper
 
 
-def on_state(name, *, exact=True, parse=False, fuzzy=False):
+def on_state(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
@@ -204,10 +204,10 @@ def on_state(name, *, exact=True, parse=False, fuzzy=False):
     return wrapper
 
 
-def on_message(name, *, exact=True, parse=False, fuzzy=False):
+def on_message(name, *, exact=True, parse=False, fuzzy=False, ignore_case=True):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
