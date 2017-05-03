@@ -39,6 +39,6 @@ class WebhookAgent(Agent):
         token = request.GET['token']
         if token != TOKEN:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
-        data = {k: v for k, v in request.GET.items() if k != 'name'}
+        data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         self.emit(name, data=data)
         return web.json_response({'success': True})
