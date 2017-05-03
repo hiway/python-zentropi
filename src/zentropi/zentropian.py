@@ -151,8 +151,8 @@ class Zentropian(object):
             # print('broadcasting')
         return message
 
-    def connect(self, endpoint, *, tag='default'):
-        self._connections.connect(endpoint, tag=tag)
+    def connect(self, endpoint, *, auth=None, tag='default'):
+        self._connections.connect(endpoint, auth=auth, tag=tag)
 
     def bind(self, endpoint, *, tag='default'):
         self._connections.bind(endpoint, tag=tag)

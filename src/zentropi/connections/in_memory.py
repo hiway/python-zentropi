@@ -23,7 +23,7 @@ class InMemoryConnection(Connection):
             raise ConnectionError('Unable to connect as {} is already connected or bound to endpoint {!r}'
                                   ''.format(self.__class__.__name__, endpoint))
 
-    def connect(self, endpoint: str):   # type: ignore
+    def connect(self, endpoint: str, auth: Optional[str] = None):   # type: ignore
         global SPACES
         agent_name = self._agent.name
         endpoint = validate_endpoint(endpoint)

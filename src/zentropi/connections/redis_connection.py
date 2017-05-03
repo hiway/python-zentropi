@@ -1,5 +1,6 @@
 # coding=utf-8
 import asyncio
+import os
 from typing import Optional
 
 try:
@@ -10,8 +11,11 @@ except ImportError:
 from ..agent import Agent
 from ..connections.connection import Connection
 from ..frames import Frame
-from ..utils import validate_endpoint
-from ..utils import validate_name
+from ..utils import (
+    validate_endpoint,
+    validate_name,
+    validate_auth
+)
 
 assert Optional  # ignore unused error for now.
 
@@ -26,6 +30,7 @@ class RedisConnection(Connection):
         self._endpoint = None  # type: Optional[str]
         self._spaces = set()  # type: set
         self._listener_task = None
+        self._auth = None
 
     async def _connection_listener(self):
         connection = self._connection
@@ -43,8 +48,10 @@ class RedisConnection(Connection):
     def bind(self, endpoint: str) -> None:
         self.connect(endpoint)
 
-    async def connect(self, endpoint: str) -> None:  # type: ignore
+    async def connect(self, endpoint: str, auth: Optional[str] = None) -> None:  # type: ignore
         endpoint = validate_endpoint(endpoint)
+        auth = validate_auth(auth)
+        self._auth = auth
         # print('*** redis connecting to ', endpoint, flush=True)
         if self._connected:
             raise ConnectionError('Already connected.')
@@ -54,6 +61,8 @@ class RedisConnection(Connection):
         host, port = endpoint.replace('redis://', '').split(':')  # todo: handle exception
         self._subscriber = await aioredis.create_redis((host, port))
         self._publisher = await aioredis.create_redis((host, port))
+        await self._subscriber.auth(auth)
+        await self._publisher.auth(auth)
         self._connected = True
 
     async def _reconnect(self):

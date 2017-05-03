@@ -162,7 +162,15 @@ def validate_space(space):
     return space
 
 
-def run_agents(*agents, endpoint='inmemory://', space='zentropia', shell=False):
+def validate_auth(auth):
+    if auth is None:
+        return auth
+    if not isinstance(auth, str):
+        raise AssertionError('Expected auth to be str. Got: {!r}'.format(auth))
+    return auth
+
+
+def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', shell=False):
     import asyncio
     from zentropi import Agent, ZentropiShell
 
@@ -182,7 +190,7 @@ def run_agents(*agents, endpoint='inmemory://', space='zentropia', shell=False):
 
     if len(agents) == 1:
         agent = agents[0]
-        agent.connect(endpoint)
+        agent.connect(endpoint, auth=auth)
         agent.join(space)
         agent.run()
         return
@@ -206,10 +214,10 @@ def run_agents(*agents, endpoint='inmemory://', space='zentropia', shell=False):
 
     for agent in connect_agents:
         agent.start(loop=loop)
-        agent.connect(endpoint)
+        agent.connect(endpoint, auth=auth)
         agent.join(space)
 
-    last_agent.connect(endpoint)
+    last_agent.connect(endpoint, auth=auth)
     last_agent.join(space)
     last_agent.loop = loop
     last_agent.run()

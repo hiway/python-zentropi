@@ -42,12 +42,12 @@ class ConnectionRegistry(object):
     def connections(self):
         return [c for c in self._connections]
 
-    def connect(self, endpoint, *, tag='default', connection_class=None):
+    def connect(self, endpoint, *, auth=None, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
         if iscoroutinefunction(connection.connect):
-            self._agent.spawn(connection.connect(endpoint))
+            self._agent.spawn(connection.connect(endpoint, auth=auth))
         else:
-            connection.connect(endpoint)
+            connection.connect(endpoint, auth=auth)
         self._connections.add(connection)
         self._tags[tag].add(connection)
         self._endpoints[endpoint].add(connection)

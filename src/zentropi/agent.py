@@ -123,8 +123,8 @@ class Agent(Zentropian):
         self.states.should_stop = True
         self.timers.should_stop = True
 
-    def connect(self, endpoint, *, tag='default'):
-        retval = super().connect(endpoint, tag=tag)
+    def connect(self, endpoint, *, auth=None, tag='default'):
+        retval = super().connect(endpoint, auth=auth, tag=tag)
         if not isgeneratorfunction(retval):
             return
         self.spawn(retval)

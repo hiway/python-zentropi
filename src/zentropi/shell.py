@@ -74,10 +74,10 @@ class ZentropiShell(Agent):
         self.cli.request_redraw()
 
     async def interact(self):
-        self.emit('shell-starting')
+        self.emit('shell-starting', internal=True)
         while True:
             try:
-                self.emit('shell-ready')
+                self.emit('shell-ready', internal=True)
                 user_input = await self.cli.run_async()
                 command = user_input.text
                 self._exit_on_next_kb_interrupt = False  # We have new input; relax.
@@ -93,7 +93,7 @@ class ZentropiShell(Agent):
                 self._exit_on_next_kb_interrupt = True
                 print('!')
                 continue
-        self.emit('shell-stopping')
+        self.emit('shell-stopping', internal=True)
         print('Stopping...', flush=True)
         self.stop()
 
