@@ -4,8 +4,8 @@
 # coding=utf-8
 
 import asyncio
-
-from aiohttp import web, os
+import os
+from aiohttp import web
 from zentropi import Agent
 
 
