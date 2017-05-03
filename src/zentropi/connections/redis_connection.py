@@ -61,8 +61,11 @@ class RedisConnection(Connection):
         host, port = endpoint.replace('redis://', '').split(':')  # todo: handle exception
         self._subscriber = await aioredis.create_redis((host, port))
         self._publisher = await aioredis.create_redis((host, port))
-        await self._subscriber.auth(auth)
-        await self._publisher.auth(auth)
+        if auth:
+            await self._subscriber.auth(auth)
+            await self._publisher.auth(auth)
+        else:
+            print('*** WARNING: Redis connection has no password.')
         self._connected = True
 
     async def _reconnect(self):

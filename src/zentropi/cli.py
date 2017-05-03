@@ -16,6 +16,7 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 import click
+import os
 
 
 @click.group()
@@ -29,8 +30,9 @@ def main():
 @click.option('--join', default='')
 def shell(name, endpoint, join):
     from .shell import ZentropiShell
+    auth = os.getenv('ZENTROPI_REDIS_PASSWORD', None)
     shell_agent = ZentropiShell(name)
-    shell_agent.connect(endpoint)
+    shell_agent.connect(endpoint, auth=auth)
     if join:
         shell_agent.join(space=join)
     shell_agent.run()
