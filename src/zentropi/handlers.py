@@ -142,10 +142,10 @@ class HandlerRegistry(object):
 
     def match(self, frame):
         for match_function in self.match_functions:
-            frame, handlers = match_function(frame)
+            frame_, handlers = match_function(frame)
             if not handlers:
                 continue
-            return frame, handlers
+            return frame_, handlers
         else:
             if '*' in self._handlers:
                 return frame, self._handlers['*']
@@ -174,7 +174,7 @@ class HandlerRegistry(object):
             data = frame.data
             data.update(**res.named)
             data.update({'args': res.fixed})
-            frame.data.update(data)
+            frame.data = data
             return frame, handlers
         else:
             return frame, set()

@@ -51,7 +51,7 @@ class WebhookAgent(Agent):
         self.spawn_in_thread(web_server, self.webhook_emit)
         super().start(loop)
 
-    def webhook_emit(self, request):
+    async def webhook_emit(self, request):
         if 'name' not in request.GET:
             return web.json_response({'success': False, 'message': 'Error: required parameter "name" not found.'})
         if 'token' not in request.GET:
