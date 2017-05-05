@@ -119,10 +119,14 @@ class ZentropiShell(Agent):
 
     @on_event('join {space}', parse=True)
     def join_space(self, message):
+        if message.source != self.name:
+            return
         space = message.data.space.strip()
         self.join(space)
 
     @on_event('leave {space}', parse=True)
     def leave_space(self, message):
+        if message.source != self.name:
+            return
         space = message.data.space.strip()
         self.leave(space)
