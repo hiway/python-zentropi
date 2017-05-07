@@ -1,6 +1,8 @@
 # coding=utf-8
 import gettext
 import json
+import traceback
+
 import locale as lib_locale
 import logging
 import os
@@ -220,4 +222,19 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', sh
     last_agent.connect(endpoint, auth=auth)
     last_agent.join(space)
     last_agent.loop = loop
-    last_agent.run()
+
+    @last_agent.on_event('*** stopping')
+    def exit_other_agents(event):
+        for agent in connect_agents:
+            try:
+                agent.stop()
+            except:
+                pass
+
+    try:
+        last_agent.run()
+    except KeyboardInterrupt:
+        pass
+    except Exception as e:
+        traceback.print_exc()
+

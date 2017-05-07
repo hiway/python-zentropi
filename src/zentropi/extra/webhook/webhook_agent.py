@@ -1,14 +1,13 @@
 # coding=utf-8
-# coding=utf-8
-
-# coding=utf-8
-
 import asyncio
 import ssl
 
 import os
 from aiohttp import web
-from zentropi import Agent
+from zentropi import (
+    Agent,
+    on_event
+)
 
 RELATIVE_BASE_DIR = '~/.zentropi/'
 BASE_DIR = os.path.abspath(os.path.expanduser(RELATIVE_BASE_DIR))
@@ -34,22 +33,28 @@ def get_ssl_context():
     return ssl_context
 
 
-def web_server(emit_callback):
-    loop = asyncio.new_event_loop()
-    app = web.Application(loop=loop)
-    app.router.add_get('/emit', emit_callback)
-    host = '127.0.0.1'
-    port = 26514
-    web.run_app(app, host=host, port=port, loop=loop, ssl_context=get_ssl_context())
-
-
 class WebhookAgent(Agent):
     def __init__(self, name=None):
         super().__init__(name=name)
+        self.server_task = None
+        self.host = '127.0.0.1'
+        self.port = 26514
+        self.app = None  # type: web.Application
+        self.handler = None
 
-    def start(self, loop=None):
-        self.spawn_in_thread(web_server, self.webhook_emit)
-        super().start(loop)
+    def _add_routes(self):
+        self.app.router.add_route('*', '/emit', self.webhook_emit)
+
+    async def _run_forever(self):
+        self.app = web.Application()
+        self._add_routes()
+        self.handler = self.app.make_handler()
+        server_coro = self.loop.create_server(self.handler,
+                                              host=self.host,
+                                              port=self.port,
+                                              ssl=get_ssl_context())
+        self.server_task = await server_coro
+        await super()._run_forever()
 
     async def webhook_emit(self, request):
         if 'name' not in request.GET:
@@ -63,3 +68,11 @@ class WebhookAgent(Agent):
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         self.emit(name, data=data)
         return web.json_response({'success': True})
+
+    @on_event('*** stopping')
+    async def on_stopping(self, event):
+        print('*** Stop webhook server')
+        await self.server_task.wait_closed()
+        await self.app.shutdown()
+        await self.handler.shutdown(10.0)
+        await self.app.cleanup()
