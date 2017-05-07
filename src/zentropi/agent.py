@@ -118,6 +118,7 @@ class Agent(Zentropian):
     def spawn_in_thread(func, *args, **kwargs):
         task = threading.Thread(target=func, args=args, kwargs=kwargs)
         task.start()
+        return task
 
     def stop(self):
         self.states.should_stop = True
