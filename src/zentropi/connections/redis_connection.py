@@ -92,7 +92,6 @@ class RedisConnection(Connection):
             self._publisher.close()
 
     async def join(self, space: str) -> None:  # type: ignore
-
         space = validate_name(space)
         self._spaces.add(space)
         await self._reconnect()
@@ -113,4 +112,8 @@ class RedisConnection(Connection):
         else:
             spaces = self._spaces
         for space in spaces:
-            await self._publisher.publish_json(space, frame.as_dict())
+            try:
+                await self._publisher.publish_json(space, frame.as_dict())
+            except aioredis.errors.ConnectionClosedError:
+                print('*** disconnected!')
+                self._connected = False
