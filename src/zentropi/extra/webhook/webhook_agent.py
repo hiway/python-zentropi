@@ -3,8 +3,9 @@ import asyncio
 import ssl
 
 import os
-from hashlib import sha1
+import hmac
 from aiohttp import web
+from hashlib import sha1
 from zentropi import (
     Agent,
     on_event
@@ -13,7 +14,6 @@ from zentropi import (
 RELATIVE_BASE_DIR = '~/.zentropi/'
 BASE_DIR = os.path.abspath(os.path.expanduser(RELATIVE_BASE_DIR))
 TOKEN = os.getenv('ZENTROPI_WEBHOOK_TOKEN', None)
-TOKEN_SHA1 = 'sha1={}'.format(sha1(TOKEN.encode('utf-8')))
 assert TOKEN, 'Error: export ZENTROPI_WEBHOOK_TOKEN="[32-or-more-urlsafe-random-characters]" ' \
               'Send the token with client-request as /emit?token=[32-or-more-urlsafe-random-characters].'
 
@@ -70,7 +70,7 @@ class WebhookAgent(Agent):
         if not name:
             name = request.GET.get('name', None) or post_data['name']
         token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
-        if token not in [TOKEN, TOKEN_SHA1]:
+        if token != TOKEN and self.verify_hmac(post_data, TOKEN, token):
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         if post_data:
@@ -85,3 +85,17 @@ class WebhookAgent(Agent):
         await self.app.shutdown()
         await self.handler.shutdown(10.0)
         await self.app.cleanup()
+
+    @staticmethod
+    def verify_hmac(data, secret, signature):
+        if not secret:
+            return False
+        if signature is None:
+            return False
+        sha_name, signature = signature.split('=')
+        if sha_name != 'sha1':
+            return False
+        mac = hmac.new(str(secret), msg=data, digestmod=sha1)
+        if not hmac.compare_digest(str(mac.hexdigest()), str(signature)):
+            return False
+        return True
