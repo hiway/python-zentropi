@@ -73,8 +73,8 @@ class WebhookAgent(Agent):
         if not name:
             name = request.GET.get('name', None) or post_data['name']
         if not token:
-            token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
-        if token != TOKEN and self.verify_hmac(post_data, TOKEN, token) is False:
+            token = request.GET.get('token', None)
+        if token != TOKEN is False:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         if post_data:
@@ -89,22 +89,3 @@ class WebhookAgent(Agent):
         await self.app.shutdown()
         await self.handler.shutdown(10.0)
         await self.app.cleanup()
-
-    @staticmethod
-    def verify_hmac(data, secret, signature):
-        if not secret:
-            print('!! no secret')
-            return False
-        if signature is None:
-            print('!! no signature')
-            return False
-        sha_name, signature = signature.split('=')
-        if sha_name != 'sha1':
-            print('!! not sha1')
-            return False
-        mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps({k: v for k, v in data.items()}).encode('utf-8'),
-                       digestmod=sha1)
-        if not hmac.compare_digest(str(mac.hexdigest()), str(signature)):
-            print('!! {} != {}'.format(mac.hexdigest(), signature))
-            return False
-        return True
