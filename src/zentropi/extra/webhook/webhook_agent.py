@@ -48,6 +48,7 @@ class WebhookAgent(Agent):
     def _add_routes(self):
         self.app.router.add_route('*', '/emit', self.webhook_emit)
         self.app.router.add_route('*', '/{name}', self.webhook_emit)
+        self.app.router.add_route('*', '/{name}/{token}', self.webhook_emit)
 
     async def _run_forever(self):
         self.app = web.Application()
@@ -62,15 +63,17 @@ class WebhookAgent(Agent):
 
     async def webhook_emit(self, request):
         name = request.match_info.get('name', None)
+        token = request.match_info.get('token', None)
         post_data = await request.post()
         if not name:
             if 'name' not in request.GET or 'name' not in post_data:
                 return web.json_response({'success': False, 'message': 'Error: required parameter "name" not found.'})
-        if not any(['token' not in request.GET, 'X-Hub-Signature' not in request.headers]):
+        if not token and not any(['token' not in request.GET, 'X-Hub-Signature' not in request.headers]):
             return web.json_response({'success': False, 'message': 'Error: required parameter "token" not found.'})
         if not name:
             name = request.GET.get('name', None) or post_data['name']
-        token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
+        if not token:
+            token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
         if token != TOKEN and self.verify_hmac(post_data, TOKEN, token) is False:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
