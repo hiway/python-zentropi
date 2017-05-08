@@ -4,7 +4,8 @@ import ssl
 
 import os
 import hmac
-from aiohttp import web, json
+import json
+from aiohttp import web
 from hashlib import sha1
 from zentropi import (
     Agent,
