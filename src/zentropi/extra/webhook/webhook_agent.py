@@ -1,12 +1,12 @@
 # coding=utf-8
-import asyncio
 import ssl
+import json
 
 import os
 import hmac
-import json
 from aiohttp import web
 from hashlib import sha1
+
 from zentropi import (
     Agent,
     on_event
@@ -71,7 +71,7 @@ class WebhookAgent(Agent):
         if not name:
             name = request.GET.get('name', None) or post_data['name']
         token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
-        if token != TOKEN and self.verify_hmac(post_data, TOKEN, token):
+        if token != TOKEN and self.verify_hmac(post_data, TOKEN, token) is False:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         if post_data:
@@ -96,7 +96,8 @@ class WebhookAgent(Agent):
         sha_name, signature = signature.split('=')
         if sha_name != 'sha1':
             return False
-        mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps({k:v for k, v in data.items()}).encode('utf-8'), digestmod=sha1)
+        mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps({k: v for k, v in data.items()}).encode('utf-8'),
+                       digestmod=sha1)
         if not hmac.compare_digest(str(mac.hexdigest()), str(signature)):
             return False
         return True
