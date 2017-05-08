@@ -3,6 +3,7 @@ import asyncio
 import ssl
 
 import os
+from hashlib import sha1
 from aiohttp import web
 from zentropi import (
     Agent,
@@ -12,6 +13,7 @@ from zentropi import (
 RELATIVE_BASE_DIR = '~/.zentropi/'
 BASE_DIR = os.path.abspath(os.path.expanduser(RELATIVE_BASE_DIR))
 TOKEN = os.getenv('ZENTROPI_WEBHOOK_TOKEN', None)
+TOKEN_SHA1 = 'sha1={}'.format(sha1(TOKEN.encode('utf-8')))
 assert TOKEN, 'Error: export ZENTROPI_WEBHOOK_TOKEN="[32-or-more-urlsafe-random-characters]" ' \
               'Send the token with client-request as /emit?token=[32-or-more-urlsafe-random-characters].'
 
@@ -68,7 +70,7 @@ class WebhookAgent(Agent):
         if not name:
             name = request.GET.get('name', None) or post_data['name']
         token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
-        if token != TOKEN:
+        if token not in [TOKEN, TOKEN_SHA1]:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
         if post_data:
