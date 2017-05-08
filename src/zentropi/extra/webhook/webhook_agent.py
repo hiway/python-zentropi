@@ -58,8 +58,7 @@ class WebhookAgent(Agent):
         await super()._run_forever()
 
     async def webhook_emit(self, request):
-        print('###', request.GET)
-        name = request.match_info.get('name', "Anonymous")
+        name = request.match_info.get('name', None)
         if not name and 'name' not in request.GET:
             return web.json_response({'success': False, 'message': 'Error: required parameter "name" not found.'})
         if 'token' not in request.GET:
