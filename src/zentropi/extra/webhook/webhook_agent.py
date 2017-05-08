@@ -90,14 +90,18 @@ class WebhookAgent(Agent):
     @staticmethod
     def verify_hmac(data, secret, signature):
         if not secret:
+            print('!! no secret')
             return False
         if signature is None:
+            print('!! no signature')
             return False
         sha_name, signature = signature.split('=')
         if sha_name != 'sha1':
+            print('!! not sha1')
             return False
         mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps({k: v for k, v in data.items()}).encode('utf-8'),
                        digestmod=sha1)
         if not hmac.compare_digest(str(mac.hexdigest()), str(signature)):
+            print('!! {} != {}'.format(mac.hexdigest(), signature))
             return False
         return True
