@@ -44,6 +44,7 @@ class WebhookAgent(Agent):
 
     def _add_routes(self):
         self.app.router.add_route('*', '/emit', self.webhook_emit)
+        self.app.router.add_route('*', '/{name}', self.webhook_emit)
 
     async def _run_forever(self):
         self.app = web.Application()
@@ -57,11 +58,14 @@ class WebhookAgent(Agent):
         await super()._run_forever()
 
     async def webhook_emit(self, request):
-        if 'name' not in request.GET:
+        print('###', request.GET)
+        name = request.match_info.get('name', "Anonymous")
+        if not name and 'name' not in request.GET:
             return web.json_response({'success': False, 'message': 'Error: required parameter "name" not found.'})
         if 'token' not in request.GET:
             return web.json_response({'success': False, 'message': 'Error: required parameter "token" not found.'})
-        name = request.GET['name']
+        if not name:
+            name = request.GET['name']
         token = request.GET['token']
         if token != TOKEN:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
