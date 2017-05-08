@@ -63,11 +63,11 @@ class WebhookAgent(Agent):
         if not name:
             if 'name' not in request.GET or 'name' not in post_data:
                 return web.json_response({'success': False, 'message': 'Error: required parameter "name" not found.'})
-        if 'token' not in request.GET:
+        if not any(['token' not in request.GET, 'X-Hub-Signature' not in request.headers]):
             return web.json_response({'success': False, 'message': 'Error: required parameter "token" not found.'})
         if not name:
             name = request.GET.get('name', None) or post_data['name']
-        token = request.GET['token']
+        token = request.GET.get('token', None) or request.headers.get('X-Hub-Signature')
         if token != TOKEN:
             return web.json_response({'success': False, 'message': 'Error: authentication failed. Invalid token.'})
         data = {k: v for k, v in request.GET.items() if k not in ['name', 'token']}
