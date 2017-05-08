@@ -96,7 +96,7 @@ class WebhookAgent(Agent):
         sha_name, signature = signature.split('=')
         if sha_name != 'sha1':
             return False
-        mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps(data), digestmod=sha1)
+        mac = hmac.new(bytes(secret, 'utf-8'), msg=json.dumps(data.items()), digestmod=sha1)
         if not hmac.compare_digest(str(mac.hexdigest()), str(signature)):
             return False
         return True
