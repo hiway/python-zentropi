@@ -21,7 +21,7 @@ FRAME_PREFIX = {
     KINDS.RESPONSE: '🔻',
 }
 
-template = """<span class='prefix'>{prefix}</span>
+frame_template = """<span class='prefix'>{prefix}</span>
 <span class='source_name'>@{source}:</span> 
 <span class='frame_name'>{name}</span>"""
 
@@ -72,8 +72,7 @@ class BrowserDOMAgent(Agent):
     def __init__(self, name=None):
         super().__init__(name=name)
         self.document = get_document()
-        style_ = Style(style)
-        self.document.head.appendChild(style_)
+        self.document.head.appendChild(Style(style))
         self.ul = Ul(class_='zen-log')
         self.document.body.appendChild(self.ul)
 
@@ -82,7 +81,7 @@ class BrowserDOMAgent(Agent):
     def every_frame(self, frame):
         li = Li()
         prefix = FRAME_PREFIX[frame.kind]
-        text = template.format(prefix=prefix, source=frame.source, name=frame.name)
+        text = frame_template.format(prefix=prefix, source=frame.source, name=frame.name)
         data = frame.data
         if data and not (len(data.keys()) == 1 and 'text' in data):
             text += data_template.format(data=pformat(data))
