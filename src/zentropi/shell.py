@@ -77,7 +77,7 @@ class ZentropiShell(Agent):
         self.emit('shell-starting', internal=True)
         while True:
             try:
-                self.emit('shell-ready', internal=True)
+                # self.emit('shell-ready', internal=True)
                 user_input = await self.cli.run_async()
                 command = user_input.text
                 self._exit_on_next_kb_interrupt = False  # We have new input; relax.
@@ -103,13 +103,15 @@ class ZentropiShell(Agent):
 
     @on_message('*')
     @on_event('*')
-    def on_any_message(self, frame):
+    async def on_any_message(self, frame):
         if frame.source == self.name and frame.internal is True and not frame.name.startswith('***'):
             if 'text' in frame.data:
                 text = frame.data.text.strip()
             else:
                 text = frame.name
             self.message(text)
+            return
+        elif frame.source == self.name and frame.internal is False:
             return
         prefix = FRAME_PREFIX[frame.kind]
         if frame.data and frame.data.text != frame.name:
@@ -118,14 +120,14 @@ class ZentropiShell(Agent):
             print('{} @{}: {}'.format(prefix, frame.source, frame.name))
 
     @on_event('join {space}', parse=True)
-    def join_space(self, message):
+    async def join_space(self, message):
         if message.source != self.name:
             return
         space = message.data.space.strip()
         self.join(space)
 
     @on_event('leave {space}', parse=True)
-    def leave_space(self, message):
+    async def leave_space(self, message):
         if message.source != self.name:
             return
         space = message.data.space.strip()
