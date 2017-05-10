@@ -63,8 +63,11 @@ class InMemoryConnection(Connection):
         self._connected = False
 
     def broadcast(self, frame):
-        self.validate_is_connected()
-        self._spaces.broadcast(frame)
+        try:
+            self.validate_is_connected()
+            self._spaces.broadcast(frame)
+        except AssertionError:
+            self._connected = False
         return True
 
     def join(self, space: str) -> None:  # type: ignore

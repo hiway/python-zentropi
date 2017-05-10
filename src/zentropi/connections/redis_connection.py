@@ -115,5 +115,4 @@ class RedisConnection(Connection):
             try:
                 await self._publisher.publish_json(space, frame.as_dict())
             except aioredis.errors.ConnectionClosedError:
-                print('*** disconnected!')
                 self._connected = False
