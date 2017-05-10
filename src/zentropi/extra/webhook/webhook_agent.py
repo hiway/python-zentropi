@@ -48,7 +48,7 @@ class WebhookAgent(Agent):
     def _add_routes(self):
         self.app.router.add_route('*', '/emit', self.webhook_emit)
         self.app.router.add_route('*', '/{name}', self.webhook_emit)
-        self.app.router.add_route('*', '/{name}/{token}', self.webhook_emit)
+        self.app.router.add_route('*', '/{token}/{name}', self.webhook_emit)
 
     async def _run_forever(self):
         self.app = web.Application()
