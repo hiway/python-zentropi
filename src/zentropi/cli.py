@@ -26,11 +26,15 @@ def main():
 
 @main.command()
 @click.option('--name', default='zentropi_shell')
-@click.option('--endpoint', default='redis://localhost:6379')
-@click.option('--join', default='')
-def shell(name, endpoint, join):
+@click.option('--endpoint', default='redis://127.0.0.1:6379')
+@click.option('--auth/--no-auth', 'send_auth', is_flag=True, default=True)
+@click.option('--join', default='zentropia')
+def shell(name, endpoint, join, send_auth):
     from .shell import ZentropiShell
-    auth = os.getenv('ZENTROPI_REDIS_PASSWORD', None)
+    if send_auth:
+        auth = os.getenv('ZENTROPI_REDIS_PASSWORD', None)
+    else:
+        auth = None
     shell_agent = ZentropiShell(name)
     shell_agent.connect(endpoint, auth=auth)
     if join:
