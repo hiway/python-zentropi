@@ -56,6 +56,12 @@ class Handler(object):
         self._length = len(name)
         self._ignore_case = bool(ignore_case)
         self._filters = {k[1:]: a for k, a in kwargs.items() if k.startswith('_')}
+        unexpected_kwargs = [k for k in kwargs if not k.startswith('_')]
+        if unexpected_kwargs:
+            raise AssertionError('Unexpected keyword arguments: {}\n'
+                                 'Filters should be named as: {}'.format(', '.join(unexpected_kwargs),
+                                                                         ', '.join(['_{}'.format(k)
+                                                                                    for k in unexpected_kwargs])))
 
     def __call__(self, *args, **kwargs):
         return self._handler(*args, **kwargs)
