@@ -64,6 +64,8 @@ class Agent(Zentropian):
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
         if frame and frame.id in self._seen_frames:
             return
+        if not self.apply_filters([handler]):
+            return
         if frame:
             self._seen_frames.add(frame.id)
         payload = []  # type: list
@@ -169,10 +171,10 @@ class Agent(Zentropian):
             connection.close()
 
 
-def on_timer(interval):
+def on_timer(interval, **kwargs):
     def wrapper(handler):
         name = str(interval)
-        handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler)
+        handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
