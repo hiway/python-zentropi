@@ -123,6 +123,9 @@ class Agent(Zentropian):
         task.start()
         return task
 
+    def run_in_thread(self):
+        return self.spawn_in_thread(self.run)
+
     def stop(self):
         self.states.should_stop = True
         self.timers.should_stop = True
