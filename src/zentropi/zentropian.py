@@ -78,8 +78,11 @@ class Zentropian(object):
         handlers_ = set(handlers)
         for handler in handlers:
             for filter_, value in handler.filters.items():
-                if self.states.get(filter_, None) != value:
-                    handlers_.remove(handler)
+                if self.states.get(filter_, None) == value:
+                    continue
+                if handler not in handlers_:
+                    continue
+                handlers_.remove(handler)
         return handlers_
 
     def handle_return(self, frame, return_value):
@@ -156,7 +159,6 @@ class Zentropian(object):
                                         source=self.name, reply_to=reply_to)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=message)
-            # print('broadcasting')
         return message
 
     def connect(self, endpoint, *, auth=None, tag='default'):
