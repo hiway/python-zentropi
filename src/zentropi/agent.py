@@ -58,7 +58,10 @@ class Agent(Zentropian):
         if loop:
             self.loop = loop
         if not self.loop:
-            self.loop = asyncio.get_event_loop()
+            try:
+                self.loop = asyncio.get_event_loop()
+            except RuntimeError:
+                self.loop = asyncio.new_event_loop()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
         if frame and frame.id in self._seen_frames:
