@@ -1,14 +1,13 @@
 # coding=utf-8
-from collections import defaultdict
 from inspect import (
     getfullargspec,
     iscoroutinefunction,
 )
 
+from collections import defaultdict
 from fuzzywuzzy import fuzz, process
 from parse import parse as string_parse
 from sortedcontainers import SortedListWithKey
-
 from zentropi.defaults import MATCH_FUZZY_THRESHOLD
 from zentropi.utils import (
     validate_handler,
@@ -22,11 +21,11 @@ class Handler(object):
         '_kind', '_name', '_handler',
         '_meta', '_async', '_pass_self',
         '_match_exact', '_match_parse', '_match_fuzzy',
-        '_ignore_case', '_length',
+        '_ignore_case', '_length', '_filters'
     ]
 
     def __init__(self, kind, name, handler, meta=None,
-                 exact=True, parse=False, fuzzy=False, ignore_case=False):
+                 exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
         if callable(handler) and not iscoroutinefunction(handler):
             self._async = False
         elif iscoroutinefunction(handler):
@@ -56,6 +55,7 @@ class Handler(object):
         self._match_fuzzy = bool(fuzzy)
         self._length = len(name)
         self._ignore_case = bool(ignore_case)
+        self._filters = {k[1:]: a for k, a in kwargs.items() if k.startswith('_')}
 
     def __call__(self, *args, **kwargs):
         return self._handler(*args, **kwargs)
@@ -95,6 +95,10 @@ class Handler(object):
     @property
     def ignore_case(self):
         return self._ignore_case
+
+    @property
+    def filters(self):
+        return self._filters
 
 
 class HandlerRegistry(object):

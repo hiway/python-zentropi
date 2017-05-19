@@ -71,8 +71,16 @@ class Zentropian(object):
         else:
             raise ValueError('Unknown frame {!r} with kind {!r}'
                              ''.format(frame.name, KINDS(frame.kind)))  # todo: KINDS might throw an exception?
-        for handler in handlers:
+        for handler in self.apply_filters(handlers):
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
+
+    def apply_filters(self, handlers):
+        handlers_ = set(handlers)
+        for handler in handlers:
+            for filter_, value in handler.filters.items():
+                if self.states.get(filter_, None) != value:
+                    handlers_.remove(handler)
+        return handlers_
 
     def handle_return(self, frame, return_value):
         """Original frame and returned value from handler."""
@@ -204,10 +212,10 @@ def on_state(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False):
     return wrapper
 
 
-def on_message(name, *, exact=True, parse=False, fuzzy=False, ignore_case=True):
+def on_message(name, *, exact=True, parse=False, fuzzy=False, ignore_case=True, **kwargs):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
