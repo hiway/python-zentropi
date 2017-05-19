@@ -43,6 +43,7 @@ class TelegramAgent(Agent):
                 'user_id': message['from']['id'],
                 'username': message['from']['username'],
                 'full_name': full_name,
+                'session': message['chat']['id'],
             })
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
         except Exception:
@@ -66,9 +67,9 @@ class TelegramAgent(Agent):
     @on_event('send_telegram_message')
     async def send_message(self, event):
         text = event.data.text
-        chat_id = event.data.chat_id
+        chat_id = event.data.session or event.data.chat_id
         if not chat_id:
-            self.emit('telegram_message_error')
+            self.emit('telegram_message_error', data={'text': 'session or chat_id expected.'})
             return
         try:
             ret_val = await self._bot.send_message(chat_id=chat_id, text=text)
