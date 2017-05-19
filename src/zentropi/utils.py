@@ -172,7 +172,7 @@ def validate_auth(auth):
     return auth
 
 
-def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', shell=False):
+def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', shell=False, loop=None):
     import asyncio
     from zentropi import Agent, ZentropiShell
 
@@ -188,7 +188,8 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', sh
     if shell:
         shell = ZentropiShell('shell')
         agents.append(shell)
-    loop = asyncio.get_event_loop()
+    if not loop:
+        loop = asyncio.get_event_loop()
 
     if len(agents) == 1:
         agent = agents[0]
@@ -229,12 +230,12 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', sh
             try:
                 agent.stop()
             except:
+                traceback.print_exc()
                 pass
 
     try:
         last_agent.run()
     except KeyboardInterrupt:
-        pass
+        last_agent.stop()
     except Exception as e:
         traceback.print_exc()
-
