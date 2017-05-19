@@ -10,7 +10,11 @@ from typing import (
 
 from pybloom_live import ScalableBloomFilter
 
-from zentropi.frames import Frame
+from zentropi.frames import (
+    Frame,
+    Message,
+    Event,
+)
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
@@ -62,6 +66,10 @@ class Agent(Zentropian):
                 self.loop = asyncio.new_event_loop()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
+        if isinstance(frame, Message) and frame.source == self.name:
+            return
+        if isinstance(frame, Event) and frame.source != self.name and frame.name.startswith('***'):
+            return
         if frame and frame.id in self._seen_frames:
             return
         if not self.apply_filters([handler]):
