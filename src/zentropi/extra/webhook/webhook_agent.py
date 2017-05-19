@@ -1,11 +1,8 @@
 # coding=utf-8
 import ssl
-import json
 
 import os
-import hmac
 from aiohttp import web
-from hashlib import sha1
 
 from zentropi import (
     Agent,
