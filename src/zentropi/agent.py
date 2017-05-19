@@ -48,8 +48,6 @@ class Agent(Zentropian):
         self.timers.start_timers(self.spawn)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
-        self.emit('*** stopping', internal=True)
-        await asyncio.sleep(0.1)
         self.emit('*** stopped', internal=True)
 
     def _set_asyncio_loop(self, loop=None):
@@ -100,7 +98,8 @@ class Agent(Zentropian):
 
         return wrapper
 
-    def sleep(self, duration: float):
+    @staticmethod
+    def sleep(duration: float):
         return asyncio.sleep(duration)
 
     def start(self, loop=None):
@@ -127,6 +126,7 @@ class Agent(Zentropian):
         return self.spawn_in_thread(self.run)
 
     def stop(self):
+        self.emit('*** stopping', internal=True)
         self.states.should_stop = True
         self.timers.should_stop = True
 
