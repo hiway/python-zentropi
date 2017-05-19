@@ -21,5 +21,4 @@ class EchoBot(Agent):
 if __name__ == '__main__':
     echo_bot = EchoBot('echo_bot')
     telegram_agent = TelegramAgent('tg')
-    shell = ZentropiShell('shell')
-    run_agents(echo_bot, telegram_agent, shell)
+    run_agents(echo_bot, telegram_agent, shell=True)

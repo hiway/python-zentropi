@@ -34,5 +34,4 @@ class Relay(Agent):
 
 if __name__ == '__main__':
     relay = Relay('relay')
-    shell = ZentropiShell('shell')
-    run_agents(relay, shell)
+    run_agents(relay, shell=True)

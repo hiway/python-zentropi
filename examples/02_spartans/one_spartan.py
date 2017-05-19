@@ -15,7 +15,5 @@ class Spartan(Agent):
 
 
 if __name__ == '__main__':
-    from zentropi.shell import ZentropiShell
-    shell = ZentropiShell('shell')
     warrior = Spartan(name='Spartan')
-    run_agents(shell, warrior, space='Thermopylae')
+    run_agents(warrior, space='Thermopylae', shell=True)
