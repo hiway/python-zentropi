@@ -1,6 +1,8 @@
 # coding=utf-8
 import os
 
+from zentropi import Agent, on_event, on_message
+
 try:
     from tinydb import (
         Query,
@@ -9,11 +11,6 @@ try:
 except ImportError as e:
     raise ImportError('Run `pip install tinydb` (https://tinydb.readthedocs.io/)')
 
-from zentropi import (
-    Agent,
-    on_event,
-    on_message,
-)
 
 STORE_PATH = os.path.expanduser('~/.zentropi/kvstore.db')
 

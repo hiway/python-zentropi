@@ -3,19 +3,20 @@ import asyncio
 import os
 from typing import Optional
 
+from ..agent import Agent
+from ..connections.connection import Connection
+from ..frames import Frame
+from ..utils import (
+    validate_auth,
+    validate_endpoint,
+    validate_name
+)
+
 try:
     import aioredis
 except ImportError:
     raise ImportError('Missing dependency: pip install aioredis')
 
-from ..agent import Agent
-from ..connections.connection import Connection
-from ..frames import Frame
-from ..utils import (
-    validate_endpoint,
-    validate_name,
-    validate_auth
-)
 
 assert Optional  # ignore unused error for now.
 

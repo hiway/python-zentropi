@@ -2,11 +2,7 @@
 import os
 import traceback
 
-from zentropi import (
-    Agent,
-    on_event,
-    on_message
-)
+from zentropi import Agent, on_event, on_message
 
 
 class LogAgent(Agent):

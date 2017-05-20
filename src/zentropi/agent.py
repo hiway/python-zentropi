@@ -7,11 +7,7 @@ from typing import Optional, Union
 
 from pybloom_live import ScalableBloomFilter
 
-from zentropi.frames import (
-    Frame,
-    Message,
-    Event,
-)
+from zentropi.frames import Event, Frame, Message
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry

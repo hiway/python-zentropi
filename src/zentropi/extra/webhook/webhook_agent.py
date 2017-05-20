@@ -1,13 +1,10 @@
 # coding=utf-8
+import os
 import ssl
 
-import os
 from aiohttp import web
 
-from zentropi import (
-    Agent,
-    on_event
-)
+from zentropi import Agent, on_event
 
 RELATIVE_BASE_DIR = '~/.zentropi/'
 BASE_DIR = os.path.abspath(os.path.expanduser(RELATIVE_BASE_DIR))

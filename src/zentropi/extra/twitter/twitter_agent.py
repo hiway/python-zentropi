@@ -1,15 +1,13 @@
 # coding=utf-8
 # coding=utf-8
 import json
+import os
 import traceback
 
 import jmespath
-import os
 import tweepy as tweepy
-from zentropi import (
-    Agent,
-    on_event,
-)
+
+from zentropi import Agent, on_event
 
 auth = tweepy.OAuthHandler(os.getenv('ZENTROPI_TWITTER_API_KEY'),
                            os.getenv('ZENTROPI_TWITTER_API_SECRET'))

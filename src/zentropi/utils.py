@@ -1,12 +1,11 @@
 # coding=utf-8
 import gettext
 import json
-import traceback
-
 import locale as lib_locale
 import logging
 import os
 import sys
+import traceback
 import warnings
 from typing import Any, Optional
 

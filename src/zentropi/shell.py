@@ -1,26 +1,22 @@
 # coding=utf-8
+import os
 import pprint
 import sys
-
-import os
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import create_prompt_application
-from prompt_toolkit.shortcuts import create_asyncio_eventloop
+from prompt_toolkit.shortcuts import (
+    create_asyncio_eventloop,
+    create_prompt_application
+)
 from pygments.token import Token
-from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 
-from .agent import (
-    Agent,
-    on_event,
-    on_message
-)
-from .frames import (
-    KINDS,
-    Message
-)
+from zentropi.defaults import \
+    FRAME_NAME_MAX_LENGTH
+
+from .agent import Agent, on_event, on_message
+from .frames import KINDS, Message
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'

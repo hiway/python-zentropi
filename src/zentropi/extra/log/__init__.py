@@ -3,7 +3,6 @@
 
 from .log_agent import LogAgent
 
-
 __all__ = [
     'LogAgent',
 ]
