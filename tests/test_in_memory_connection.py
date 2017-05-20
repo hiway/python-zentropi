@@ -1,8 +1,10 @@
 # coding=utf-8
 # import pytest
-from zentropi import InMemoryConnection
-from zentropi import Zentropian
-from zentropi import on_event
+from zentropi import (
+    InMemoryConnection,
+    Zentropian,
+    on_event
+)
 
 
 # Test Connection() without ConnectionHandler()

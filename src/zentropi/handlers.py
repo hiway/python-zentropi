@@ -2,18 +2,19 @@
 from collections import defaultdict
 from inspect import (
     getfullargspec,
-    iscoroutinefunction,
+    iscoroutinefunction
 )
 
 from fuzzywuzzy import fuzz, process
 from parse import parse as string_parse
 from sortedcontainers import SortedListWithKey
 
-from zentropi.defaults import MATCH_FUZZY_THRESHOLD
+from zentropi.defaults import \
+    MATCH_FUZZY_THRESHOLD
 from zentropi.utils import (
     validate_handler,
     validate_kind,
-    validate_name,
+    validate_name
 )
 
 
@@ -22,11 +23,11 @@ class Handler(object):
         '_kind', '_name', '_handler',
         '_meta', '_async', '_pass_self',
         '_match_exact', '_match_parse', '_match_fuzzy',
-        '_length',
+        '_ignore_case', '_length', '_filters'
     ]
 
     def __init__(self, kind, name, handler, meta=None,
-                 exact=True, parse=False, fuzzy=False):
+                 exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
         if callable(handler) and not iscoroutinefunction(handler):
             self._async = False
         elif iscoroutinefunction(handler):
@@ -55,6 +56,14 @@ class Handler(object):
         self._match_parse = bool(parse)
         self._match_fuzzy = bool(fuzzy)
         self._length = len(name)
+        self._ignore_case = bool(ignore_case)
+        self._filters = {k[1:]: a for k, a in kwargs.items() if k.startswith('_')}
+        unexpected_kwargs = [k for k in kwargs if not k.startswith('_')]
+        if unexpected_kwargs:
+            raise AssertionError('Unexpected keyword arguments: {}\n'
+                                 'Filters should be named as: {}'.format(', '.join(unexpected_kwargs),
+                                                                         ', '.join(['_{}'.format(k)
+                                                                                    for k in unexpected_kwargs])))
 
     def __call__(self, *args, **kwargs):
         return self._handler(*args, **kwargs)
@@ -91,6 +100,14 @@ class Handler(object):
     def match_fuzzy(self):
         return self._match_fuzzy
 
+    @property
+    def ignore_case(self):
+        return self._ignore_case
+
+    @property
+    def filters(self):
+        return self._filters
+
 
 class HandlerRegistry(object):
     def __init__(self):
@@ -113,6 +130,8 @@ class HandlerRegistry(object):
                     handler.match_fuzzy]):
             raise ValueError('Expected one of exact, parse, fuzzy'
                              'to be True.')
+        if handler.ignore_case:
+            name = name.lower()
         if handler in self._handlers[name]:
             raise ValueError('Handler: {!r} already assigned to: {!r}'
                              ''.format(handler, name))
@@ -135,19 +154,23 @@ class HandlerRegistry(object):
 
     def match(self, frame):
         for match_function in self.match_functions:
-            frame, handlers = match_function(frame)
+            frame_, handlers = match_function(frame)
             if not handlers:
                 continue
-            return frame, handlers
+            return frame_, handlers
         else:
             if '*' in self._handlers:
                 return frame, self._handlers['*']
             return frame, set()
 
     def match_exact(self, frame):
-        if frame.name not in self._index_exact:
-            return frame, set()
-        return frame, self._handlers[frame.name]
+        name = frame.name
+        if name in self._index_exact:
+            return frame, self._handlers[frame.name]
+        if name.lower() in self._index_exact:
+            handlers_ = self._handlers[name.lower()]
+            return frame, {h for h in handlers_ if h.ignore_case is True}
+        return frame, set()
 
     def match_parse(self, frame):
         for pattern in reversed(self._index_parse):
@@ -163,7 +186,7 @@ class HandlerRegistry(object):
             data = frame.data
             data.update(**res.named)
             data.update({'args': res.fixed})
-            frame.data.update(data)
+            frame.data = data
             return frame, handlers
         else:
             return frame, set()

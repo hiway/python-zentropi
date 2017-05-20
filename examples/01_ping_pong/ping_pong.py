@@ -1,10 +1,10 @@
 # coding=utf-8
 from zentropi import (
     Agent,
+    ZentropiShell,
     on_event,
     on_timer,
-    run_agents,
-    ZentropiShell
+    run_agents
 )
 
 
@@ -29,5 +29,4 @@ class PongBot(Agent):
 if __name__ == '__main__':
     ping_bot = PingBot(name='ping_bot')
     pong_bot = PongBot(name='pong_bot')
-    shell = ZentropiShell(name='shell')
-    run_agents(ping_bot, pong_bot, shell)
+    run_agents(ping_bot, pong_bot, shell=True)

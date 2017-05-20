@@ -73,12 +73,31 @@ Zentropi is for you if:
 Installation
 ============
 
+Note: Requires Python 3.5+ and compiler toolchain to build c-extensions.
+
+Stable:
+-------
+
 ::
 
-    pip install zentropi
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ pip install zentropi
 
 
-Or follow more detailed installation steps for your platform here:
+Current:
+--------
+
+::
+
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
+
+
+Install steps for Ubuntu and MacOS:
 https://zentropi.readthedocs.io/en/latest/installation.html
 
 

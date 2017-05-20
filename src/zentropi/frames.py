@@ -2,8 +2,7 @@
 import json
 import time
 from collections import UserDict
-from typing import Optional
-from typing import Union
+from typing import Optional, Union
 from uuid import uuid4
 
 from zentropi.symbols import KINDS
@@ -13,7 +12,7 @@ from zentropi.utils import (
     validate_id,
     validate_kind,
     validate_meta,
-    validate_name,
+    validate_name
 )
 
 
@@ -236,6 +235,12 @@ class Message(Frame):
         if 'text' not in self._data:
             self._data.text = self.name
         self._kind = KINDS.MESSAGE
+
+    @property
+    def text(self):
+        if 'text' in self._data:
+            return self._data['text']
+        return self.name
 
 
 class Request(Frame):

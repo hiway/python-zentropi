@@ -9,9 +9,8 @@ import json
 import os
 
 from aiohttp.web_ws import MsgType
-from zentropi import (Agent,
-                      on_event,
-                      on_message)
+
+from zentropi import Agent, on_event, on_message
 
 from .event_types import EVENT_TYPES
 

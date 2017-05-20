@@ -7,12 +7,9 @@ except ImportError:
 import os
 import traceback
 
-from zentropi import (
-    Agent,
-    on_event,
-    on_message
-)
-from zentropi.defaults import FRAME_NAME_MAX_LENGTH
+from zentropi import Agent, on_event, on_message
+from zentropi.defaults import \
+    FRAME_NAME_MAX_LENGTH
 
 TELEGRAM_BOT_NAME = os.getenv('TELEGRAM_BOT_NAME', None)
 TELEGRAM_BOT_API_TOKEN = os.getenv('TELEGRAM_BOT_API_TOKEN', None)
@@ -43,6 +40,7 @@ class TelegramAgent(Agent):
                 'user_id': message['from']['id'],
                 'username': message['from']['username'],
                 'full_name': full_name,
+                'session': message['chat']['id'],
             })
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
         except Exception:
@@ -56,15 +54,30 @@ class TelegramAgent(Agent):
         text = message.data.text or message.name
         try:
             chat_id = self.sent_telegram_messages[message.reply_to]
-            del self.sent_telegram_messages[message.reply_to]
+            # del self.sent_telegram_messages[message.reply_to]
             await self._bot.send_message(chat_id=chat_id, text=text)
-            self.emit('telegram-reply-sent', data={'text': text, 'chat_id': chat_id})
+            self.emit('telegram_reply_sent', data={'text': text, 'chat_id': chat_id})
         except Exception:
             print(traceback.format_exc())
             print(message.name, message.data)
 
+    @on_event('send_telegram_message')
+    async def send_message(self, event):
+        text = event.data.text
+        chat_id = event.data.session or event.data.chat_id
+        if not chat_id:
+            self.emit('telegram_message_error', data={'text': 'session or chat_id expected.'})
+            return
+        try:
+            ret_val = await self._bot.send_message(chat_id=chat_id, text=text)
+            self.emit('telegram_message_sent', data={'text': text, 'chat_id': chat_id, 'return': ret_val})
+        except Exception:
+            print(traceback.format_exc())
+            print(event.name, event.data)
+
     @on_event('*** started')
     def on_started(self, event):
+        self.emit('telegram_connecting')
         self.spawn(self._bot.loop())
 
     @on_event('*** stopping')

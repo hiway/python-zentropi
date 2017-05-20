@@ -1,7 +1,6 @@
 # coding=utf-8
 
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 
 class Connection(object):
@@ -17,7 +16,7 @@ class Connection(object):
     def endpoint(self) -> Optional[str]:
         return self._endpoint
 
-    def connect(self, endpoint: str) -> None:
+    def connect(self, endpoint: str, auth: Optional[str] = None) -> None:
         raise NotImplementedError()
 
     def bind(self, endpoint: str) -> None:

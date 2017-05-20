@@ -1,25 +1,14 @@
 # coding=utf-8
-from typing import (
-    Optional,
-    Union,
-)
+from typing import Optional, Union
 from uuid import uuid4
 
-from zentropi.defaults import FRAME_NAME_MAX_LENGTH
-from zentropi.events import (
-    Event,
-    Events,
-)
+from zentropi.defaults import \
+    FRAME_NAME_MAX_LENGTH
+from zentropi.events import Event, Events
 from zentropi.frames import Frame
 from zentropi.handlers import Handler
-from zentropi.messages import (
-    Message,
-    Messages,
-)
-from zentropi.states import (
-    State,
-    States,
-)
+from zentropi.messages import Message, Messages
+from zentropi.states import State, States
 from zentropi.symbols import KINDS
 from zentropi.utils import validate_name
 
@@ -71,8 +60,19 @@ class Zentropian(object):
         else:
             raise ValueError('Unknown frame {!r} with kind {!r}'
                              ''.format(frame.name, KINDS(frame.kind)))  # todo: KINDS might throw an exception?
-        for handler in handlers:
+        for handler in self.apply_filters(handlers):
             self._trigger_frame_handler(frame=frame, handler=handler, internal=True)
+
+    def apply_filters(self, handlers):
+        handlers_ = set(handlers)
+        for handler in handlers:
+            for filter_, value in handler.filters.items():
+                if self.states.get(filter_, None) == value:
+                    continue
+                if handler not in handlers_:
+                    continue
+                handlers_.remove(handler)
+        return handlers_
 
     def handle_return(self, frame, return_value):
         """Original frame and returned value from handler."""
@@ -109,28 +109,28 @@ class Zentropian(object):
         return_value = handler(*payload)
         return self.handle_return(frame, return_value)
 
-    def on_state(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_state(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
             self.states.add_handler(name, handler_obj)
             return handler
 
         return wrapper
 
-    def on_event(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_event(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.EVENT, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
             self.events.add_handler(name, handler_obj)
             return handler
 
         return wrapper
 
-    def on_message(self, name, *, exact=True, parse=False, fuzzy=False):
+    def on_message(self, name, *, exact=True, parse=False, fuzzy=False, ignore_case=True, **kwargs):
         def wrapper(handler):
             handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
-                                  exact=exact, parse=parse, fuzzy=fuzzy)
+                                  exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
             self.messages.add_handler(name, handler_obj)
             return handler
 
@@ -148,11 +148,10 @@ class Zentropian(object):
                                         source=self.name, reply_to=reply_to)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=message)
-            # print('broadcasting')
         return message
 
-    def connect(self, endpoint, *, tag='default'):
-        self._connections.connect(endpoint, tag=tag)
+    def connect(self, endpoint, *, auth=None, tag='default'):
+        self._connections.connect(endpoint, auth=auth, tag=tag)
 
     def bind(self, endpoint, *, tag='default'):
         self._connections.bind(endpoint, tag=tag)
@@ -178,10 +177,10 @@ class Zentropian(object):
             connection.close()
 
 
-def on_event(name, *, exact=True, parse=False, fuzzy=False):
+def on_event(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.EVENT, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
@@ -191,10 +190,10 @@ def on_event(name, *, exact=True, parse=False, fuzzy=False):
     return wrapper
 
 
-def on_state(name, *, exact=True, parse=False, fuzzy=False):
+def on_state(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.STATE, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:
@@ -204,10 +203,10 @@ def on_state(name, *, exact=True, parse=False, fuzzy=False):
     return wrapper
 
 
-def on_message(name, *, exact=True, parse=False, fuzzy=False):
+def on_message(name, *, exact=True, parse=False, fuzzy=False, ignore_case=True, **kwargs):
     def wrapper(handler):
         handler_obj = Handler(kind=KINDS.MESSAGE, name=name, handler=handler,
-                              exact=exact, parse=parse, fuzzy=fuzzy)
+                              exact=exact, parse=parse, fuzzy=fuzzy, ignore_case=ignore_case, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:

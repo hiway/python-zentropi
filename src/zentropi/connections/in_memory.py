@@ -1,12 +1,10 @@
 # coding=utf-8
-from typing import List
-from typing import Optional
+from typing import List, Optional
 
 from ..connections.connection import Connection
 from ..spaces import Spaces
 from ..utils import validate_endpoint
 from ..zentropian import Zentropian
-
 
 SPACES = {}  # type: dict
 
@@ -23,7 +21,7 @@ class InMemoryConnection(Connection):
             raise ConnectionError('Unable to connect as {} is already connected or bound to endpoint {!r}'
                                   ''.format(self.__class__.__name__, endpoint))
 
-    def connect(self, endpoint: str):   # type: ignore
+    def connect(self, endpoint: str, auth: Optional[str] = None):   # type: ignore
         global SPACES
         agent_name = self._agent.name
         endpoint = validate_endpoint(endpoint)
@@ -63,8 +61,11 @@ class InMemoryConnection(Connection):
         self._connected = False
 
     def broadcast(self, frame):
-        self.validate_is_connected()
-        self._spaces.broadcast(frame)
+        try:
+            self.validate_is_connected()
+            self._spaces.broadcast(frame)
+        except AssertionError:
+            self._connected = False
         return True
 
     def join(self, space: str) -> None:  # type: ignore

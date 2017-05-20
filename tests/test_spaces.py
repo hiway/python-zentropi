@@ -1,7 +1,7 @@
 # coding=utf-8
 import pytest
-from zentropi.spaces import Space
-from zentropi.spaces import Spaces
+
+from zentropi.spaces import Space, Spaces
 
 
 def test_space():
@@ -103,4 +103,3 @@ def test_spaces_join_fails():
     assert cmd.name == 'join'
     cmd = spaces.join(agent_name, space_name)
     assert cmd.name == 'join-failed'
-

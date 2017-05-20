@@ -1,10 +1,10 @@
 # coding=utf-8
 from zentropi import (
     Agent,
+    ZentropiShell,
     on_event,
     on_message,
-    run_agents,
-    ZentropiShell,
+    run_agents
 )
 
 
@@ -68,5 +68,4 @@ class SnippetBot(Agent):
 
 if __name__ == '__main__':
     snippet_bot = SnippetBot(name='snip')
-    shell = ZentropiShell(name='shell')
-    run_agents(snippet_bot, shell)
+    run_agents(snippet_bot, shell=True)

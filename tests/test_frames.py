@@ -3,15 +3,16 @@ import json
 import time
 import unittest
 
-
-from zentropi.frames import Command
-from zentropi.frames import Event
-from zentropi.frames import Frame
-from zentropi.frames import FrameData
-from zentropi.frames import Message
-from zentropi.frames import Request
-from zentropi.frames import Response
-from zentropi.frames import State
+from zentropi.frames import (
+    Command,
+    Event,
+    Frame,
+    FrameData,
+    Message,
+    Request,
+    Response,
+    State
+)
 from zentropi.symbols import KINDS
 
 
@@ -142,7 +143,7 @@ class TestZenceliumFrame(unittest.TestCase):
         message = Message('a test', data={'another': 'test'})
         assert message.id
         assert message.name == 'a test'
-        assert message.data == {'another': 'test'}
+        assert message.data == {'another': 'test', 'text': 'a test'}
         assert isinstance(Frame.build(**message.as_dict()), Message)
 
     def test_state(self):

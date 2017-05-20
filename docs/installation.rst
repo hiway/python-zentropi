@@ -4,7 +4,25 @@ Installation
 
 If you already have virtual-environment and python-dev set up::
 
-    pip install zentropi
+Stable:
+-------
+
+::
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ pip install zentropi
+
+
+Current:
+--------
+
+::
+
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
 
 
 Linux
@@ -75,9 +93,18 @@ and type ``zen`` to activate the virtual-environment.
 5. Install zentropi
 -------------------
 
+Stable:
 ::
 
     $ pip install zentropi
+
+
+Current:
+::
+
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
 
 
 MacOS
@@ -93,20 +120,16 @@ Mac before, getting all the tools is a considerable download, 2-5 GB of data.
 You will not need to download as much again until the tools are updated, which is not
 too often for the big packages.
 
-Test that brew is working, then install python-3.6 since it is easily available
-on MacOS and comes with several improvements over 3.5 in terms of speed, memory usage
-and some sweet new features!
-
 More hints: http://docs.python-guide.org/en/latest/starting/install3/osx/#install3-osx
 
-1. Install package manager
---------------------------
+1. Update package manager
+-------------------------
 ::
 
     $ brew update
 
-2. Install python and external-dependencies
--------------------------------------------
+2. Install python
+-----------------
 ::
 
     $ brew install python3
@@ -142,7 +165,17 @@ and type ``zen`` to activate the virtual-environment.
 
 5. Install zentropi
 -------------------
+
+Stable:
 ::
 
     $ pip install zentropi
+
+
+Current:
+::
+
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
 

@@ -1,13 +1,14 @@
 # coding=utf-8
 import logging
-
 from io import StringIO
 
 from zentropi.frames import FrameData
-from zentropi.utils import i18n_wrapper
-from zentropi.utils import log_to_stream
-from zentropi.utils import logger
-from zentropi.utils import validate_data
+from zentropi.utils import (
+    i18n_wrapper,
+    log_to_stream,
+    logger,
+    validate_data
+)
 
 
 def test_log():

@@ -1,6 +1,5 @@
 # coding=utf-8
-from zentropi import Zentropian
-from zentropi import on_event
+from zentropi import Zentropian, on_event
 
 
 def test_default_zentropian():
