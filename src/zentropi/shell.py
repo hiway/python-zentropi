@@ -1,5 +1,7 @@
 # coding=utf-8
+import pprint
 import sys
+
 import os
 
 from prompt_toolkit import CommandLineInterface
@@ -114,10 +116,9 @@ class ZentropiShell(Agent):
         elif frame.source == self.name and frame.internal is False:
             return
         prefix = FRAME_PREFIX[frame.kind]
+        print('{} @{}: {}'.format(prefix, frame.source, frame.name))
         if frame.data and frame.data.text != frame.name:
-            print('{} @{}: {!r} {!r}'.format(prefix, frame.source, frame.name, frame.data))
-        else:
-            print('{} @{}: {}'.format(prefix, frame.source, frame.name))
+            pprint.pprint(frame.data)
 
     @on_event('join {space}', parse=True)
     async def join_space(self, message):
