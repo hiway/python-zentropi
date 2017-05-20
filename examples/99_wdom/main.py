@@ -31,7 +31,7 @@ data_template = """<pre class="frame_data">{data}</pre>"""
 style = """\
 body {
     background-color: #F7F6F7;
-    color: #3A3239;
+    color: #151217;
     font-family: verdana, sans-serif;
 }
 
