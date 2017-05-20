@@ -2,9 +2,27 @@
 Installation
 ============
 
-At the command line::
+If you already have virtual-environment and python-dev set up::
 
-    pip install zentropi
+Stable:
+-------
+
+::
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ pip install zentropi
+
+
+Current:
+--------
+
+::
+
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
 
 
 Linux
@@ -16,18 +34,20 @@ We will need to set up Ubuntu for Python development before we can
 install and use Zentropi, follow the steps below to update your
 system with necessary packages:
 
-1. Confirm that Python 3.5 is available
----------------------------------------
+1. Confirm that Python 3.5 or above is available
+------------------------------------------------
 
 ::
 
-    $ python3.5 -V
+    $ sudo apt update
+    $ sudo apt install python3
+    $ python3 -V
+
 
 Above command should output text similar to ``Python 3.5.X``;
 at the time of writing, it was ``Python 3.5.2``.
 
-If the command fails, run ``sudo apt install python3.5``.
-
+If the command fails, run ``sudo apt install python3``.
 
 2. Install external requirements
 --------------------------------
@@ -37,51 +57,125 @@ that are needed by Zentropi.
 
 ::
 
-    $ sudo apt install gcc libssl-dev python3-dev python3-setuptools
+    $ sudo apt install gcc libssl-dev python3-dev python3-setuptools python3-venv
 
 
-3. Install pip
---------------
+3. Install and create venv
+--------------------------
+::
 
-Although Ubuntu 16.04 comes with python3.5 installed, it does not have
-a necessary tool (pip) needed to install additional libraries in system python.
-We can fix that with:
+    $ python3 -m venv zen
+
+
+This creates a python virtual-environment, which keeps your installed
+libraries separate from rest of the system.
+
+4. Activate the venv
+--------------------
 
 ::
 
-    $ wget https://bootstrap.pypa.io/get-pip.py
-    $ sudo python3.5 get-pip.py
-
-You may want to read more on the topic here: http://pip.readthedocs.io/en/latest/installing/#install-pip
-
-
-4. Install and set up virtualenv
---------------------------------
-
-Not strictly needed, however it is highly recommended to use ``virtualenv``
-to isolate Python environments. Let us set it up because we care about our future self :)
-
-::
-
-    $ sudo pip3 install virtualenv
-    $ virtualenv --python=`which python3.5` zen
     $ source zen/bin/activate
-    (zen) $
-
-You can run ``deactivate`` to disable the virtualenv in current session.
-
-::
-
-    (zen) $ deactivate
-    $
-
-Remember to run ``source zen/bin/activate`` in a new terminal session to activate the virtualenv.
 
 
-5. Install zentropi inside virtualenv
--------------------------------------
+You will need to `activate` the zen virtual-environment before working
+with zentropi. A shortcut would be to add an alias to your ``~/.profile``
+or ``~/.bash_profile``:
 
 ::
 
-    (zen) $ pip install zentropi
+    alias zen="source /path/to/zen/bin/activate"
+
+
+You can run ``source ~/.profile`` or open a new terminal window
+and type ``zen`` to activate the virtual-environment.
+
+5. Install zentropi
+-------------------
+
+Stable:
+::
+
+    $ pip install zentropi
+
+
+Current:
+::
+
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
+
+
+MacOS
+=====
+
+Tested on MacOS Sierra.
+
+If you are starting from scratch for python, we will also set up brew package manager.
+Visit https://brew.sh/ for instructions. Once you have brew set up (and it may take
+a long while, depending on your network - if you have never developed software on your
+Mac before, getting all the tools is a considerable download, 2-5 GB of data.
+
+You will not need to download as much again until the tools are updated, which is not
+too often for the big packages.
+
+More hints: http://docs.python-guide.org/en/latest/starting/install3/osx/#install3-osx
+
+1. Update package manager
+-------------------------
+::
+
+    $ brew update
+
+2. Install python
+-----------------
+::
+
+    $ brew install python3
+
+
+3. Install and create venv
+--------------------------
+::
+
+    $ python3 -m venv zen
+
+
+This creates a python virtual-environment, which keeps your installed
+libraries separate from rest of the system.
+
+4. Activate the venv
+--------------------
+::
+
+    $ source zen/bin/activate
+
+
+You will need to `activate` the zen virtual-environment before working
+with zentropi. A shortcut would be to add an alias to your ``~/.profile``
+or ``~/.bash_profile``:
+::
+
+    alias zen="source /path/to/zen/bin/activate"
+
+
+You can run ``source ~/.profile`` or open a new terminal window
+and type ``zen`` to activate the virtual-environment.
+
+5. Install zentropi
+-------------------
+
+Stable:
+::
+
+    $ pip install zentropi
+
+
+Current:
+::
+
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
 

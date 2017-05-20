@@ -1,18 +1,26 @@
 # coding=utf-8
-import os
+import pprint
 import sys
+
+import os
 
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory
-from prompt_toolkit.shortcuts import (
-    create_asyncio_eventloop,
-    create_prompt_application
-)
+from prompt_toolkit.shortcuts import create_prompt_application
+from prompt_toolkit.shortcuts import create_asyncio_eventloop
 from pygments.token import Token
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 
-from .agent import Agent, on_event, on_message
-from .frames import KINDS, Message
+from .agent import (
+    Agent,
+    on_event,
+    on_message
+)
+from .frames import (
+    KINDS,
+    Message
+)
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
@@ -71,14 +79,14 @@ class ZentropiShell(Agent):
         self.emit('shell-starting', internal=True)
         while True:
             try:
-                self.emit('shell-ready', internal=True)
+                # self.emit('shell-ready', internal=True)
                 user_input = await self.cli.run_async()
                 command = user_input.text
                 self._exit_on_next_kb_interrupt = False  # We have new input; relax.
                 if command in ['exit', 'q']:
                     break
                 if command:
-                    self.message(command, internal=True)
+                    self.emit(command[:FRAME_NAME_MAX_LENGTH], data={'text': command}, internal=True)
             except EOFError:
                 break
             except KeyboardInterrupt:
@@ -87,7 +95,7 @@ class ZentropiShell(Agent):
                 self._exit_on_next_kb_interrupt = True
                 print('!')
                 continue
-        self.emit('shell-exiting', internal=True)
+        self.emit('shell-stopping', internal=True)
         print('Stopping...', flush=True)
         self.stop()
 
@@ -97,26 +105,31 @@ class ZentropiShell(Agent):
 
     @on_message('*')
     @on_event('*')
-    def on_any_message(self, frame):
-        if frame.source == self.name and frame.internal is True and isinstance(frame, Message):
+    async def on_any_message(self, frame):
+        if frame.source == self.name and frame.internal is True and not frame.name.startswith('***'):
             if 'text' in frame.data:
                 text = frame.data.text.strip()
             else:
                 text = frame.name
             self.message(text)
             return
+        elif frame.source == self.name and frame.internal is False:
+            return
         prefix = FRAME_PREFIX[frame.kind]
-        if frame.data:
-            print('{} @{}: {!r} {!r}'.format(prefix, frame.source, frame.name, frame.data))
-        else:
-            print('{} @{}: {!r}'.format(prefix, frame.source, frame.name))
+        print('{} @{}: {}'.format(prefix, frame.source, frame.name))
+        if frame.data and frame.data.text != frame.name:
+            pprint.pprint(frame.data)
 
-    @on_message('join {space}', parse=True)
-    def join_space(self, message):
+    @on_event('join {space}', parse=True)
+    async def join_space(self, message):
+        if message.source != self.name:
+            return
         space = message.data.space.strip()
         self.join(space)
 
-    @on_message('leave {space}', parse=True)
-    def leave_space(self, message):
+    @on_event('leave {space}', parse=True)
+    async def leave_space(self, message):
+        if message.source != self.name:
+            return
         space = message.data.space.strip()
         self.leave(space)

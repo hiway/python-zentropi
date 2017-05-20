@@ -236,6 +236,12 @@ class Message(Frame):
             self._data.text = self.name
         self._kind = KINDS.MESSAGE
 
+    @property
+    def text(self):
+        if 'text' in self._data:
+            return self._data['text']
+        return self.name
+
 
 class Request(Frame):
     __slots__ = ['_id', '_name', '_data', '_meta', '_kind']

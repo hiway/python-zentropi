@@ -33,9 +33,9 @@ Overview
     :alt: PyPI Package latest release
     :target: https://pypi.python.org/pypi/zentropi
 
-.. |commits_since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.2.svg
+.. |commits_since| image:: https://img.shields.io/github/commits-since/zentropi/python-zentropi/v0.1.3.svg
     :alt: Commits since latest release
-    :target: https://github.com/zentropi/python-zentropi/compare/v0.1.2...master
+    :target: https://github.com/zentropi/python-zentropi/compare/v0.1.3...master
 
 .. |wheel| image:: https://img.shields.io/pypi/wheel/zentropi.svg
     :alt: PyPI Wheel
@@ -73,9 +73,33 @@ Zentropi is for you if:
 Installation
 ============
 
+Note: Requires Python 3.5+ and compiler toolchain to build c-extensions.
+
+Stable:
+-------
+
 ::
 
-    pip3 install zentropi
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ pip install zentropi
+
+
+Current:
+--------
+
+::
+
+    $ python3 -m venv zen
+    $ source zen/bin/activate
+    $ git clone https://github.com/zentropi/python-zentropi.git
+    $ cd python-zentropi
+    $ pip install -e .
+
+
+Install steps for Ubuntu and MacOS:
+https://zentropi.readthedocs.io/en/latest/installation.html
+
 
 Documentation
 =============

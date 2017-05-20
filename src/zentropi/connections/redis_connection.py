@@ -1,15 +1,20 @@
 # coding=utf-8
 import asyncio
+import os
 from typing import Optional
 
-import aioredis
+try:
+    import aioredis
+except ImportError:
+    raise ImportError('Missing dependency: pip install aioredis')
 
 from ..agent import Agent
 from ..connections.connection import Connection
 from ..frames import Frame
 from ..utils import (
     validate_endpoint,
-    validate_name
+    validate_name,
+    validate_auth
 )
 
 assert Optional  # ignore unused error for now.
@@ -25,6 +30,7 @@ class RedisConnection(Connection):
         self._endpoint = None  # type: Optional[str]
         self._spaces = set()  # type: set
         self._listener_task = None
+        self._auth = None
 
     async def _connection_listener(self):
         connection = self._connection
@@ -42,8 +48,10 @@ class RedisConnection(Connection):
     def bind(self, endpoint: str) -> None:
         self.connect(endpoint)
 
-    async def connect(self, endpoint: str) -> None:  # type: ignore
+    async def connect(self, endpoint: str, auth: Optional[str] = None) -> None:  # type: ignore
         endpoint = validate_endpoint(endpoint)
+        auth = validate_auth(auth)
+        self._auth = auth
         # print('*** redis connecting to ', endpoint, flush=True)
         if self._connected:
             raise ConnectionError('Already connected.')
@@ -53,6 +61,11 @@ class RedisConnection(Connection):
         host, port = endpoint.replace('redis://', '').split(':')  # todo: handle exception
         self._subscriber = await aioredis.create_redis((host, port))
         self._publisher = await aioredis.create_redis((host, port))
+        if auth:
+            await self._subscriber.auth(auth)
+            await self._publisher.auth(auth)
+        else:
+            print('*** WARNING: Redis connection has no password.')
         self._connected = True
 
     async def _reconnect(self):
@@ -79,7 +92,6 @@ class RedisConnection(Connection):
             self._publisher.close()
 
     async def join(self, space: str) -> None:  # type: ignore
-
         space = validate_name(space)
         self._spaces.add(space)
         await self._reconnect()
@@ -93,9 +105,14 @@ class RedisConnection(Connection):
         return [s for s in self._spaces]
 
     async def broadcast(self, frame):
+        if not self._publisher:
+            return
         if frame.space:
             spaces = [frame.space]
         else:
             spaces = self._spaces
         for space in spaces:
-            await self._publisher.publish_json(space, frame.as_dict())
+            try:
+                await self._publisher.publish_json(space, frame.as_dict())
+            except aioredis.errors.ConnectionClosedError:
+                self._connected = False

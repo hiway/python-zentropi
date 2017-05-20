@@ -42,7 +42,7 @@ from zentropi.zentropian import (
     on_state
 )
 
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 

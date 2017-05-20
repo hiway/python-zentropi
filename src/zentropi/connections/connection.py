@@ -16,7 +16,7 @@ class Connection(object):
     def endpoint(self) -> Optional[str]:
         return self._endpoint
 
-    def connect(self, endpoint: str) -> None:
+    def connect(self, endpoint: str, auth: Optional[str] = None) -> None:
         raise NotImplementedError()
 
     def bind(self, endpoint: str) -> None:

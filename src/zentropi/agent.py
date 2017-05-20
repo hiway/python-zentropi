@@ -5,9 +5,13 @@ import threading
 from inspect import isgeneratorfunction
 from typing import Optional, Union
 
-from bloom_filter import BloomFilter
+from pybloom_live import ScalableBloomFilter
 
-from zentropi.frames import Frame
+from zentropi.frames import (
+    Frame,
+    Message,
+    Event,
+)
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
@@ -27,7 +31,8 @@ class Agent(Zentropian):
         self.states.running = False
         self.loop = None  # asyncio.get_event_loop()
         self._spawn_on_start = set()
-        self._seen_frames = BloomFilter(max_elements=10000, error_rate=0.001)
+        self._seen_frames = ScalableBloomFilter(
+                    mode=ScalableBloomFilter.LARGE_SET_GROWTH, error_rate=0.001)
 
     @on_state('should_stop')
     def _on_should_stop(self, state):
@@ -44,8 +49,6 @@ class Agent(Zentropian):
         self.timers.start_timers(self.spawn)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
-        self.emit('*** stopping', internal=True)
-        await asyncio.sleep(0.1)
         self.emit('*** stopped', internal=True)
 
     def _set_asyncio_loop(self, loop=None):
@@ -54,10 +57,19 @@ class Agent(Zentropian):
         if loop:
             self.loop = loop
         if not self.loop:
-            self.loop = asyncio.get_event_loop()
+            try:
+                self.loop = asyncio.get_event_loop()
+            except RuntimeError:
+                self.loop = asyncio.new_event_loop()
 
     def _trigger_frame_handler(self, frame: Frame, handler: Handler, internal=False):
+        if isinstance(frame, Message) and frame.source == self.name:
+            return
+        if isinstance(frame, Event) and frame.source != self.name and frame.name.startswith('***'):
+            return
         if frame and frame.id in self._seen_frames:
+            return
+        if not self.apply_filters([handler]):
             return
         if frame:
             self._seen_frames.add(frame.id)
@@ -93,7 +105,8 @@ class Agent(Zentropian):
 
         return wrapper
 
-    def sleep(self, duration: float):
+    @staticmethod
+    def sleep(duration: float):
         return asyncio.sleep(duration)
 
     def start(self, loop=None):
@@ -114,13 +127,18 @@ class Agent(Zentropian):
     def spawn_in_thread(func, *args, **kwargs):
         task = threading.Thread(target=func, args=args, kwargs=kwargs)
         task.start()
+        return task
+
+    def run_in_thread(self):
+        return self.spawn_in_thread(self.run)
 
     def stop(self):
+        self.emit('*** stopping', internal=True)
         self.states.should_stop = True
         self.timers.should_stop = True
 
-    def connect(self, endpoint, *, tag='default'):
-        retval = super().connect(endpoint, tag=tag)
+    def connect(self, endpoint, *, auth=None, tag='default'):
+        retval = super().connect(endpoint, auth=auth, tag=tag)
         if not isgeneratorfunction(retval):
             return
         self.spawn(retval)
@@ -158,10 +176,10 @@ class Agent(Zentropian):
             connection.close()
 
 
-def on_timer(interval):
+def on_timer(interval, **kwargs):
     def wrapper(handler):
         name = str(interval)
-        handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler)
+        handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler, **kwargs)
         if hasattr(handler, 'meta'):
             handler.meta.append(handler_obj)
         else:

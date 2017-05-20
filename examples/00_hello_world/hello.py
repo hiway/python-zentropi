@@ -2,9 +2,8 @@
 
 from zentropi import (
     Agent,
-    ZentropiShell,
     on_message,
-    run_agents
+    run_agents,
 )
 
 
@@ -16,5 +15,4 @@ class HelloBot(Agent):
 
 if __name__ == '__main__':
     hello_bot = HelloBot(name='hello_bot')
-    shell = ZentropiShell(name='shell')
-    run_agents(hello_bot, shell)
+    run_agents(hello_bot, shell=True)

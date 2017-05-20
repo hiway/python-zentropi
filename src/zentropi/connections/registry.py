@@ -8,7 +8,6 @@ from ..agent import Agent
 from ..zentropian import Zentropian
 from .connection import Connection
 from .in_memory import InMemoryConnection
-from .redis_connection import RedisConnection
 
 
 def build_connection_instance(endpoint: str, connection_class: Connection, agent: Zentropian):
@@ -20,6 +19,7 @@ def build_connection_instance(endpoint: str, connection_class: Connection, agent
     if endpoint.startswith('inmemory://'):
         return InMemoryConnection(agent=agent)
     elif endpoint.startswith('redis://'):
+        from .redis_connection import RedisConnection
         return RedisConnection(agent=agent)
     else:
         raise ValueError('Expected endpoint to be in {!r}. Got: {!r}.'
@@ -41,12 +41,12 @@ class ConnectionRegistry(object):
     def connections(self):
         return [c for c in self._connections]
 
-    def connect(self, endpoint, *, tag='default', connection_class=None):
+    def connect(self, endpoint, *, auth=None, tag='default', connection_class=None):
         connection = build_connection_instance(endpoint, connection_class, self._agent)
         if iscoroutinefunction(connection.connect):
-            self._agent.spawn(connection.connect(endpoint))
+            self._agent.spawn(connection.connect(endpoint, auth=auth))
         else:
-            connection.connect(endpoint)
+            connection.connect(endpoint, auth=auth)
         self._connections.add(connection)
         self._tags[tag].add(connection)
         self._endpoints[endpoint].add(connection)

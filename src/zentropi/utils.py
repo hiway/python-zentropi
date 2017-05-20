@@ -1,6 +1,8 @@
 # coding=utf-8
 import gettext
 import json
+import traceback
+
 import locale as lib_locale
 import logging
 import os
@@ -158,23 +160,36 @@ def validate_space(space):
     return space
 
 
-def run_agents(*agents, endpoint='inmemory://', space='zentropia'):
+def validate_auth(auth):
+    if auth is None:
+        return auth
+    if not isinstance(auth, str):
+        raise AssertionError('Expected auth to be str. Got: {!r}'.format(auth))
+    return auth
+
+
+def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', shell=False, loop=None):
     import asyncio
-    from zentropi import Agent
+    from zentropi import Agent, ZentropiShell
 
     endpoint = validate_endpoint(endpoint)
     space = validate_space(space)
 
     if not agents:
         return
+    agents = list(agents)
     for agent in agents:
         if not isinstance(agent, Agent):
             raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
-    loop = asyncio.get_event_loop()
+    if shell:
+        shell = ZentropiShell('shell')
+        agents.append(shell)
+    if not loop:
+        loop = asyncio.get_event_loop()
 
     if len(agents) == 1:
         agent = agents[0]
-        agent.connect(endpoint)
+        agent.connect(endpoint, auth=auth)
         agent.join(space)
         agent.run()
         return
@@ -198,10 +213,25 @@ def run_agents(*agents, endpoint='inmemory://', space='zentropia'):
 
     for agent in connect_agents:
         agent.start(loop=loop)
-        agent.connect(endpoint)
+        agent.connect(endpoint, auth=auth)
         agent.join(space)
 
-    last_agent.connect(endpoint)
+    last_agent.connect(endpoint, auth=auth)
     last_agent.join(space)
     last_agent.loop = loop
-    last_agent.run()
+
+    @last_agent.on_event('*** stopping')
+    def exit_other_agents(event):
+        for agent in connect_agents:
+            try:
+                agent.stop()
+            except:
+                traceback.print_exc()
+                pass
+
+    try:
+        last_agent.run()
+    except KeyboardInterrupt:
+        last_agent.stop()
+    except Exception as e:
+        traceback.print_exc()
