@@ -17,7 +17,7 @@ def test_zentropian():
         zen.emit('what is this')
         return True
 
-    @zen.on_event('what is that', fuzzy=True)  # todo: '*'
+    @zen.on_event({'what is that'}, fuzzy=True)
     def on_test(event):
         print('Event: TEST!')
 

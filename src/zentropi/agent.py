@@ -15,7 +15,8 @@ from zentropi.zentropian import (
     Zentropian,
     on_event,
     on_message,
-    on_state
+    on_state,
+    wrap_handler,
 )
 
 
@@ -92,10 +93,10 @@ class Agent(Zentropian):
         else:
             super().add_handler(handler)
 
-    def on_timer(self, interval):
+    def on_timer(self, interval, **kwargs):
         def wrapper(handler):
             name = str(interval)
-            handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler)
+            handler_obj = wrap_handler(kind=KINDS.TIMER, name=name, handler=handler, **kwargs)
             self.timers.add_handler(name, handler_obj)
             return handler
 
@@ -175,12 +176,7 @@ class Agent(Zentropian):
 def on_timer(interval, **kwargs):
     def wrapper(handler):
         name = str(interval)
-        handler_obj = Handler(kind=KINDS.TIMER, name=name, handler=handler, **kwargs)
-        if hasattr(handler, 'meta'):
-            handler.meta.append(handler_obj)
-        else:
-            handler.meta = [handler_obj]
-        return handler
+        return wrap_handler(kind=KINDS.STATE, name=name, handler=handler, **kwargs)
 
     return wrapper
 
