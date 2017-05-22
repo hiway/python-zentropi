@@ -166,10 +166,22 @@ def validate_auth(auth):
         raise AssertionError('Expected auth to be str. Got: {!r}'.format(auth))
     return auth
 
+SCHEDULER_INSTANCE = None
 
-def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', shell=False, loop=None):
+
+def scheduler_emit(**kwargs):
+    scheduler = SCHEDULER_INSTANCE
+    if not scheduler:
+        print('!!! No SCHEDULER_INSTANCE set! Skipping: {!r}'.format(kwargs))
+        return
+    print('*** scheduler emit: {!r}'.format(kwargs))
+    scheduler.emit(**kwargs)
+
+
+def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
+               loop=None, shell=False, scheduler=False):
     import asyncio
-    from zentropi import Agent, ZentropiShell
+    from zentropi import Agent
 
     endpoint = validate_endpoint(endpoint)
     space = validate_space(space)
@@ -180,7 +192,16 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia', sh
     for agent in agents:
         if not isinstance(agent, Agent):
             raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
+    if scheduler:
+        from zentropi.extra.scheduler import SchedulerAgent
+        global SCHEDULER_INSTANCE
+        if SCHEDULER_INSTANCE:
+            raise AssertionError('SCHEDULER_INSTANCE is already set: {!r}'.format(SCHEDULER_INSTANCE))
+        scheduler = SchedulerAgent('scheduler')
+        SCHEDULER_INSTANCE = scheduler
+        agents.append(scheduler)
     if shell:
+        from zentropi import ZentropiShell
         shell = ZentropiShell('shell')
         agents.append(shell)
     if not loop:
