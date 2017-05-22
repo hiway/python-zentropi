@@ -74,6 +74,7 @@ setup(
         'pub-sub',
     ],
     install_requires=[
+        'apscheduler>=3.3, <3.4',
         'click>=6.7, <7.0',
         'fuzzywuzzy>=0.15.0, <0.20',
         'parse>=1.8.0, <2.0',
