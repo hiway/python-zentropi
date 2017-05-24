@@ -176,7 +176,8 @@ class Agent(Zentropian):
 def on_timer(interval, **kwargs):
     def wrapper(handler):
         name = str(interval)
-        return wrap_handler(kind=KINDS.STATE, name=name, handler=handler, **kwargs)
+        wrap_handler(kind=KINDS.TIMER, name=name, handler=handler, **kwargs)
+        return handler
 
     return wrapper
 
