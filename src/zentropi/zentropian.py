@@ -13,7 +13,7 @@ from zentropi.symbols import KINDS
 from zentropi.utils import validate_name
 
 
-def wrap_handler(kind, name, handler, exact, parse, fuzzy, ignore_case, **kwargs):
+def wrap_handler(kind, name, handler, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
     """Called by on_* decorators."""
     if isinstance(name, str):
         name = {name}
