@@ -26,7 +26,7 @@ def read(*names, **kwargs):
 
 
 redis = [
-    'aioredis==0.3.0, <0.4',
+    'aioredis>=0.3.0, <0.4',
 ]
 
 
@@ -78,7 +78,7 @@ setup(
         'click>=6.7, <7.0',
         'fuzzywuzzy>=0.15.0, <0.20',
         'parse>=1.8.0, <2.0',
-        'prompt_toolkit==1.0.14, <1.1',
+        'prompt_toolkit>=1.0.14, <1.1',
         'pybloom_live>=2.2.0, <2.3',
         'Pygments>=2.2.0, <2.3',
         'python-Levenshtein>=0.12.0',
