@@ -5,6 +5,7 @@ from collections import UserDict
 from typing import Optional, Union
 from uuid import uuid4
 
+from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 from zentropi.symbols import KINDS
 from zentropi.utils import (
     deflate_dict,
@@ -229,11 +230,14 @@ class Message(Frame):
                  reply_to: str = None,
                  timestamp: int = None,
                  internal: bool = False) -> None:
+        name_ = name
+        if len(name) > FRAME_NAME_MAX_LENGTH:
+            name = name[:FRAME_NAME_MAX_LENGTH]
         super().__init__(name, data=data, meta=meta, kind=KINDS.MESSAGE, id=id,
                          source=source, target=target, space=space,
                          reply_to=reply_to, timestamp=timestamp, internal=internal)
         if 'text' not in self._data:
-            self._data.text = self.name
+            self._data.text = name_
         self._kind = KINDS.MESSAGE
 
     @property
