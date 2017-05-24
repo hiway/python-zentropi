@@ -4,7 +4,7 @@ from zentropi import (
     on_message,
     run_agents
 )
-from zentropi.extra.agents import TelegramAgent
+from zentropi.extra.telegram import TelegramAgent
 
 
 class EchoBot(Agent):
