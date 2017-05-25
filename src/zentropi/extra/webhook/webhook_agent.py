@@ -13,9 +13,10 @@ assert TOKEN, 'Error: export ZENTROPI_WEBHOOK_TOKEN="[32-or-more-urlsafe-random-
               'Send the token with client-request as /emit?token=[32-or-more-urlsafe-random-characters].'
 
 
-def get_ssl_context():
-    cert_path = os.path.join(BASE_DIR, 'webhook.crt')
-    key_path = os.path.join(BASE_DIR, 'webhook.key')
+def get_ssl_context(path):
+    path = os.path.expanduser(path)
+    cert_path = os.path.join(path, 'webhook.crt')
+    key_path = os.path.join(path, 'webhook.key')
     if not os.path.exists(cert_path):
         raise ValueError('Certificate file does not exist: {cert_path}'.format(cert_path=cert_path))
     if not os.path.exists(key_path):
@@ -31,13 +32,14 @@ def get_ssl_context():
 
 
 class WebhookAgent(Agent):
-    def __init__(self, name=None):
+    def __init__(self, name=None, keys_path='~/.zentropi/'):
         super().__init__(name=name)
         self.server_task = None
         self.host = '127.0.0.1'
         self.port = 26514
         self.app = None  # type: web.Application
         self.handler = None
+        self.keys_path = keys_path
 
     def _add_routes(self):
         self.app.router.add_route('*', '/emit', self.webhook_emit)
@@ -51,7 +53,7 @@ class WebhookAgent(Agent):
         server_coro = self.loop.create_server(self.handler,
                                               host=self.host,
                                               port=self.port,
-                                              ssl=get_ssl_context())
+                                              ssl=get_ssl_context(self.keys_path))
         self.server_task = await server_coro
         await super()._run_forever()
 
