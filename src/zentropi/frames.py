@@ -231,7 +231,7 @@ class Message(Frame):
                  timestamp: int = None,
                  internal: bool = False) -> None:
         name_ = name
-        if len(name) > FRAME_NAME_MAX_LENGTH:
+        if name and len(name) > FRAME_NAME_MAX_LENGTH:
             name = name[:FRAME_NAME_MAX_LENGTH]
         super().__init__(name, data=data, meta=meta, kind=KINDS.MESSAGE, id=id,
                          source=source, target=target, space=space,
