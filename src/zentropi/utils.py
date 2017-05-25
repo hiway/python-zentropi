@@ -185,8 +185,8 @@ def env_split(line):
     return key, value
 
 
-def load_env_variables():
-    with open('.env') as envfile:
+def load_env_variables(file_path):
+    with open(os.path.expanduser(file_path)) as envfile:
         env = envfile.readlines()
     env = [env_split(l) for l in env if l.strip()]
     for key, value in env:
@@ -199,7 +199,7 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
     from zentropi import Agent
 
     if env:
-        load_env_variables()
+        load_env_variables(env)
 
     endpoint = validate_endpoint(endpoint)
     space = validate_space(space)
