@@ -178,10 +178,25 @@ def scheduler_emit(**kwargs):
     scheduler.emit(**kwargs)
 
 
+def env_split(line):
+    key, value = line.split('=')
+    return key, value
+
+
+def load_env_variables():
+    with open('.env') as envfile:
+        env = filter(lambda x: x, [env_split(l) for l in envfile.readlines() if l.strip()])
+    for key, value in env:
+        os.environ.setdefault(key, value)
+
+
 def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
-               loop=None, shell=False, scheduler=False):
+               loop=None, shell=False, scheduler=False, env=None):
     import asyncio
     from zentropi import Agent
+
+    if env:
+        load_env_variables()
 
     endpoint = validate_endpoint(endpoint)
     space = validate_space(space)
