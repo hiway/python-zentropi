@@ -1,13 +1,14 @@
 # coding=utf-8
 import gettext
 import json
-import locale as lib_locale
 import logging
-import os
 import sys
 import traceback
-import warnings
 from typing import Any, Optional
+
+import locale as lib_locale
+import os
+import warnings
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
@@ -166,6 +167,7 @@ def validate_auth(auth):
         raise AssertionError('Expected auth to be str. Got: {!r}'.format(auth))
     return auth
 
+
 SCHEDULER_INSTANCE = None
 
 
@@ -185,9 +187,10 @@ def env_split(line):
 
 def load_env_variables():
     with open('.env') as envfile:
-        env = filter(lambda x: x, [env_split(l) for l in envfile.readlines() if l.strip()])
+        env = envfile.readlines()
+    env = [env_split(l) for l in env if l.strip()]
     for key, value in env:
-        os.environ.setdefault(key, value)
+        os.environ[key] = value
 
 
 def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
