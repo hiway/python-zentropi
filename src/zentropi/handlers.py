@@ -115,9 +115,10 @@ class HandlerRegistry(object):
         self._index_exact = SortedListWithKey(key=len)
         self._index_parse = SortedListWithKey(key=len)
         self._index_fuzzy = SortedListWithKey(key=len)
-        self.match_functions = [self.match_exact,
-                                self.match_parse,
-                                self.match_fuzzy]
+        self.match_functions = {self.match_exact: self._index_exact,
+                                self.match_parse: self._index_parse,
+                                self.match_fuzzy: self._index_fuzzy}
+        self._catch_all_handlers = set()
 
     @property
     def handlers(self):
@@ -142,6 +143,8 @@ class HandlerRegistry(object):
             self._index_parse.add(name)
         else:  # handler.match_fuzzy:
             self._index_fuzzy.add(name)
+        if '*' in self._handlers:
+            self._catch_all_handlers = self._handlers['*']
 
     def remove_handler(self, name, handler):
         self._handlers[name].remove(handler)
@@ -153,14 +156,16 @@ class HandlerRegistry(object):
             self._index_fuzzy.remove(name)
 
     def match(self, frame):
-        for match_function in self.match_functions:
+        for match_function, index in self.match_functions.items():
+            if not index:
+                continue
             frame_, handlers = match_function(frame)
             if not handlers:
                 continue
             return frame_, handlers
         else:
-            if '*' in self._handlers:
-                return frame, self._handlers['*']
+            if self._catch_all_handlers:
+                return frame, self._catch_all_handlers
             return frame, set()
 
     def match_exact(self, frame):
@@ -192,6 +197,8 @@ class HandlerRegistry(object):
             return frame, set()
 
     def match_fuzzy(self, frame):
+        if not self._index_fuzzy:
+            return frame, set()
         pattern = process.extractOne(
             frame.name, self._index_fuzzy,
             scorer=fuzz.token_sort_ratio)
