@@ -1,4 +1,6 @@
 # coding=utf-8
+import signal
+
 try:
     from aiotg import Bot
 except ImportError:
@@ -7,7 +9,7 @@ except ImportError:
 import os
 import traceback
 
-from zentropi import Agent, on_event, on_message
+from zentropi import Agent, on_event, on_message, on_timer
 from zentropi.defaults import \
     FRAME_NAME_MAX_LENGTH
 
@@ -22,9 +24,16 @@ class TelegramAgent(Agent):
         super().__init__(name=name)
         self._bot = Bot(api_token=TELEGRAM_BOT_API_TOKEN,
                         name=TELEGRAM_BOT_NAME,
-                        api_timeout=10)
+                        api_timeout=30)
         self._bot.default(self.on_incoming_telegram_message)
         self.sent_telegram_messages = {}
+
+    @on_timer(60)
+    async def restart_bot(self):
+        # self._bot.stop_webhook()
+        self._bot.stop()
+        await self.sleep(1)
+        self.spawn(self._bot.loop())
 
     def on_incoming_telegram_message(self, chat, message):
         try:
@@ -43,23 +52,19 @@ class TelegramAgent(Agent):
                 'session': message['chat']['id'],
             })
             self.sent_telegram_messages.update({sent_msg.id: message['chat']['id']})
-        except Exception:
-            print(traceback.format_exc())
-            print(message.name, message.data)
+        except Exception as e:
+            traceback.print_exc()
+            signal.alarm(1)
 
     @on_message('*')
     async def telegram_message_reply(self, message):
         if message.reply_to not in self.sent_telegram_messages:
             return
         text = message.data.text or message.name
-        try:
-            chat_id = self.sent_telegram_messages[message.reply_to]
-            # del self.sent_telegram_messages[message.reply_to]
-            await self._bot.send_message(chat_id=chat_id, text=text)
-            self.emit('telegram_reply_sent', data={'text': text, 'chat_id': chat_id})
-        except Exception:
-            print(traceback.format_exc())
-            print(message.name, message.data)
+        chat_id = self.sent_telegram_messages[message.reply_to]
+        # del self.sent_telegram_messages[message.reply_to]
+        await self._bot.send_message(chat_id=chat_id, text=text)
+        self.emit('telegram_reply_sent', data={'text': text, 'chat_id': chat_id})
 
     @on_event('send_telegram_message')
     async def send_message(self, event):
@@ -68,12 +73,8 @@ class TelegramAgent(Agent):
         if not chat_id:
             self.emit('telegram_message_error', data={'text': 'session or chat_id expected.'})
             return
-        try:
-            ret_val = await self._bot.send_message(chat_id=chat_id, text=text)
-            self.emit('telegram_message_sent', data={'text': text, 'chat_id': chat_id, 'return': ret_val})
-        except Exception:
-            print(traceback.format_exc())
-            print(event.name, event.data)
+        ret_val = await self._bot.send_message(chat_id=chat_id, text=text)
+        self.emit('telegram_message_sent', data={'text': text, 'chat_id': chat_id, 'return': ret_val})
 
     @on_event('*** started')
     def on_started(self, event):
