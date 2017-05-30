@@ -183,12 +183,15 @@ class Agent(Zentropian):
 
     def describe(self):
         description = {
+            'name': self.name,
+            'help': self.__doc__,
             'events': self.events.describe(),
             'messages': self.messages.describe(),
             'states': self.states.describe(),
             'timers': self.timers.describe(),
         }
-        return description
+        from .utils import deflate_dict
+        return deflate_dict(description)
 
 
 def on_timer(interval, **kwargs):

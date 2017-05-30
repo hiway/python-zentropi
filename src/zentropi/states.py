@@ -20,7 +20,8 @@ class States(UserDict):
             state = value_or_state
         else:
             state = Field(value_or_state)
-        state.name = '{}.{}'.format(self.__class__.__name__, name)
+        # state.name = '{}.{}'.format(self.__class__.__name__, name)
+        state.name = name
         self.data[name] = state
 
     def _get_state(self, name):
@@ -104,10 +105,12 @@ class States(UserDict):
         return self._handlers.match(frame)
 
     def describe(self):
-        fields = [{'name': name, 'field': field.describe()}
-                  for name, field in self.data.items()]
-        expects = {}  # todo: gather handler names (and help?)
-        return {'states': {'fields': fields, 'expects': expects}}
+        fields = [field.describe()
+                  for field in self.data.values()]
+        expects = self._handlers.describe()
+        description = {'states': {'fields': fields, 'expects': expects}}
+        from .utils import deflate_dict
+        return deflate_dict(description)
 
     def add_handler(self, name, handler):
         self._handlers.add_handler(name, handler)

@@ -61,19 +61,40 @@ def test_state_fails_with_invalid_callback_on_init():
 
 
 def test_states_describe():
+    def _trigger_frame_handler(frame, handler, internal):
+        assert frame
+        assert handler
+        assert internal
+        return handler(frame)
+
+    def test_handler(state):
+        assert state.name == 'the_answer'
+        assert state.data.value in [42, 0]
+        return True
+
     states = States()
-    states.test = 'yo'
+
+    a_handler = Handler(KINDS.STATE, 'the_answer', test_handler)
+    states.add_handler('the_answer', handler=a_handler)
+    states.the_answer = Field()
+    states.callback = _trigger_frame_handler
+    assert states.callback == _trigger_frame_handler
+    states.the_answer = 42
+    assert states.the_answer is 42
+
     assert states.describe() == {
         'states': {
-            'expects': {},
+            'expects': [{
+                # 'help': None,
+                'kind': KINDS.STATE.name,
+                'match': 'exact',
+                'name': 'the_answer',
+            }],
             'fields': [{
-                           'field': {
-                               'kind': 'Field',
-                               'name': 'States.test',
-                               'value': 'yo'
-                           },
-                           'name': 'test'
-                       }]
+                'kind': 'Field',
+                'name': 'the_answer',
+                'value': 42
+            }]
         }
     }
 

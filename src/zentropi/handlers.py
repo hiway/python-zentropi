@@ -117,7 +117,8 @@ class Handler(object):
             'help': self._handler.__doc__,
             'match': match,
         }
-        return description
+        from .utils import deflate_dict
+        return deflate_dict(description)
 
 
 class HandlerRegistry(object):

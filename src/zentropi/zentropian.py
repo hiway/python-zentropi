@@ -201,11 +201,14 @@ class Zentropian(object):
 
     def describe(self):
         description = {
+            'name': self.name,
+            'help': self.__doc__,
             'events': self.events.describe(),
             'messages': self.messages.describe(),
             'states': self.states.describe(),
         }
-        return description
+        from .utils import deflate_dict
+        return deflate_dict(description)
 
 
 def on_event(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
