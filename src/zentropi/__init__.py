@@ -34,7 +34,10 @@ from zentropi.frames import (
 from zentropi.shell import ZentropiShell
 from zentropi.spaces import Spaces
 from zentropi.symbols import KINDS
-from zentropi.utils import run_agents
+from zentropi.utils import (
+    run_agents,
+    run_agents_forever
+)
 from zentropi.zentropian import (
     Zentropian,
     on_event,
@@ -65,6 +68,7 @@ __all__ = [
     'on_state',
     'on_timer',
     'run_agents',
+    'run_agents_forever',
     'ZentropiShell',
     'Spaces',
     'State',

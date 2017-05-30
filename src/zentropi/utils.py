@@ -2,9 +2,12 @@
 import gettext
 import json
 import logging
-import sys
+import signal
 import traceback
 from typing import Any, Optional
+import sys
+import select
+import time
 
 import locale as lib_locale
 import os
@@ -193,10 +196,32 @@ def load_env_variables(file_path):
         os.environ[key] = value
 
 
+def select_timed_input(prompt, timeout):
+    sys.stdout.write(prompt)
+    sys.stdout.flush()
+    ready, _, _ = select.select([sys.stdin], [], [], timeout)
+    if ready:
+        return sys.stdin.readline().strip()
+    else:
+        return None
+
+
+class StopAgent(Exception):
+    pass
+
+
+def stop_agent_signal(signum, frame):
+    print('Caught signal %d' % signum)
+    raise StopAgent
+
+
 def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
                loop=None, shell=False, scheduler=False, env=None):
     import asyncio
     from zentropi import Agent
+    signal.signal(signal.SIGTERM, stop_agent_signal)
+    signal.signal(signal.SIGINT, stop_agent_signal)
+    signal.signal(signal.SIGALRM, stop_agent_signal)
 
     if env:
         load_env_variables(env)
@@ -213,9 +238,9 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
     if scheduler:
         from zentropi.extra.scheduler import SchedulerAgent
         global SCHEDULER_INSTANCE
-        if SCHEDULER_INSTANCE:
-            raise AssertionError('SCHEDULER_INSTANCE is already set: {!r}'.format(SCHEDULER_INSTANCE))
-        scheduler = SchedulerAgent('scheduler')
+        if not SCHEDULER_INSTANCE:
+            scheduler = SchedulerAgent('scheduler')
+            # raise AssertionError('SCHEDULER_INSTANCE is already set: {!r}'.format(SCHEDULER_INSTANCE))
         SCHEDULER_INSTANCE = scheduler
         agents.append(scheduler)
     if shell:
@@ -269,7 +294,36 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
 
     try:
         last_agent.run()
+    except StopAgent as e:
+        last_agent.stop()
     except KeyboardInterrupt:
         last_agent.stop()
     except Exception as e:
+        last_agent.stop()
+        raise e
+
+
+def run_agents_forever(*agents, endpoint='inmemory://', auth=None, space='zentropia',
+                       loop=None, shell=False, scheduler=False, env=None, timeout=10, confirm=True):
+    try:
+        run_agents(*agents, endpoint=endpoint, auth=auth, space=space,
+                   loop=loop, shell=shell, scheduler=scheduler, env=env)
+    except StopAgent as e:
+        pass
+    except Exception as e:
         traceback.print_exc()
+    if confirm:
+        try:
+            text = select_timed_input('Restarting in {} seconds... press ENTER to quit...'
+                                      ''.format(timeout), timeout=timeout)
+            if text is not None and text.lower() in ['', 'q', 'quit', 'exit']:
+                return
+        except StopAgent as e:
+            pass
+        except Exception as e:
+            traceback.print_exc()
+    else:
+        time.sleep(timeout)  # Wait to avoid rapid restarts.
+    python = sys.executable
+    # hard restart, resources will NOT free up automatically.
+    os.execl(python, python, *sys.argv)

@@ -1,7 +1,9 @@
 # coding=utf-8
 import asyncio
 # import atexit
+import signal
 import threading
+import traceback
 from inspect import isgeneratorfunction
 from typing import Optional, Union
 
@@ -11,6 +13,7 @@ from zentropi.frames import Event, Frame, Message
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
+from zentropi.utils import StopAgent
 from zentropi.zentropian import (
     Zentropian,
     on_event,
@@ -77,10 +80,16 @@ class Agent(Zentropian):
             payload.append(frame)
         if handler.run_async:
             async def return_handler():
-                ret_val = await handler(*payload)
-                if ret_val:
-                    self.handle_return(frame, return_value=ret_val)
-
+                try:
+                    ret_val = await handler(*payload)
+                    if ret_val:
+                        self.handle_return(frame, return_value=ret_val)
+                except Exception as e:
+                    # todo: make any exception stop all agents in a process;
+                    # todo: send signal/ put exception in a queue?
+                    traceback.print_exc()
+                    signal.alarm(1)
+                    self.stop()
             self.spawn(return_handler())
         else:
             ret_val = handler(*payload)
