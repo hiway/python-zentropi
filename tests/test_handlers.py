@@ -176,6 +176,6 @@ def test_handler_describe():
     description = handler_exact.describe()
     assert 'name' in description
     assert description['name'] == 'dummy'
-    assert description['kind'] == KINDS.EVENT
+    assert description['kind'] == KINDS.EVENT.name
     assert description['match'] == 'exact'
     assert description['help'] == "A dummy handler."
