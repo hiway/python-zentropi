@@ -1,14 +1,13 @@
 # coding=utf-8
-from collections import defaultdict
 from inspect import (
     getfullargspec,
     iscoroutinefunction
 )
 
+from collections import defaultdict
 from fuzzywuzzy import fuzz, process
 from parse import parse as string_parse
 from sortedcontainers import SortedListWithKey
-
 from zentropi.defaults import \
     MATCH_FUZZY_THRESHOLD
 from zentropi.utils import (
@@ -27,7 +26,8 @@ class Handler(object):
     ]
 
     def __init__(self, kind, name, handler, meta=None,
-                 exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
+                 exact=True, parse=False, fuzzy=False,
+                 ignore_case=False, **kwargs):
         if callable(handler) and not iscoroutinefunction(handler):
             self._async = False
         elif iscoroutinefunction(handler):
@@ -108,6 +108,17 @@ class Handler(object):
     def filters(self):
         return self._filters
 
+    def describe(self):
+        matches = {self._match_exact: 'exact', self._match_parse: 'parse', self._match_fuzzy: 'fuzzy'}
+        match = [v for k, v in matches.items() if k is True][0]
+        description = {
+            'name': self._name,
+            'kind': self._kind.name,
+            'help': self._handler.__doc__,
+            'match': match,
+        }
+        return description
+
 
 class HandlerRegistry(object):
     def __init__(self):
@@ -115,14 +126,24 @@ class HandlerRegistry(object):
         self._index_exact = SortedListWithKey(key=len)
         self._index_parse = SortedListWithKey(key=len)
         self._index_fuzzy = SortedListWithKey(key=len)
-        self.match_functions = {self.match_exact: self._index_exact,
-                                self.match_parse: self._index_parse,
-                                self.match_fuzzy: self._index_fuzzy}
+        self.match_functions = {
+            self.match_exact: self._index_exact,
+            self.match_parse: self._index_parse,
+            self.match_fuzzy: self._index_fuzzy
+        }
         self._catch_all_handlers = set()
 
     @property
     def handlers(self):
         return self._handlers.keys()
+
+    @property
+    def handler_objects(self):
+        set_values = [v for v in self._handlers.values()]
+        all_values = set()
+        for v in set_values:
+            [all_values.add(x) for x in v]
+        return all_values
 
     def add_handler(self, name, handler):
         validate_handler(handler)
@@ -206,6 +227,12 @@ class HandlerRegistry(object):
             return frame, set()
         return frame, self._handlers[pattern[0]]
 
+    def describe(self):
+        descriptions = []
+        for handlers in self._handlers.values():
+            descriptions += [h.describe() for h in handlers]
+        return descriptions
+
 
 class Registry(object):
     def __init__(self, callback=None):
@@ -239,3 +266,6 @@ class Registry(object):
             raise ValueError('Expected a callable for callback, got: {}'
                              ''.format(callback))
         self._trigger_frame_handler = callback
+
+    def describe(self):
+        return self._registry.describe()

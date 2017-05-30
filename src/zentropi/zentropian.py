@@ -199,6 +199,14 @@ class Zentropian(object):
         for connection in connections:
             connection.close()
 
+    def describe(self):
+        description = {
+            'events': self.events.describe(),
+            'messages': self.messages.describe(),
+            'states': self.states.describe(),
+        }
+        return description
+
 
 def on_event(name, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
     def wrapper(handler):

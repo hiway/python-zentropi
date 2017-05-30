@@ -13,11 +13,13 @@ from zentropi.symbols import KINDS
 
 
 def dummy():
+    """A dummy handler."""
     assert True
     return True
 
 
 async def dummy_async():  # pragma: no cover
+    """An async dummy handler."""
     pass
 
 
@@ -167,3 +169,13 @@ def test_registry_remove_handler():
     assert handler_fuzzy in registry._handlers['test-event']
     registry.remove_handler('test-event', handler_fuzzy)
     assert handler_fuzzy not in registry._handlers['test-event']
+
+
+def test_handler_describe():
+    handler_exact = Handler(KINDS.EVENT, 'dummy', handler=dummy)
+    description = handler_exact.describe()
+    assert 'name' in description
+    assert description['name'] == 'dummy'
+    assert description['kind'] == KINDS.EVENT
+    assert description['match'] == 'exact'
+    assert description['help'] == "A dummy handler."
