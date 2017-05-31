@@ -1,7 +1,7 @@
 # coding=utf-8
 from typing import List, Optional
 
-from ..connections.connection import Connection
+from .connection import Connection
 from ..spaces import Spaces
 from ..utils import validate_endpoint
 from ..zentropian import Zentropian
