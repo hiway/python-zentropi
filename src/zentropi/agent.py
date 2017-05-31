@@ -24,7 +24,34 @@ from zentropi.zentropian import (
 
 
 class Agent(Zentropian):
+    """
+    A Zentropian Agent, if you are new to Zentropi, this is where you want to start exploring.
+
+    >>> from zentropi import Agent
+    >>>
+    >>> agent = Agent(name='hello')
+    >>>
+    >>> @agent.on_event('*** started')
+    >>> def on_started(event):
+    >>>     print('hello, world.')
+    >>>     agent.stop()
+    >>>
+    >>> agent.run()
+    None
+    """
+
     def __init__(self, name=None):
+        """
+        >>> from zentropi import Agent
+        >>>
+        >>> agent = Agent(name='hello')
+        >>>
+        >>> class MyAgent(Agent):
+        >>>     pass
+
+        :param name: Name of Agent. Unicode string. Length must be < FRAME_NAME_MAX_LENGTH (default: 128) characters.
+        :type name: str
+        """
         self.timers = TimerRegistry(callback=self._trigger_frame_handler)
         super().__init__(name=name)
         self.states.should_stop = False

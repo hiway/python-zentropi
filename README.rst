@@ -69,6 +69,8 @@ Zentropi is for you if:
 
 ..where were we? Ah, yes, if any of these ^^ sound familiar, you are not alone!
 
+Zentropi is a system that helps you create and mix-and-match agents as building blocks
+to make your own automation.
 
 Installation
 ============
@@ -130,8 +132,7 @@ We will go deeper into these in the READMEs along with examples, for now let us 
 
     if __name__ == '__main__':
         hello_bot = HelloBot(name='hello_bot')
-        shell = ZentropiShell(name='shell')
-        run_agents(hello_bot, shell)
+        run_agents(hello_bot, shell=True)
 
 
 Save this as ``hello.py`` and run with ``$ python hello.py``
@@ -142,8 +143,6 @@ You should see this on your screen:
 
     $ python hello.py
     ⚡ ︎ @shell: '*** started'
-    ⚡ ︎ @shell: 'shell-starting'
-    ⚡ ︎ @shell: 'shell-ready'
     〉
 
 We can type any message at the prompt ``〉`` and the shell agent will
@@ -153,8 +152,7 @@ broadcast it for us. Go ahead and type ``hello``, followed by ENTER.
 
     〉hello
     ✉  @shell: 'hello'
-    ✉  @hello_bot: 'hello, world' {'text': 'hello, world'}
-    ⚡ ︎ @shell: 'shell-ready'
+    ✉  @hello_bot: 'hello, world'
     〉exit
 
 Type ``exit`` or press Ctrl-D to leave the shell.
