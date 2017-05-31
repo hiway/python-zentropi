@@ -32,7 +32,7 @@ class Field(object):
         self._meta = ['kind', 'name', 'value']
 
     @property
-    def default(self):
+    def default(self) -> Any:
         return self._default
 
     @property
@@ -79,3 +79,82 @@ class Field(object):
 
     def describe(self) -> dict:
         return {k: getattr(self, k) for k in self._meta}
+
+
+class PersistentField(Field):
+    __slots__ = ['_default', '_value', '_name', '_meta', '_store']
+
+    def __init__(self,
+                 default: Optional[Any] = None,
+                 *,
+                 name: Optional[str] = None,
+                 store: Optional[Any] = None) -> None:
+        super().__init__(default, name=name)
+        self._store = store
+        if name not in store:
+            self._store[name] = self.clean_and_validate(default)
+
+    @property
+    def value(self) -> Any:
+        if self._name in self._store:
+            return self._store[self._name]
+        return self._default
+
+    @value.setter
+    def value(self, value: Any) -> None:
+        import transaction
+        self._store[self._name] = self.clean_and_validate(value)
+        transaction.commit()
+
+
+class PersistentStore(object):
+    def __init__(self, file_name: str, extra_tables: Optional[dict] = None):
+        from BTrees.OOBTree import OOBTree
+        from persistent import Persistent
+        valid_store_cls = (OOBTree, Persistent)
+        self.tables = {
+            'states': OOBTree,
+        }
+        if extra_tables is not None:
+            for name, cls in extra_tables.items():
+                if not isinstance(name, str):
+                    raise AssertionError('Expected name to be str, got: {!r}'.format(name))
+                if not issubclass(cls, valid_store_cls):
+                    raise AssertionError('Expected cls to be one of {}, got: {!r}'.format(
+                        ', '.join([cls.__name__ for cls in valid_store_cls]),
+                        cls
+                    ))
+            self.tables.update(extra_tables)
+        self.zodb_connection = None
+        self.zodb_db = None
+        self.zodb_storage = None
+        self.db = self.load_db(file_name)
+
+    def load_db(self, file_name):
+        import os
+        import atexit
+        from ZODB import DB, FileStorage
+        file_name = os.path.expanduser(file_name)
+        print('*** Loading db {!r}'.format(file_name))
+        storage = FileStorage.FileStorage(file_name)
+        db = DB(storage)
+        conn = db.open()
+        root = conn.root()
+        for table_name, table_class in self.tables.items():
+            if not hasattr(root, table_name):
+                setattr(root, table_name, table_class())
+                print('*** Created table {!r}'.format(table_name))
+        self.zodb_connection = conn
+        self.zodb_db = db
+        self.zodb_storage = storage
+        atexit.register(self.save_db)
+        return root
+
+    def save_db(self):
+        print('*** Saving db...')
+        self.zodb_connection.close()
+        self.zodb_db.close()
+        self.zodb_storage.close()
+
+    def field(self, default, *, name: Optional[str] = None):
+        return PersistentField(default, name=name, store=self.db.states)

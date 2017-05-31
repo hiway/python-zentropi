@@ -9,6 +9,7 @@ import sys
 import select
 import time
 
+import atexit
 import locale as lib_locale
 import os
 import warnings
@@ -324,6 +325,7 @@ def run_agents_forever(*agents, endpoint='inmemory://', auth=None, space='zentro
             traceback.print_exc()
     else:
         time.sleep(timeout)  # Wait to avoid rapid restarts.
+    atexit._run_exitfuncs()
     python = sys.executable
     # hard restart, resources will NOT free up automatically.
     os.execl(python, python, *sys.argv)
