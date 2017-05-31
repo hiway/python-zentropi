@@ -18,6 +18,14 @@ from zentropi.utils import (
 
 
 class FrameData(UserDict):
+    """
+    FrameData is a wrapper around dict that supports
+    dot-notation access for keys and returns a None
+    instead of raising KeyError if the key is missing.
+
+    Used by:
+        - zentropi.frames.Frame().data
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -76,7 +84,7 @@ class Frame(object):
         self._name = validate_name(name)
 
     @property
-    def data(self) -> Optional[dict]:
+    def data(self) -> dict:
         return self._data or FrameData()
 
     @data.setter

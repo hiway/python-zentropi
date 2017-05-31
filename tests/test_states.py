@@ -83,7 +83,6 @@ def test_states_describe():
     assert states.the_answer is 42
 
     assert states.describe() == {
-        'states': {
             'expects': [{
                 # 'help': None,
                 'kind': KINDS.STATE.name,
@@ -95,7 +94,6 @@ def test_states_describe():
                 'name': 'the_answer',
                 'value': 42
             }]
-        }
     }
 
 

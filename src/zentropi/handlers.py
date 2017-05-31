@@ -269,4 +269,7 @@ class Registry(object):
         self._trigger_frame_handler = callback
 
     def describe(self):
-        return self._registry.describe()
+        expects = [e for e in self._registry.describe()]
+        description = {'expects': expects}
+        from .utils import deflate_dict
+        return deflate_dict(description)

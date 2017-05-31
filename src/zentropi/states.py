@@ -105,10 +105,11 @@ class States(UserDict):
         return self._handlers.match(frame)
 
     def describe(self):
+        INTERNAL = ['should_stop', 'running']
         fields = [field.describe()
-                  for field in self.data.values()]
-        expects = self._handlers.describe()
-        description = {'states': {'fields': fields, 'expects': expects}}
+                  for name, field in self.data.items() if name not in INTERNAL]
+        expects = [e for e in self._handlers.describe() if e['name'] not in INTERNAL]
+        description = {'fields': fields, 'expects': expects}
         from .utils import deflate_dict
         return deflate_dict(description)
 

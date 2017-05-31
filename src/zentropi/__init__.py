@@ -1,5 +1,10 @@
 # coding=utf-8
 """
+Zentropi - Script Your World
+----------------------------
+
+LICENSE:
+
 Copyright 2017 Harshad Sharma
 
 Licensed under the Apache License, Version 2.0 (the "License");
