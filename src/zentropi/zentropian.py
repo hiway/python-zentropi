@@ -10,7 +10,7 @@ from zentropi.handlers import Handler
 from zentropi.messages import Message, Messages
 from zentropi.states import State, States
 from zentropi.symbols import KINDS
-from zentropi.utils import validate_name
+from zentropi.utils import validate_name, validate_auth
 
 
 def wrap_handler(kind, name, handler, *, exact=True, parse=False, fuzzy=False, ignore_case=False, **kwargs):
@@ -34,9 +34,10 @@ def wrap_handler(kind, name, handler, *, exact=True, parse=False, fuzzy=False, i
 
 
 class Zentropian(object):
-    def __init__(self, name=None):
+    def __init__(self, name=None, auth=None):
         from .connections.registry import ConnectionRegistry
         self._name = validate_name(name) if name else uuid4().hex
+        self._auth = validate_auth(auth)
         callback = self._trigger_frame_handler
         self.states = States(callback=callback)
         self.events = Events(callback=callback)

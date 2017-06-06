@@ -75,7 +75,9 @@ setup(
     ],
     install_requires=[
         'apscheduler>=3.3, <3.4',
+        'cachetools>=2.0.0, <2.1',
         'click>=6.7, <7.0',
+        'cookiecutter',
         'fuzzywuzzy>=0.15.0, <0.20',
         'parse>=1.8.0, <2.0',
         'prompt_toolkit>=1.0.14, <1.1',

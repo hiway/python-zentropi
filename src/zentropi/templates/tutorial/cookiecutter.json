@@ -1,0 +1,5 @@
+{
+    "agent_name": "Nameless Agent",
+    "agent_class_name": "{{ cookiecutter.agent_name|replace(' ','') }}",
+    "agent_module_name": "{{ cookiecutter.agent_name|lower|replace(' ','_')|replace('-','_') }}"
+}

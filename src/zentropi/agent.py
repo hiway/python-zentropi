@@ -13,7 +13,7 @@ from zentropi.frames import Event, Frame, Message
 from zentropi.handlers import Handler
 from zentropi.symbols import KINDS
 from zentropi.timer import TimerRegistry
-from zentropi.utils import StopAgent
+from zentropi.utils import logger
 from zentropi.zentropian import (
     Zentropian,
     on_event,
@@ -40,7 +40,7 @@ class Agent(Zentropian):
     None
     """
 
-    def __init__(self, name=None):
+    def __init__(self, name=None, auth=None):
         """
         >>> from zentropi import Agent
         >>>
@@ -53,7 +53,7 @@ class Agent(Zentropian):
         :type name: str
         """
         self.timers = TimerRegistry(callback=self._trigger_frame_handler)
-        super().__init__(name=name)
+        super().__init__(name=name, auth=auth)
         self.states.should_stop = False
         self.states.running = False
         self.loop = None  # asyncio.get_event_loop()
@@ -72,7 +72,7 @@ class Agent(Zentropian):
         if self._spawn_on_start:
             [self.spawn(coro) for coro in self._spawn_on_start]
             self._spawn_on_start = None
-        self.emit('*** started', internal=True)
+        self.emit('*** start', internal=True)
         self.timers.start_timers(self.spawn)
         while self.states.should_stop is False:
             await asyncio.sleep(1)
@@ -166,7 +166,8 @@ class Agent(Zentropian):
         return self.spawn_in_thread(self.run)
 
     def stop(self):
-        self.emit('*** stopping', internal=True)
+        self.emit('*** stop', internal=True)
+        logger.debug('{} emitted shutdown signal'.format(type(self).__name__))
         self.states.should_stop = True
         self.timers.should_stop = True
 

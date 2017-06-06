@@ -1,25 +1,31 @@
 # coding=utf-8
+import asyncio
 import gettext
 import json
 import logging
 import signal
 import traceback
-from typing import Any, Optional
+from concurrent.futures import CancelledError
+from typing import Any, Optional, TypeVar
 import sys
 import select
 import time
-
 import atexit
+
 import locale as lib_locale
 import os
 import warnings
+from zentropi.defaults import FRAME_DATA_MAX_LENGTH, FRAME_META_MAX_LENGTH
+
+LoggerType = TypeVar('LoggerType', bound=logging.Logger)
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 
 
 def log_to_stream(stream: Optional[Any] = None, *,
-                  level: Optional[Any] = None) -> Any:
+                  level: Optional[Any] = None,
+                  enable=True) -> LoggerType:
     """
     Send zentropi logs to stream, at logging.[DEBUG] level.
     Default: zentropi.defaults.LOG_LEVEL => logging.DEBUG
@@ -39,16 +45,19 @@ def log_to_stream(stream: Optional[Any] = None, *,
 
     global logger
 
+    if not enable:
+        return logger
+
     if not stream:
         stream = sys.stdout  # pragma: no cover
     handler = logging.StreamHandler(stream)
     handler.setLevel(level or LOG_LEVEL)
     formatter = logging.Formatter(
-        '%(asctime)s %(threadName)-10s %(filename)10s:%(lineno)03d '
-        '%(funcName)-10s %(levelname)-6s %(message)s')
+        '%(asctime)s %(threadName)-10s %(levelname)-6s '
+        '%(filename)10s:%(lineno)03d %(funcName)-10s %(message)s')
     handler.setFormatter(formatter)
     logger.addHandler(handler)
-    return handler
+    return logger
 
 
 def i18n_wrapper(locale: Optional[str] = None) -> Any:
@@ -130,7 +139,7 @@ def validate_data(data):
     assert isinstance(data, (dict, FrameData)), data
     if isinstance(data, FrameData):
         data = data.data
-    assert len(json.dumps(data)) < 1024 * 10
+    assert len(json.dumps(data)) < FRAME_DATA_MAX_LENGTH
     return FrameData(data)  # type: ignore
 
 
@@ -138,7 +147,7 @@ def validate_meta(meta: dict = None) -> dict:
     if meta is None:
         return {}
     assert isinstance(meta, dict)
-    assert len(json.dumps(meta)) < 512
+    assert len(json.dumps(meta)) < FRAME_META_MAX_LENGTH
     return meta
 
 
@@ -216,8 +225,30 @@ def stop_agent_signal(signum, frame):
     raise StopAgent
 
 
+def run_final_agent(loop, last_agent):
+    try:
+        last_agent.run()
+    except (KeyboardInterrupt, StopAgent):
+        last_agent.stop()
+    except Exception as e:
+        last_agent.stop()
+        raise e
+    finally:
+        pending = asyncio.Task.all_tasks()
+        len_pending = len(pending)
+        if not len_pending:
+            return
+        log_message = 'Waiting for {} pending tasks'.format(len_pending)
+        logger.debug(log_message)
+        print(log_message)
+        try:
+            loop.run_until_complete(asyncio.gather(*pending))
+        except CancelledError:
+            pass
+
+
 def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
-               loop=None, shell=False, scheduler=False, env=None):
+               loop=None, shell=False, env=None):
     import asyncio
     from zentropi import Agent
     signal.signal(signal.SIGTERM, stop_agent_signal)
@@ -236,26 +267,19 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
     for agent in agents:
         if not isinstance(agent, Agent):
             raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
-    if scheduler:
-        from zentropi.extra.scheduler import SchedulerAgent
-        global SCHEDULER_INSTANCE
-        if not SCHEDULER_INSTANCE:
-            scheduler = SchedulerAgent('scheduler')
-            # raise AssertionError('SCHEDULER_INSTANCE is already set: {!r}'.format(SCHEDULER_INSTANCE))
-        SCHEDULER_INSTANCE = scheduler
-        agents.append(scheduler)
     if shell:
         from zentropi import ZentropiShell
-        shell = ZentropiShell('shell')
+        shell = ZentropiShell('shell', auth='4cb1c5fe714b469caae03f26e635f676')
         agents.append(shell)
     if not loop:
         loop = asyncio.get_event_loop()
 
     if len(agents) == 1:
         agent = agents[0]
-        agent.connect(endpoint, auth=auth)
-        agent.join(space)
-        agent.run()
+        if not endpoint.startswith('inmemory://'):
+            agent.connect(endpoint, auth=auth)
+            agent.join(space)
+        run_final_agent(loop, agent)
         return
     if len(agents) == 2:
         first_agent = agents[0]
@@ -284,31 +308,26 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
     last_agent.join(space)
     last_agent.loop = loop
 
-    @last_agent.on_event('*** stopping')
+    @last_agent.on_event('*** stop')
     def exit_other_agents(event):
+        logger.debug('stopping agent {}'.format(type(first_agent).__name__))
+        first_agent.stop()
         for agent in connect_agents:
             try:
+                logger.debug('stopping agent {}'.format(type(agent).__name__))
                 agent.stop()
             except:
                 traceback.print_exc()
                 pass
 
-    try:
-        last_agent.run()
-    except StopAgent as e:
-        last_agent.stop()
-    except KeyboardInterrupt:
-        last_agent.stop()
-    except Exception as e:
-        last_agent.stop()
-        raise e
+    run_final_agent(loop, last_agent)
 
 
 def run_agents_forever(*agents, endpoint='inmemory://', auth=None, space='zentropia',
-                       loop=None, shell=False, scheduler=False, env=None, timeout=10, confirm=True):
+                       loop=None, shell=False, env=None, timeout=10, confirm=True):
     try:
         run_agents(*agents, endpoint=endpoint, auth=auth, space=space,
-                   loop=loop, shell=shell, scheduler=scheduler, env=env)
+                   loop=loop, shell=shell, env=env)
     except StopAgent as e:
         pass
     except Exception as e:

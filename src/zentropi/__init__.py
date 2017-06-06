@@ -20,6 +20,7 @@ import os
 import zentropi.fields as fields
 import zentropi.utils as utils
 from zentropi.agent import Agent, on_timer
+from zentropi.config import Config, Option
 from zentropi.connections import Connection
 from zentropi.connections.in_memory import \
     InMemoryConnection
@@ -36,6 +37,7 @@ from zentropi.shell import ZentropiShell
 from zentropi.spaces import Spaces
 from zentropi.symbols import KINDS
 from zentropi.utils import (
+    log_to_stream,
     run_agents,
     run_agents_forever
 )
@@ -56,6 +58,7 @@ __all__ = [
     'BASE_PATH',
     'Command',
     'Connection',
+    'Config',
     'Event',
     'Events',
     'Frame',
@@ -63,11 +66,13 @@ __all__ = [
     'fields',
     'InMemoryConnection',
     'KINDS',
+    'log_to_stream',
     'Message',
     'on_event',
     'on_message',
     'on_state',
     'on_timer',
+    'Option',
     'run_agents',
     'run_agents_forever',
     'ZentropiShell',

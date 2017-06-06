@@ -57,16 +57,20 @@ class Handler(object):
         self._match_fuzzy = bool(fuzzy)
         self._length = len(name)
         self._ignore_case = bool(ignore_case)
-        self._filters = {k[1:]: a for k, a in kwargs.items() if k.startswith('_')}
-        unexpected_kwargs = [k for k in kwargs if not k.startswith('_')]
+        self._filters = {k[6:]: a for k, a in kwargs.items() if k.startswith('state_')}
+        unexpected_kwargs = [k for k in kwargs if not k.startswith('state_')]
         if unexpected_kwargs:
             raise AssertionError('Unexpected keyword arguments: {}\n'
                                  'Filters should be named as: {}'.format(', '.join(unexpected_kwargs),
-                                                                         ', '.join(['_{}'.format(k)
+                                                                         ', '.join(['state_{}'.format(k)
                                                                                     for k in unexpected_kwargs])))
 
     def __call__(self, *args, **kwargs):
-        return self._handler(*args, **kwargs)
+        try:
+            return self._handler(*args, **kwargs)
+        except TypeError:
+            args = args[1:]
+            return self._handler(*args, **kwargs)
 
     @property
     def name(self):

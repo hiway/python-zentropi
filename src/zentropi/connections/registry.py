@@ -21,6 +21,9 @@ def build_connection_instance(endpoint: str, connection_class: Connection, agent
     elif endpoint.startswith('redis://'):
         from .redis_connection import RedisConnection
         return RedisConnection(agent=agent)
+    elif endpoint.startswith('wss://'):
+        from .websocket_connection import WebsocketConnection
+        return WebsocketConnection(agent=agent)
     else:
         raise ValueError('Expected endpoint to be in {!r}. Got: {!r}.'
                          ''.format(['inmemory://'], endpoint))  # todo: generic list

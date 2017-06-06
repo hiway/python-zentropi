@@ -19,6 +19,13 @@ import os
 
 import click
 
+from cookiecutter.main import cookiecutter
+
+DEFAULT_CHOICE_NOTE = """
+Not what you want? Press Ctrl+C to cancel. See available choices by:
+$ zentropi {} --help
+"""
+
 
 @click.group()
 def main():
@@ -27,17 +34,53 @@ def main():
 
 @main.command()
 @click.option('--name', default='zentropi_shell')
-@click.option('--endpoint', default='redis://127.0.0.1:6379')
-@click.option('--auth/--no-auth', 'send_auth', is_flag=True, default=True)
+@click.option('--endpoint', default='wss://local.zentropi.com/')
+@click.option('--auth', default='4cb1c5fe714b469caae03f26e635f676')
 @click.option('--join', default='zentropia')
-def shell(name, endpoint, join, send_auth):
+def shell(name, endpoint, join, auth):
     from .shell import ZentropiShell
-    if send_auth:
-        auth = os.getenv('ZENTROPI_REDIS_PASSWORD', None)
-    else:
-        auth = None
     shell_agent = ZentropiShell(name)
     shell_agent.connect(endpoint, auth=auth)
     if join:
         shell_agent.join(space=join)
     shell_agent.run()
+
+
+@main.group()
+def create():
+    pass
+
+
+@create.command()
+@click.argument('path', type=click.Path(exists=False), default='.')
+@click.option('--template', default='package')
+def agent(path, template):
+    """
+    Create a new agent.
+    - Default path '.' will create a new directory inside your
+        current working directory.
+    - Default template 'package' will create a new agent that can
+        be installed as a package with pip. You can pick either:
+            - package: default, pip-install and pypi ready package.
+            - module: one module with multiple files.
+            - file: a single python file
+            - tutorial: a zentropi tutorial
+    """
+    if template == 'agent':
+        click.echo('Chosen options')
+        click.echo('\t--template={}'.format(template))
+        click.echo(DEFAULT_CHOICE_NOTE.format('agent create'))
+    if any([patrn in template for patrn in ['gh:', 'github', 'bitbucket']]):
+        template_path = template
+    elif '/' in template:  # points to a path on the filesystem
+        template_path = os.path.abspath(template)
+    else:
+        template_dir = os.path.join(os.path.dirname(__file__), 'templates/')
+        template_path = os.path.join(template_dir, template)
+
+    cookiecutter(template_path, output_dir=path)
+
+
+@create.command()
+def project():
+    pass

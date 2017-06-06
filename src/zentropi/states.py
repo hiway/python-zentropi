@@ -1,4 +1,7 @@
 # coding=utf-8
+import signal
+import traceback
+
 from collections import UserDict
 
 from zentropi.fields import Field
@@ -32,25 +35,30 @@ class States(UserDict):
         return state.value
 
     def _update_state(self, name, value):
-        should_update = [True]
-        state = self.data[name]
-        if not isinstance(state, Field):
-            raise ValueError('Expected instance of Field, got: {}'
-                             ''.format(state))
-        if self._trigger_frame_handler:
-            frame = State(name, data={'value': value, 'last': state.value})
-            frame, handlers = self._handlers.match(frame)
-            for handler in handlers:
-                _should_update = self._trigger_frame_handler(
-                    frame=frame, handler=handler, internal=True)
-                if not isinstance(_should_update, bool):
-                    raise ValueError('Expected bool as return value '
-                                     'from state callback, got: {}'
-                                     ''.format(_should_update))
-                should_update.append(_should_update)
-        if all(should_update):  # Default is True if not callback set.
-            state.value = value
-            self.data[name] = state
+        try:
+            should_update = [True]
+            state = self.data[name]
+            if not isinstance(state, Field):
+                raise ValueError('Expected instance of Field, got: {}'
+                                 ''.format(state))
+            if self._trigger_frame_handler:
+                frame = State(name, data={'value': value, 'last': state.value})
+                frame, handlers = self._handlers.match(frame)
+                for handler in handlers:
+                    _should_update = self._trigger_frame_handler(
+                        frame=frame, handler=handler, internal=True)
+                    if not isinstance(_should_update, bool):
+                        raise ValueError('Expected bool as return value '
+                                         'from state callback, got: {}'
+                                         ''.format(_should_update))
+                    should_update.append(_should_update)
+            if all(should_update):  # Default is True if not callback set.
+                state.value = value
+                self.data[name] = state
+        except Exception as e:
+            traceback.print_exc()
+            signal.alarm(1)
+            raise e
 
     def _remove_state(self, name):
         del self.data[name]

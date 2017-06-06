@@ -6,14 +6,14 @@ from zentropi.frames import FrameData
 from zentropi.utils import (
     i18n_wrapper,
     log_to_stream,
-    logger,
     validate_data
 )
 
 
 def test_log():
     stream = StringIO()
-    handler = log_to_stream(stream=stream, level=logging.DEBUG)
+    logger = log_to_stream(stream=stream, level=logging.DEBUG)
+    handler = logger.handlers[0]
     logger.warning('test')
     logger.info('test')
     logger.debug('test')

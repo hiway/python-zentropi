@@ -1,10 +1,10 @@
 # coding=utf-8
 import json
 import time
-from collections import UserDict
 from typing import Optional, Union
 from uuid import uuid4
 
+from collections import UserDict
 from zentropi.defaults import FRAME_NAME_MAX_LENGTH
 from zentropi.symbols import KINDS
 from zentropi.utils import (
@@ -26,6 +26,7 @@ class FrameData(UserDict):
     Used by:
         - zentropi.frames.Frame().data
     """
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -165,8 +166,14 @@ class Frame(object):
         return Frame.build(**frame_as_dict)
 
     @staticmethod
-    def from_json(frame_as_json):
-        return Frame.build(**json.loads(frame_as_json))
+    def from_json(frame_as_json, source=None):
+        frame_kwargs = json.loads(frame_as_json)
+        if source:
+            if 'meta' in frame_kwargs:
+                frame_kwargs['meta']['source'] = source
+            else:
+                frame_kwargs.update({'meta': {'source': source}})
+        return Frame.build(**frame_kwargs)
 
     def as_dict(self) -> dict:
         return deflate_dict({
