@@ -85,6 +85,8 @@ setup(
         'Pygments>=2.2.0, <2.3',
         'python-Levenshtein>=0.12.0',
         'sortedcontainers>=1.5.7, <1.6',
+        'pyyaml',
+        'cryptography',
     ],
     extras_require={
         'redis': redis,

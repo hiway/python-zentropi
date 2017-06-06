@@ -165,3 +165,28 @@ it is already useful to experiment and build toys.
 Check out what is already possible in the examples directory:
 
 https://github.com/zentropi/python-zentropi/tree/master/examples
+
+Philosophy:
+-----------
+
+TL;DR: Zentropi is more than one thing, but they're all related.
+
+    - It is the hypothesis/phenomenon that given enough energy
+        and components capable of computing (that is, they can hold,
+        replicate, transmit or transform information),
+        any system - whether natural or artificial, can evolve
+        into a system that requires and supports a mind.
+    - It is a manifesto based on the implications of the
+        hypothesis above, and guidelines that are used to build
+        Zentropian Agents: software that is secure, resilient,
+        fair and pragmatic about solving real problems.
+    - It is a framework to write autonomous Agents, with the mental
+        models and guidelines discussed in the manifesto
+        implemented in Python; Open Source because good ideas
+        whose time has come can not be shackled.
+    - It is the company that provides subscription based
+        services for customers who use the zentropi framework
+        and would like to support its development, use agents
+        hosted by zentropi or as a global network through
+        shared and public spaces. (coming soon :)
+

@@ -3,6 +3,7 @@ import ssl
 import traceback
 from typing import Optional
 
+import os
 import websockets
 from zentropi import Frame
 
@@ -56,10 +57,11 @@ class WebsocketConnection(Connection):
         self._watchdog_disable = False
         endpoint = endpoint or self._endpoint
         auth = auth or self._auth
-        if endpoint == 'wss://zentropi.com':
-            cafile = 'zentropi.com.crt'
+        if endpoint.startswith('wss://zentropi.com'):
+            cafile = '~/.zentropi/zentropi.com.crt'
         else:
-            cafile = 'self-ssl.crt'
+            cafile = '~/.zentropi/self-ssl.crt'
+        cafile = os.path.expanduser(cafile)
         ssl_context = ssl.create_default_context(cafile=cafile)
         if not endpoint.endswith('/'):
             endpoint = endpoint + '/'
