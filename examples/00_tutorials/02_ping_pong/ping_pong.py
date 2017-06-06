@@ -26,6 +26,8 @@ class PongBot(Agent):
 
 
 if __name__ == '__main__':
-    ping_bot = PingBot(name='ping')
-    pong_bot = PongBot(name='pong')
-    run_agents(ping_bot, pong_bot, shell=True)
+    ping_bot = PingBot(name='ping', auth='3aa84b9b93e944348fad6d5161c6c1f1')
+    pong_bot = PongBot(name='pong', auth='14d91609405145999614b3c11ceb4513')
+    run_agents(ping_bot, pong_bot, shell=False,
+               endpoint='wss://local.zentropi.com/',
+               space='zentropia')

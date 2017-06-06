@@ -1,0 +1,236 @@
+subject:
+  - it
+  - this
+  - that
+  - i
+  - me
+  - you
+  - she
+  - he
+  - her
+  - him
+  - us
+  - we
+  - they
+  - them
+  - you
+  - yourself
+  - myself
+  - themselves
+  - herself
+  - himself
+  - theirselves
+  - them selves
+  - their selves
+  - itself
+
+question:
+  - who
+  - why
+  - where
+  - when
+  - what
+  - was it
+  - is it
+  - will it
+  - does it
+  - does he
+  - does she
+  - do they
+  - do we
+  - do you
+  - did it
+  - did they
+  - did she
+  - did he
+  - did we
+  - did you
+  - who is
+  - who are
+  - who were
+  - who will
+  - why is
+  - why are
+  - why were
+  - why will
+  - where is
+  - where are
+  - where were
+  - where will
+  - when is
+  - when are
+  - when were
+  - when will
+  - what is
+  - what are
+  - what were
+  - what will
+  - can i
+  - can you
+  - can we
+  - can they
+  - can she
+  - can he
+  - can it
+  - may i
+  - may you
+  - may we
+  - may they
+  - may she
+  - may he
+  - may it
+  - tell me
+
+question_agents:
+  - is
+  - are
+  - were
+  - will
+  - who is
+  - who are
+  - who were
+  - who will
+  - why is
+  - why are
+  - why were
+  - why will
+  - how is
+  - how are
+  - how were
+  - how will
+  - where is
+  - where are
+  - where were
+  - where will
+
+question_things:
+  - what is
+  - where is
+  - when is
+  - why is
+  - how is
+  - is it
+  - was it
+  - will it
+  - does it
+  - did it
+  - is that
+  - was that
+  - will that
+  - does that
+  - did that
+  - what does
+  - when does
+  - where does
+  - how does
+  - what did
+  - when did
+  - where did
+  - how did
+  - tell me
+  - when was
+  - where was
+  - what was
+  - what will
+  - where will
+  - when will
+  - what
+  - where
+  - when
+  - was
+
+
+weather:
+  - weather
+  - climate
+  - hot
+  - cold
+  - rain
+  - fog
+  - muggy
+  - damp
+  - clear
+  - bright
+  - sunny
+  - sun
+  - snow
+  - sunshine
+  - cloudy
+  - clouds
+  - raining
+  - cooling
+  - warming
+  - warm
+  - cool
+
+day:
+  - today
+  - tonight
+  - tomorrow
+  - night
+  - yesterday
+  - monday
+  - tuesday
+  - wednesday
+  - thursday
+  - friday
+  - saturday
+  - sunday
+  - monday
+  - weekend
+  - weekday
+  - week
+  - month
+  - year
+  - decade
+  - century
+  - years
+
+day_modifier:
+  - last
+  - past
+  - next
+  - tomorrow
+  - yesterday
+  - before
+  - after
+  - this
+  - current
+
+sunset:
+  - sunset
+  - twilight
+  - nightfall
+  - sunets
+  - sun set
+  - day end
+  - end of day
+  - daylight
+  - evening
+
+reminder_task:
+  - remind
+  - timer
+  - reminder
+
+greeting:
+  - hi
+  - yo
+  - hey
+  - hello
+  - howdy
+  - wassup
+
+greeting_mod:
+  - good
+  - very good
+  - top of the
+
+greeting_context:
+  - morning
+  - evening
+  - afternoon
+  - mornin
+  - evenin
+  - afternoon
+
