@@ -269,7 +269,7 @@ def run_agents(*agents, endpoint='inmemory://', auth=None, space='zentropia',
             raise ValueError('Expected an instance of Agent. Got: {!r}'.format(agent))
     if shell:
         from zentropi import ZentropiShell
-        shell = ZentropiShell('shell', auth='4cb1c5fe714b469caae03f26e635f676')
+        shell = ZentropiShell('shell', auth='69c17b93536f45e98357492806fc0b25')
         agents.append(shell)
     if not loop:
         loop = asyncio.get_event_loop()

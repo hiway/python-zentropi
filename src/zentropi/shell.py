@@ -1,10 +1,9 @@
 # coding=utf-8
 import textwrap
-
-import os
 import pprint
 import sys
 
+import os
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
 from prompt_toolkit.history import FileHistory, InMemoryHistory
@@ -13,14 +12,14 @@ from prompt_toolkit.shortcuts import (
     create_prompt_application
 )
 from pygments.token import Token
-from zentropi import Config, Option
-
+from zentropi import Config
 from zentropi.defaults import \
     FRAME_NAME_MAX_LENGTH
 
 from .agent import Agent, on_event, on_message
-from .frames import KINDS, Message
+from .frames import KINDS
 from .fields import PersistentStore
+from .utils import logger
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
@@ -58,8 +57,8 @@ class ZentropiShell(Agent):
         self._prompt_more = PROMPT_MORE
         self._multi_line = False
         self._exit_on_next_kb_interrupt = False
-        self.store = PersistentStore('~/.zentropi/shell.db')
-        self.states.events = self.store.field(True)
+        # self.store = PersistentStore('~/.zentropi/shell.db')
+        self.states.events = True  # self.store.field(True)
 
     def _get_cli(self, loop):
         if self.config.ENABLE_HISTORY:
@@ -130,7 +129,28 @@ class ZentropiShell(Agent):
                 text = frame.data.text.strip()
             else:
                 text = frame.name
-            self.message(text)
+            if text.startswith('/'):
+                name = text[1:].strip()
+                args = []
+                kwargs = {}
+                # logger.debug('prepare to emit event {}'.format(name))
+                if ' ' in name:
+                    # logger.debug('space in name')
+                    name, *params = name.split(' ')
+                    # logger.debug('name {}'.format(name))
+                    # logger.debug('parameters {}'.format(params))
+                    for token in params:
+                        # logger.debug('token {}'.format(token))
+                        if '=' in token:
+                            # logger.debug('SPLIT')
+                            k, v = token.split('=')
+                            kwargs.update({k: v})
+                        else:
+                            args.append(token)
+                    kwargs.update({'args': args})
+                self.emit(name, data=kwargs)
+            else:
+                self.message(text)
             return
         elif frame.source == self.name and frame.internal is False:
             return

@@ -1,0 +1,67 @@
+include:
+    - twitter_to_telegram
+
+log:
+    - {name: events,
+       url: 'file:///var/logs/zentropi_events.log',
+       limit: "10MB", trim: "30%", archive: "file:///archive/logs/"}
+
+config:
+    TELEGRAM_CHANNEL_ID: env
+
+states:
+    location: {}
+
+vars:
+    name: "{{frame.name}}"
+    data: "{{frame.data}}"
+    text: "{{frame.data.text}}"
+    location: {lat: "{{frame.data.lat}}", lon: "{{frame.data.lon}}"}
+    home: {lat: 0.000, lon: 0.000}
+
+templates:
+    "post_tweet":
+        kind: event
+        name: twitter_update_send
+        data: {'text': "{{text}}"}
+    "post_telegram_channel":
+        kind: event
+        name: telegram_post_channel
+        data: {'text': "{{text}}", 'session': TELEGRAM_CHANNEL_ID}
+
+match_events:
+    - match: "*"
+      log_events: "{{name}}: {{data}}"
+    - match: "location_update"
+      state: {name: location, value: "{{location}}"}
+
+match_states:
+    - match: "*"
+      log: "{{name}}: {{data}}"
+    - match: "activity-sleeping"
+      value: True
+      #op: equal  # default if missing
+      warmup: 10m
+      cooldown: 16h
+      emit_template: {name: post_tweet, vars: {text: "zzz"}}
+      #repeat: None
+    - match: "location"
+      value: "{{home}}"
+      op: geo_near
+      op_args: 200m
+      warmup: 1m
+      cooldown: 30m
+      message_template:
+        text: "Welcome home"
+        target: "username/myagent"
+        space: "home"
+      emit_template:
+        - {name: post_tweet, vars: {text: 'Cats need feeding...'}}
+        - {name: post_telegram_channel, vars: {text: 'Back home.'}}
+
+match_messages:
+    - match: "*"
+      log: "{{name}}: {{data}}"
+    - match: "tweet {text}"
+      parse: True
+      emit_template: post_tweet

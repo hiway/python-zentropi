@@ -47,7 +47,7 @@ if __name__ == '__main__':
     # from zentweepy import ZenTweepy
     # zentweepy = ZenTweepy('zentweepy')
 
-    catweepult = Catweepult(name='Catweepult', auth='f96e4809b01d4e00a0c3f318ee0f9b6e')
+    catweepult = Catweepult(name='catweepult', auth='845ee38d6dfe475595244e2e667304dd')
 
     # run_agents(catweepult, zentweepy, shell=True)
     run_agents(catweepult, shell=False, endpoint='wss://local.zentropi.com')

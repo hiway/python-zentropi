@@ -5,8 +5,8 @@ from typing import Optional
 
 import os
 import websockets
-from zentropi import Frame
 
+from zentropi import Frame
 from ..agent import Agent
 from ..connections.connection import Connection
 from ..utils import logger, validate_auth, validate_endpoint, validate_name
@@ -62,12 +62,14 @@ class WebsocketConnection(Connection):
         else:
             cafile = '~/.zentropi/self-ssl.crt'
         cafile = os.path.expanduser(cafile)
-        ssl_context = ssl.create_default_context(cafile=cafile)
-        if not endpoint.endswith('/'):
-            endpoint = endpoint + '/'
-        async with websockets.connect(
-            '{}{}/zentropia'.format(endpoint, auth),
-            ssl=ssl_context) as websocket:
+        if endpoint.startswith('wss://'):
+            ssl_context = ssl.create_default_context(cafile=cafile)
+        else:
+            ssl_context = None
+        if endpoint.endswith('/'):
+            endpoint = endpoint[:-1]
+        # async with websockets.connect('{}/{}'.format(endpoint, auth), ssl=ssl_context) as websocket:
+        async with websockets.connect('{}/{}'.format(endpoint, auth)) as websocket:
             logger.debug('connected')
             self._connected = True
             self.ws = websocket
@@ -89,7 +91,7 @@ class WebsocketConnection(Connection):
         self._auth = auth or self._agent._auth
         if self._connected:
             raise ConnectionError('Already connected.')
-        if not endpoint.startswith('wss://'):
+        if not (endpoint.startswith('wss://') or endpoint.startswith('ws://')):
             raise ValueError('Expected endpoint to begin with "wss://".'
                              'Got: {!r}'.format(endpoint))
         self._endpoint = endpoint

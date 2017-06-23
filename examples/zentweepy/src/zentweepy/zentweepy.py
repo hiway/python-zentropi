@@ -144,7 +144,6 @@ class ZenTweepy(Agent):
                     del update_['event']
                     if 'target_object' in update_:
                         update_['target_object'] = update_ = jmespath.search(UPDATE_FORMAT, update_['target_object'])
-                    pprint(update_)
                     self.emit('twitter_{}'.format(event_name), data=update_)
                 else:
                     # self.emit('twitter_stream_raw', data=update)

@@ -21,7 +21,7 @@ def build_connection_instance(endpoint: str, connection_class: Connection, agent
     elif endpoint.startswith('redis://'):
         from .redis_connection import RedisConnection
         return RedisConnection(agent=agent)
-    elif endpoint.startswith('wss://'):
+    elif endpoint.startswith('wss://') or endpoint.startswith('ws://'):
         from .websocket_connection import WebsocketConnection
         return WebsocketConnection(agent=agent)
     else:

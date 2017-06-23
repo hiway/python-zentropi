@@ -21,6 +21,8 @@ import click
 
 from cookiecutter.main import cookiecutter
 
+from zentropi import run_agents
+
 DEFAULT_CHOICE_NOTE = """
 Not what you want? Press Ctrl+C to cancel. See available choices by:
 $ zentropi {} --help
@@ -84,3 +86,17 @@ def agent(path, template):
 @create.command()
 def project():
     pass
+
+
+@main.group()
+def run():
+    pass
+
+
+@run.command()
+@click.option('--shell/--no-shell', is_flag=True, default=True)
+def avatar(shell):
+    print('Running avatar.')
+    from zentropi.avatar import Avatar
+    avatar = Avatar('avatar')
+    run_agents(avatar, shell=shell)

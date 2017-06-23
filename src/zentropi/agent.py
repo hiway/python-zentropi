@@ -157,13 +157,13 @@ class Agent(Zentropian):
         return self.loop.create_task(coro)
 
     @staticmethod
-    def spawn_in_thread(func, *args, **kwargs):
-        task = threading.Thread(target=func, args=args, kwargs=kwargs)
+    def spawn_in_thread(func, daemon=True, *args, **kwargs):
+        task = threading.Thread(target=func, args=args, kwargs=kwargs, daemon=daemon)
         task.start()
         return task
 
-    def run_in_thread(self):
-        return self.spawn_in_thread(self.run)
+    def run_in_thread(self, func=None, daemon=True, *args, **kwargs):
+        return self.spawn_in_thread(func or self.run,  daemon=True, *args, **kwargs)
 
     def stop(self):
         self.emit('*** stop', internal=True)

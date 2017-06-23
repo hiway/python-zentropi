@@ -4,6 +4,6 @@ from .zentweepy import ZenTweepy
 
 
 def main():
-    zentweepy = ZenTweepy(name='ZenTweepy', auth='c0eddc73d5c747ed8478bb25f7aee7d6')
+    zentweepy = ZenTweepy(name='ZenTweepy', auth='6aba32bb654f4d2ba750d9bdbaf2b197')
     run_agents(zentweepy, shell=False, space='zentropia',
-               endpoint='wss://zentropi.com/')
+               endpoint='ws://local.zentropi.com:8000/')

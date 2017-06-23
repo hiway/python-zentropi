@@ -108,7 +108,7 @@ class Zentropian(object):
                 name = return_value
             self.message(name=name,
                          data={'text': return_value},
-                         reply_to=frame.id)
+                         reply_to=frame.id, target=frame.source)
         else:
             raise NotImplementedError()
 
@@ -167,9 +167,9 @@ class Zentropian(object):
             self._connections.broadcast(frame=event)
         return event
 
-    def message(self, name, data=None, space=None, internal=False, reply_to=None):
+    def message(self, name, data=None, space=None, internal=False, reply_to=None, target=None):
         message = self.messages.message(name=name, data=data, space=space, internal=internal,
-                                        source=self.name, reply_to=reply_to)
+                                        source=self.name, reply_to=reply_to, target=target)
         if not internal and self._connections.connected:
             self._connections.broadcast(frame=message)
         return message
