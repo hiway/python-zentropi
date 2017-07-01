@@ -57,15 +57,15 @@ class WebsocketConnection(Connection):
         self._watchdog_disable = False
         endpoint = endpoint or self._endpoint
         auth = auth or self._auth
-        if endpoint.startswith('wss://zentropi.com'):
-            cafile = '~/.zentropi/zentropi.com.crt'
-        else:
-            cafile = '~/.zentropi/self-ssl.crt'
-        cafile = os.path.expanduser(cafile)
-        if endpoint.startswith('wss://'):
-            ssl_context = ssl.create_default_context(cafile=cafile)
-        else:
-            ssl_context = None
+        # if endpoint.startswith('wss://zentropi.com'):
+        #     cafile = '~/.zentropi/zentropi.com.crt'
+        # else:
+        #     cafile = '~/.zentropi/self-ssl.crt'
+        # cafile = os.path.expanduser(cafile)
+        # if endpoint.startswith('wss://'):
+        #     ssl_context = ssl.create_default_context(cafile=cafile)
+        # else:
+        #     ssl_context = None
         if endpoint.endswith('/'):
             endpoint = endpoint[:-1]
         # async with websockets.connect('{}/{}'.format(endpoint, auth), ssl=ssl_context) as websocket:
