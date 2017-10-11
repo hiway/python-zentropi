@@ -65,3 +65,5 @@ docs/_build
 *.bak
 .buildozer
 jobs.sqlite
+.mypy_cache
+*.mpy
