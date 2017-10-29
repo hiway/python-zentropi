@@ -1,3 +1,5 @@
+import asyncio
+
 from uzentropi import Agent as uAgent, RATE_LIMIT, Kind, Frame, MICROPY, PLATFORM
 from uzentropi.agent import wrap_handler
 from uzentropi.utils import random_id
@@ -20,3 +22,33 @@ class Agent(uAgent):
                 return
             import traceback
             traceback.print_exc()
+
+    def spawn_in_thread(self, func, *args, wait=True, **kwargs):
+        import threading
+        queue = asyncio.Queue(maxsize=1)
+
+        def task_wrapper(*args, **kwargs):
+            try:
+                retval = func(*args, **kwargs)
+            except Exception as e:
+                retval = e
+            finally:
+                if not wait:
+                    return
+                self._loop.create_task(queue.put(retval))
+
+        task = threading.Thread(target=task_wrapper, args=args, kwargs=kwargs)
+        task.start()
+        if wait:
+            async def wait_for_task():
+                retval = await queue.get()
+                if not isinstance(retval, Exception):
+                    return retval
+                raise retval
+
+            return wait_for_task()
+        return task
+
+    def attach(self, loop, endpoint=None, token=None):
+        assert not self._loop, 'event loop already initialized, call attach() instead of -> start() or run()'
+        self._loop.create_task(self.start(endpoint=endpoint, token=token, loop=loop))
