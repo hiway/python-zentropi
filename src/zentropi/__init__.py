@@ -16,46 +16,44 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import os
-# from pkgutil import extend_path
-# __path__ = extend_path(__path__, __name__)
-import pkg_resources
-pkg_resources.declare_namespace(__name__)
 
 __version__ = "0.1.3"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
 from uzentropi import (
-    RATE_LIMIT,
-    PLATFORM,
     MICROPY,
+    PLATFORM,
     PYTHON,
-    Kind,
+    RATE_LIMIT,
     Frame,
-    Session,
     Handler,
+    Kind,
+    Session,
+    WebsocketConnection,
+    asyncio,
     on_command,
     on_event,
     on_message,
     on_request,
     on_state,
     on_timer,
-    WebsocketConnection,
-    RateLimitError,
 )
 
 from .agent import Agent
+from .errors import RateLimitError
 
 __all__ = [
     '__version__',
-    'PLATFORM',
     'MICROPY',
+    'PLATFORM',
     'PYTHON',
     'RATE_LIMIT',
     'Agent',
     'Frame',
     'Handler',
     'Kind',
+    'RateLimitError',
     'Session',
     'WebsocketConnection',
     'asyncio',
@@ -64,5 +62,5 @@ __all__ = [
     'on_message',
     'on_request',
     'on_state',
-    'on_timer'
+    'on_timer',
 ]
