@@ -20,6 +20,8 @@ import os
 import click
 
 from cookiecutter.main import cookiecutter
+from zentropi.api import API
+from uzentropi.utils import save_token, load_token, TOKENS_PATH
 
 DEFAULT_CHOICE_NOTE = """
 Not what you want? Press Ctrl+C to cancel. See available choices by:
@@ -27,26 +29,55 @@ $ zentropi {} --help
 """
 
 
+def get_api():
+    # token = os.getenv('ZENTROPI_API_TOKEN', '')
+    try:
+        token = load_token('user:default')
+    except KeyError:
+        token = None
+    return API(endpoint='https://zentropi.com/api', token=token)
+
+
 @click.group()
-def main():
+def cli():
     pass
 
 
-@main.command()
-@click.option('--name', default='zentropi_shell')
-@click.option('--endpoint', default='wss://local.zentropi.com/')
-@click.option('--auth', default='4cb1c5fe714b469caae03f26e635f676')
-@click.option('--join', default='zentropia')
-def shell(name, endpoint, join, auth):
-    from .shell import ZentropiShell
-    shell_agent = ZentropiShell(name)
-    shell_agent.connect(endpoint, auth=auth)
-    if join:
-        shell_agent.join(space=join)
-    shell_agent.run()
+@cli.command()
+def register():
+    api = get_api()
+    username = click.prompt('username')
+    email = click.prompt('email')
+    password = click.prompt('password', hide_input=True)
+    click.echo(api.register(email, username, password))
 
 
-@main.group()
+@cli.command()
+def login():
+    api = get_api()
+    username = click.prompt('username')
+    password = click.prompt('password', hide_input=True)
+    token = api.login(username, password)
+    if isinstance(token, dict):
+        click.echo('Invalid username or password.')
+        raise click.Abort()
+    save_token('user:default', token)
+    click.echo('Your user-token is saved to {}'.format(TOKENS_PATH))
+
+
+@cli.command()
+@click.argument('agent_name')
+def login_agent(agent_name):
+    api = get_api()
+    agent_token = api.login_agent(agent_name)
+    if isinstance(agent_token, dict):
+        click.echo('Invalid agent name.')
+        raise click.Abort()
+    save_token(agent_name, agent_token)
+    click.echo('Token for agent {} is saved to {}'.format(agent_name, TOKENS_PATH))
+
+
+@cli.group()
 def create():
     pass
 
@@ -54,7 +85,7 @@ def create():
 @create.command()
 @click.argument('path', type=click.Path(exists=False), default='.')
 @click.option('--template', default='package')
-def agent(path, template):
+def project(path, template):
     """
     Create a new agent.
     - Default path '.' will create a new directory inside your
@@ -82,5 +113,84 @@ def agent(path, template):
 
 
 @create.command()
-def project():
-    pass
+@click.argument('name')
+@click.argument('description', default='')
+@click.option('--login', is_flag=True, default=False)
+@click.option('--spaces', default='')
+def agent(name, description, login, spaces):
+    api = get_api()
+    click.echo('Creating agent {}...'.format(name))
+    click.echo(api.agent_create(name, description))
+    click.echo('{} created.'.format(name))
+    if spaces:
+        for space in spaces.split(','):
+            click.echo('Joining {}'.format(space))
+            click.echo(api.join(space, name))
+    if login:
+        click.echo('Logging in...')
+        agent_token = api.login_agent(name)
+        if isinstance(agent_token, dict):
+            click.echo('Invalid agent name.')
+            raise click.Abort()
+        save_token(name, agent_token)
+        click.echo('Token for agent {} is saved to {}'.format(name, TOKENS_PATH))
+
+
+@create.command()
+@click.argument('name')
+@click.argument('description', default='')
+def space(name, description):
+    api = get_api()
+    click.echo(api.space_create(name, description))
+
+
+@cli.command()
+@click.argument('space')
+@click.argument('agent')
+def join(space, agent):
+    api = get_api()
+    click.echo(api.join(space, agent))
+
+
+@cli.command()
+@click.argument('space')
+@click.argument('agent')
+def leave(space, agent):
+    api = get_api()
+    click.echo(api.leave(space, agent))
+
+
+@cli.command()
+@click.argument('space', default='all')
+def agents(space):
+    api = get_api()
+    if space == 'all':
+        all_agents = api.all_agents()
+        if not isinstance(all_agents, list):
+            click.echo(all_agents)
+        else:
+            click.echo([a['name'] for a in all_agents])
+    else:
+        click.echo(api.agents(space))
+
+
+@cli.command()
+@click.argument('agent', default='all')
+def spaces(agent):
+    api = get_api()
+    if agent == 'all':
+        all_spaces = api.all_spaces()
+        if not isinstance(all_spaces, list):
+            click.echo(all_spaces)
+        else:
+            click.echo([s['name'] for s in all_spaces])
+    else:
+        click.echo(api.spaces(agent))
+
+
+@cli.command()
+def shell():
+    from .shell import ZentropiShell
+    token = ''
+    shell = ZentropiShell()
+    shell.run('wss://zentropi.com/zensocket', token)

@@ -16,68 +16,53 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import os
-
-import zentropi.fields as fields
-import zentropi.utils as utils
-from zentropi.agent import Agent, on_timer
-from zentropi.config import Config, Option
-from zentropi.connections import Connection
-from zentropi.connections.in_memory import \
-    InMemoryConnection
-from zentropi.events import Events
-from zentropi.fields import Field
-from zentropi.frames import (
-    Command,
-    Event,
-    Frame,
-    Message,
-    State
-)
-from zentropi.shell import ZentropiShell
-from zentropi.spaces import Spaces
-from zentropi.symbols import KINDS
-from zentropi.utils import (
-    log_to_stream,
-    run_agents,
-    run_agents_forever
-)
-from zentropi.zentropian import (
-    Zentropian,
-    on_event,
-    on_message,
-    on_state
-)
+# from pkgutil import extend_path
+# __path__ = extend_path(__path__, __name__)
+import pkg_resources
+pkg_resources.declare_namespace(__name__)
 
 __version__ = "0.1.3"
 
 BASE_PATH = os.path.abspath(os.path.dirname(__file__))
 
+from uzentropi import (
+    RATE_LIMIT,
+    PLATFORM,
+    MICROPY,
+    PYTHON,
+    Kind,
+    Frame,
+    Session,
+    Handler,
+    on_command,
+    on_event,
+    on_message,
+    on_request,
+    on_state,
+    on_timer,
+    WebsocketConnection,
+    RateLimitError,
+)
+
+from .agent import Agent
+
 __all__ = [
     '__version__',
+    'PLATFORM',
+    'MICROPY',
+    'PYTHON',
+    'RATE_LIMIT',
     'Agent',
-    'BASE_PATH',
-    'Command',
-    'Connection',
-    'Config',
-    'Event',
-    'Events',
     'Frame',
-    'Field',
-    'fields',
-    'InMemoryConnection',
-    'KINDS',
-    'log_to_stream',
-    'Message',
+    'Handler',
+    'Kind',
+    'Session',
+    'WebsocketConnection',
+    'asyncio',
+    'on_command',
     'on_event',
     'on_message',
+    'on_request',
     'on_state',
-    'on_timer',
-    'Option',
-    'run_agents',
-    'run_agents_forever',
-    'ZentropiShell',
-    'Spaces',
-    'State',
-    'utils',
-    'Zentropian',
+    'on_timer'
 ]

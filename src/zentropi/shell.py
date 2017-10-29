@@ -1,71 +1,47 @@
 # coding=utf-8
-import textwrap
-
-import os
-import pprint
+import shlex
 import sys
 
+import os
 from prompt_toolkit import CommandLineInterface
 from prompt_toolkit.filters import Condition
-from prompt_toolkit.history import FileHistory, InMemoryHistory
+from prompt_toolkit.history import InMemoryHistory
 from prompt_toolkit.shortcuts import (
     create_asyncio_eventloop,
     create_prompt_application
 )
 from pygments.token import Token
-from zentropi import Config, Option
-
-from zentropi.defaults import \
-    FRAME_NAME_MAX_LENGTH
-
-from .agent import Agent, on_event, on_message
-from .frames import KINDS, Message
-from .fields import PersistentStore
+from zentropi import Agent, Kind, on_event, on_message, on_request, on_state
 
 BASE_DIR = os.path.dirname(os.path.abspath(__name__))
 PROMPT = '〉'
 PROMPT_MORE = '  '
+history = InMemoryHistory()
 
 FRAME_PREFIX = {
-    KINDS.EVENT: '⚡ ︎',
-    KINDS.MESSAGE: '✉ ',
-    KINDS.STATE: '⇥ ',
-    KINDS.COMMAND: '⎈ ',
-    KINDS.REQUEST: '🔺 ',
-    KINDS.RESPONSE: '🔻 ',
+    Kind.EVENT: '⚡ ︎',
+    Kind.MESSAGE: '✉ ',
+    Kind.STATE: '⇥ ',
+    Kind.COMMAND: '⎈ ',
+    Kind.REQUEST: '🔺 ',
+    Kind.RESPONSE: '🔻 ',
 }
 
 
-class ZentropiShellConfig(Config):
-    _can_extend = True
-    _can_modify = True
-    _config_file = '~/.zentropi/shell.conf'
-
-    HISTORY_FILE = '~/.zentropi/shell.history'
-    ENABLE_HISTORY = False
-
-
 class ZentropiShell(Agent):
-    def __init__(self, name=None, config=None, **kwargs):
-        self.config = config or ZentropiShellConfig()
+    def __init__(self, name=None, **kwargs):
         ptk_loop = create_asyncio_eventloop()
         self.loop = ptk_loop.loop
         self.cli = self._get_cli(ptk_loop)
-        self.std_out = self.cli.stdout_proxy(raw=True)
-        sys.stdout = self.std_out
+        sys.stdout = self.cli.stdout_proxy(raw=True)
         super().__init__(name=name, **kwargs)
         self._prompt = PROMPT
         self._prompt_more = PROMPT_MORE
         self._multi_line = False
         self._exit_on_next_kb_interrupt = False
-        self.store = PersistentStore('~/.zentropi/shell.db')
-        self.states.events = self.store.field(True)
 
     def _get_cli(self, loop):
-        if self.config.ENABLE_HISTORY:
-            history = FileHistory(os.path.expanduser(self.config.HISTORY_FILE))
-        else:
-            history = InMemoryHistory()
+        global history
         return CommandLineInterface(
             application=create_prompt_application(
                 multiline=Condition(lambda: self._multi_line),
@@ -91,83 +67,79 @@ class ZentropiShell(Agent):
         self.cli.request_redraw()
 
     async def interact(self):
-        self.emit('shell-starting', internal=True)
         while True:
             try:
-                # self.emit('shell-ready', internal=True)
                 user_input = await self.cli.run_async()
-                if not hasattr(user_input, 'text'):
-                    continue
                 command = user_input.text
                 self._exit_on_next_kb_interrupt = False  # We have new input; relax.
                 if command in ['exit', 'q']:
                     break
                 if command:
-                    self.emit(command[:FRAME_NAME_MAX_LENGTH], data={'text': command}, internal=True)
+                    await self.process_command(command)
             except EOFError:
                 break
-            except KeyboardInterrupt:
+            except KeyboardInterrupt:  # User pressed Ctrl+C
                 if self._exit_on_next_kb_interrupt:
+                    # Second, immediate interrupt (can be reset by input on prompt).
                     break
+                # First interrupt
                 self._exit_on_next_kb_interrupt = True
                 print('!')
                 continue
-        self.emit('shell-stopping', internal=True)
         print('Stopping...', flush=True)
         self.stop()
 
-    async def _run_forever(self):
-        self.spawn(self.interact())
-        await super()._run_forever()
+    async def start(self, loop=None, **kwargs):
+        await super().start(loop=loop, **kwargs)
+        self._loop.create_task(self.interact())
 
-    @on_message('*')
-    @on_event('*')
-    async def on_any_message(self, frame):
-        if not self.states.events and frame.kind is KINDS.EVENT:
-            return
-        if frame.source == self.name and frame.internal is True and not frame.name.startswith('***'):
-            if 'text' in frame.data:
-                text = frame.data.text.strip()
-            else:
-                text = frame.name
-            self.message(text)
-            return
-        elif frame.source == self.name and frame.internal is False:
-            return
-        prefix = FRAME_PREFIX[frame.kind]
-        print('{} @{}: {}'.format(prefix, frame.source, frame.name))
-        if frame.data and frame.data.text != frame.name:
-            str_data = str(frame.data)
-            if len(str_data) < 500:
-                pprint.pprint(frame.data)
-            else:
-                print(textwrap.shorten(str_data, 80))
+    def parse_command(self, command):
+        if ' ' not in command:
+            return command, {}
+        split_command = command.split(' ')
+        name = split_command[0]
+        data = {k: v
+                for k, v in [x.split('=')
+                             for x in shlex.split(' '.join(split_command[1:]))
+                             if '=' in x]}
+        return name, data
 
-    @on_event('join {space}', parse=True)
-    async def join_space(self, message):
-        if message.source != self.name:
-            return
-        space = message.data.space.strip()
-        self.join(space)
-
-    @on_event('leave {space}', parse=True)
-    async def leave_space(self, message):
-        if message.source != self.name:
-            return
-        space = message.data.space.strip()
-        self.leave(space)
-
-    @on_event('shell events {events_state:w}', parse=True)
-    def set_events(self, message):
-        events_ = message.data.events_state.lower().strip()
-        if events_ in ['true', 'on', 'yes']:
-            self.states.events = True
-        elif events_ in ['false', 'off', 'no']:
-            self.states.events = False
+    async def process_command(self, command):
+        if command.startswith('/'):
+            event_name, data = self.parse_command(command[1:])
+            await self.emit(event_name, **data)
+        elif command.startswith('?'):
+            try:
+                command_name, data = self.parse_command(command[1:])
+                print(await self.request(command_name, timeout=20, **data))
+            except Exception as e:
+                print('Error: ', e.args)
+        elif command.startswith(':'):
+            state_name, data = self.parse_command(command[1:])
+            print(await self.state(state_name, **data))
         else:
-            print('Try "events on" or "events off", or just "events" to check state.')
+            await self.message(command)
 
-    @on_event('shell events')
-    def get_events(self, message):
-        response = 'Display events is {}'.format('on' if self.states.events else 'off')
-        print(response)
+    @on_event('*', rate_limit=0)
+    async def incoming_event(self, frame):
+        await self.incoming_frame(frame)
+
+    @on_message('*', rate_limit=0)
+    async def incoming_message(self, frame):
+        await self.incoming_frame(frame)
+
+    @on_request('*', rate_limit=0)
+    async def incoming_request(self, frame):
+        await self.incoming_frame(frame)
+
+    @on_state('*', if_show_states=True, rate_limit=0)
+    async def incoming_state(self, frame):
+        await self.incoming_frame(frame)
+
+    async def incoming_frame(self, frame):
+        text = frame.name
+        if frame.data:
+            print('{} {}\n\t{}'.format(FRAME_PREFIX[frame.kind], text, frame.data), flush=True)
+        else:
+            print('{} {}'.format(FRAME_PREFIX[frame.kind], text), flush=True)
+

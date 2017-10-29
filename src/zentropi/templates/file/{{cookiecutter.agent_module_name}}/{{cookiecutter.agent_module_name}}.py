@@ -5,7 +5,6 @@ from zentropi import (
     on_message,
     on_state,
     on_timer,
-    run_agents
 )
 
 
@@ -47,5 +46,6 @@ class {{ cookiecutter.agent_class_name }}(Agent):
         print('❤️')
 
 if __name__ == '__main__':
+    TOKEN = 'TOKEN-HERE'
     {{cookiecutter.agent_module_name}} = {{cookiecutter.agent_class_name}}(name='{{cookiecutter.agent_name}}')
-    run_agents({{cookiecutter.agent_module_name}}, shell=True)
+    {{cookiecutter.agent_class_name}}.run('wss://zentropi.com/zensocket', TOKEN)
