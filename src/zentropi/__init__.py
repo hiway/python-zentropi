@@ -32,7 +32,6 @@ from uzentropi import (
     Session,
     WebsocketConnection,
     asyncio,
-    on_command,
     on_event,
     on_message,
     on_request,
@@ -40,7 +39,7 @@ from uzentropi import (
     on_timer,
 )
 
-from .agent import Agent
+from .agent import Agent, on_command
 from .errors import RateLimitError
 
 __all__ = [
